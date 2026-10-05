@@ -1,0 +1,409 @@
+{
+  "name": "Propstep",
+  "legal_name": "PropStep Consulting Private Limited",
+  "url": "https://www.propstep.in",
+  "base_path": "",
+  "description": "Propstep is a property advisory and consulting firm. We list verified homes, land and offices from across the market, and guide buyers, sellers and NRIs through every step, across India's leading cities.",
+  "since": 2011,
+  "phone": "+91 80 4718 2200",
+  "phone_href": "+918047182200",
+  "whatsapp": "918047182200",
+  "email": "info@propstep.in",
+  "hours": "Mon – Sat, 10 am – 7 pm IST",
+  "form_endpoint": "",
+  "agent_rera": "PRM/KA/RERA/1251/310/AG/230418/003412",
+  "hq": {
+    "line1": "2nd Floor, 158, 1st A Main Rd, Sector 6",
+    "line2": "HSR Layout, Bengaluru, Karnataka 560102",
+    "street": "2nd Floor, 158, 1st A Main Rd, Sector 6, HSR Layout",
+    "postcode": "560102",
+    "map_query": "PropStep Consulting Private Limited, 158, 1st A Main Rd, Sector 6, HSR Layout, Bengaluru, Karnataka 560102",
+    "maps": "https://www.google.com/maps/search/?api=1&query=PropStep+Consulting+Private+Limited%2C+158%2C+1st+A+Main+Rd%2C+Sector+6%2C+HSR+Layout%2C+Bengaluru%2C+Karnataka+560102"
+  },
+  "social": {
+    "instagram": "https://www.instagram.com/",
+    "linkedin": "https://www.linkedin.com/",
+    "youtube": "https://www.youtube.com/"
+  },
+  "stats": [
+    {
+      "value": 12,
+      "suffix": "",
+      "label": "years advising buyers",
+      "note": "since 2011"
+    },
+    {
+      "value": 300,
+      "suffix": "+",
+      "label": "verified listings",
+      "note": "checked before they go live"
+    },
+    {
+      "value": 200,
+      "suffix": "+",
+      "label": "families helped home",
+      "note": "and counting"
+    }
+  ],
+  "cities": [
+    {
+      "slug": "bengaluru",
+      "name": "Bengaluru",
+      "role": "Headquarters · Advisory & listings",
+      "desks": "Indiranagar · Whitefield · Hebbal",
+      "image": "1698332137428-3c4296198e8f",
+      "landmark": "Vidhana Soudha"
+    },
+    {
+      "slug": "mumbai",
+      "name": "Mumbai",
+      "role": "Advisory · Resale & luxury",
+      "desks": "Bandra Kurla Complex",
+      "image": "1595658658481-d53d3f999875",
+      "landmark": "Gateway of India"
+    },
+    {
+      "slug": "pune",
+      "name": "Pune",
+      "role": "Advisory · Homes & offices",
+      "desks": "Koregaon Park",
+      "image": "1715678710159-ee67d5bdba85",
+      "landmark": "Shaniwar Wada"
+    },
+    {
+      "slug": "hyderabad",
+      "name": "Hyderabad",
+      "role": "Advisory · Villas & commercial",
+      "desks": "Jubilee Hills",
+      "image": "1750834115164-8c2658f18dd0",
+      "landmark": "Charminar"
+    },
+    {
+      "slug": "chennai",
+      "name": "Chennai",
+      "role": "Advisory · Homes & NRI",
+      "desks": "Nungambakkam",
+      "image": "1616843413587-9e3a37f7bbd8",
+      "landmark": "Temple gopuram"
+    },
+    {
+      "slug": "delhi-ncr",
+      "name": "Delhi NCR",
+      "role": "Advisory · Luxury & commercial",
+      "desks": "Golf Course Road, Gurugram",
+      "image": "1705927122615-02dcef3b1465",
+      "landmark": "India Gate"
+    }
+  ],
+  "offices": [
+    {
+      "city": "Bengaluru",
+      "label": "Head office",
+      "address": "2nd Floor, 158, 1st A Main Rd, Sector 6, HSR Layout, Bengaluru 560102",
+      "phone": "+91 80 4718 2200"
+    },
+    {
+      "city": "Mumbai",
+      "label": "Advisory desk",
+      "address": "Level 4, G Block, Bandra Kurla Complex, Mumbai 400051",
+      "phone": "+91 22 4971 3300"
+    },
+    {
+      "city": "Pune",
+      "label": "Advisory desk",
+      "address": "Lane 6, Koregaon Park, Pune 411001",
+      "phone": "+91 20 4815 6600"
+    },
+    {
+      "city": "Hyderabad",
+      "label": "Advisory desk",
+      "address": "Road No. 36, Jubilee Hills, Hyderabad 500033",
+      "phone": "+91 40 4852 7700"
+    },
+    {
+      "city": "Chennai",
+      "label": "Advisory desk",
+      "address": "Khader Nawaz Khan Road, Nungambakkam, Chennai 600006",
+      "phone": "+91 44 4631 8800"
+    },
+    {
+      "city": "Delhi NCR",
+      "label": "Advisory desk",
+      "address": "Golf Course Road, Sector 54, Gurugram 122002",
+      "phone": "+91 124 491 9900"
+    }
+  ],
+  "advisors": {
+    "ananya": {
+      "name": "Ananya Rao",
+      "role": "Senior Advisor, East Bengaluru",
+      "languages": "English, Kannada, Hindi",
+      "years": 11
+    },
+    "karthik": {
+      "name": "Karthik Menon",
+      "role": "Advisor, Central Bengaluru",
+      "languages": "English, Malayalam, Kannada",
+      "years": 7
+    },
+    "farah": {
+      "name": "Farah Siddiqui",
+      "role": "Head, NRI Desk",
+      "languages": "English, Hindi, Urdu, Arabic",
+      "years": 12
+    },
+    "vikram": {
+      "name": "Vikram Shetty",
+      "role": "Director, Commercial Leasing",
+      "languages": "English, Kannada, Tulu",
+      "years": 16
+    },
+    "neha": {
+      "name": "Neha Kulkarni",
+      "role": "Advisor, Mumbai & Pune",
+      "languages": "English, Marathi, Hindi",
+      "years": 9
+    },
+    "rohan": {
+      "name": "Rohan Varma",
+      "role": "Advisor, Hyderabad & Delhi NCR",
+      "languages": "English, Telugu, Hindi",
+      "years": 8
+    }
+  },
+  "leadership": [
+    {
+      "name": "Aditya Nair",
+      "role": "Founder & Managing Director",
+      "bio": "Started Propstep in 2011 as a buyer-side advisor. Still joins clients on shortlist visits most weekends.",
+      "linkedin": "https://www.linkedin.com/"
+    },
+    {
+      "name": "Meera Iyengar",
+      "role": "Director, Research & Listings",
+      "bio": "An architect by training. Leads the team that inspects, verifies and lists every property on Propstep.",
+      "linkedin": "https://www.linkedin.com/"
+    },
+    {
+      "name": "Sanjay Hegde",
+      "role": "Head of Advisory",
+      "bio": "Built the advisory business from one desk in Indiranagar to six cities and 90 advisors.",
+      "linkedin": "https://www.linkedin.com/"
+    },
+    {
+      "name": "Priya Raman",
+      "role": "Chief Financial Officer",
+      "bio": "Oversees compliance, fees and the paperwork behind every transaction we advise on.",
+      "linkedin": "https://www.linkedin.com/"
+    }
+  ],
+  "values": [
+    {
+      "icon": "shield",
+      "title": "Nothing hidden",
+      "text": "Every price, fee, approval and delay is disclosed in writing — before you ask."
+    },
+    {
+      "icon": "verified",
+      "title": "Verified before listed",
+      "text": "Every property is title-checked by our legal team and visited in person by an advisor before it appears on our site."
+    },
+    {
+      "icon": "handshake",
+      "title": "Advice before sales",
+      "text": "Our advisors are paid on client satisfaction scores as well as transactions. Sometimes the advice is to wait."
+    },
+    {
+      "icon": "key",
+      "title": "With you to the keys",
+      "text": "One advisor from your first shortlist to registration and possession — and after, if you need us."
+    }
+  ],
+  "milestones": [
+    {
+      "year": "2011",
+      "title": "A single desk in Indiranagar",
+      "text": "Aditya Nair starts Propstep as a buy-side advisory for Bengaluru's first wave of tech homebuyers."
+    },
+    {
+      "year": "2014",
+      "title": "Legal checks, in-house",
+      "text": "Our own legal team starts reading every title, approval and khata before a client signs."
+    },
+    {
+      "year": "2017",
+      "title": "The NRI Desk opens",
+      "text": "A dedicated team for buyers in the Gulf, Singapore, the UK and the US, with live video walkthroughs."
+    },
+    {
+      "year": "2019",
+      "title": "Advisory goes national",
+      "text": "Desks open in Mumbai, Pune and Hyderabad, followed by Chennai and Delhi NCR in 2021."
+    },
+    {
+      "year": "2023",
+      "title": "Verified listings online",
+      "text": "Every property on our site checked by our legal team and visited by an advisor before it goes live."
+    },
+    {
+      "year": "2026",
+      "title": "Bengaluru, zone by zone",
+      "text": "Search the city by zone and locality, with advisors who know each part of Bengaluru."
+    }
+  ],
+  "testimonials": [
+    {
+      "quote": "We were buying from Singapore and never felt out of the loop. Weekly video updates, every document explained in plain English, and registration done before we flew in.",
+      "name": "Deepa & Rahul S.",
+      "meta": "NRI homebuyers · Whitefield"
+    },
+    {
+      "quote": "Their legal team found a khata problem on a villa we loved elsewhere and talked us out of it. Two months later they found us something better, for less.",
+      "name": "Harish K.",
+      "meta": "Homebuyer · Sarjapur Road"
+    },
+    {
+      "quote": "Leasing 40,000 sq ft on the Outer Ring Road usually takes a year. Propstep closed it in eleven weeks, on terms our board was comfortable with.",
+      "name": "Head of Workplace",
+      "meta": "Bengaluru-based SaaS company"
+    },
+    {
+      "quote": "I sold my father's house in Basavanagudi without travelling from Pune once. Clear pricing, no drama, and the buyer was verified before I ever spoke to him.",
+      "name": "Nandini P.",
+      "meta": "Seller · Basavanagudi"
+    }
+  ],
+  "services": [
+    {
+      "slug": "buy",
+      "icon": "key",
+      "title": "Buy a home",
+      "short": "New launches and verified resale homes, shortlisted to your brief.",
+      "points": [
+        "Shortlists from 2,000+ verified listings",
+        "Chauffeured or live-video site visits",
+        "Price benchmarking against actual registrations",
+        "Negotiation and booking support"
+      ],
+      "image": "1600607687939-ce8a6c25118c"
+    },
+    {
+      "slug": "sell",
+      "icon": "tag",
+      "title": "Sell your property",
+      "short": "Valuation, marketing and a pre-verified buyer pool.",
+      "points": [
+        "Free valuation backed by registration data",
+        "Professional photography and 3D tours",
+        "Buyers pre-qualified for funds and intent",
+        "Agreement to registration, handled"
+      ],
+      "image": "1600596542815-ffad4c1539a9"
+    },
+    {
+      "slug": "nri",
+      "icon": "globe",
+      "title": "NRI Desk",
+      "short": "Buy, sell and manage property in India from anywhere in the world.",
+      "points": [
+        "Live video walkthroughs at your hours",
+        "Power of attorney and FEMA guidance",
+        "Repatriation-friendly documentation",
+        "Property management after possession"
+      ],
+      "image": "1600566753086-00f18fb6b3ea"
+    },
+    {
+      "slug": "plots",
+      "icon": "trees",
+      "title": "Plots & farmland",
+      "short": "Title-clean land around Bengaluru, from villa plots to managed farms.",
+      "points": [
+        "30-year title search and survey check",
+        "Conversion and zoning verification",
+        "Boundary fixing and fencing",
+        "Managed farming partners"
+      ],
+      "image": "1500382017468-9049fed747ef"
+    },
+    {
+      "slug": "commercial",
+      "icon": "briefcase",
+      "title": "Commercial",
+      "short": "Offices, retail and pre-leased assets for occupiers and investors.",
+      "points": [
+        "Office search and lease negotiation",
+        "Fit-out budgeting and project management",
+        "Pre-leased asset sourcing and yield analysis",
+        "Portfolio reviews for family offices"
+      ],
+      "image": "1486406146926-c627a92ad1ab"
+    },
+    {
+      "slug": "legal",
+      "icon": "file",
+      "title": "Legal & documentation",
+      "short": "An in-house team that reads every page, so you don't have to.",
+      "points": [
+        "40-point title and approval check",
+        "EC, khata and RERA verification",
+        "Sale deed drafting and registration",
+        "Khata transfer and utility changes"
+      ],
+      "image": "1618219908412-a29a1bb7b86e"
+    },
+    {
+      "slug": "loans",
+      "icon": "percent",
+      "title": "Home loans",
+      "short": "Loan comparison and paperwork across leading banks and NBFCs.",
+      "points": [
+        "Offers compared across 12+ lenders",
+        "Pre-approval before you book",
+        "Documentation handled end-to-end",
+        "Balance-transfer reviews for existing loans"
+      ],
+      "image": "1484154218962-a197022b5858"
+    }
+  ],
+  "process": [
+    {
+      "title": "Discover",
+      "text": "Tell us what matters — budget, commute, schools, timelines. We come back with a shortlist of five, not fifty."
+    },
+    {
+      "title": "Visit",
+      "text": "Chauffeured site visits, or live video walkthroughs at hours that suit you in Dubai or Denver."
+    },
+    {
+      "title": "Verify",
+      "text": "Our in-house legal team runs a 40-point check on title, approvals, khata, EC and RERA before you commit a rupee."
+    },
+    {
+      "title": "Own",
+      "text": "Loan, agreement, registration, possession and — if you want it — property management. One team, start to finish."
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Do you charge buyers a fee?",
+      "a": "For new launches there is no fee to buyers. For resale purchases we charge 1% of the transaction value plus GST, agreed in writing before we start."
+    },
+    {
+      "q": "Are the new projects you list RERA-registered?",
+      "a": "Yes. We only list new projects that are registered with Karnataka RERA, and we give you the registration number so you can verify it on the Karnataka RERA portal. Propstep is itself a RERA-registered real estate agent."
+    },
+    {
+      "q": "Can I buy without visiting in person?",
+      "a": "Yes — around a third of our buyers do. The NRI Desk runs live video walkthroughs, couriers documents, and can guide you through a power of attorney so a family member or our legal team can complete registration on your behalf."
+    },
+    {
+      "q": "How do you verify resale listings?",
+      "a": "Before a resale home appears on our site we check ownership documents, the encumbrance certificate, khata status and building approvals, and an advisor visits the property in person. Listings that pass carry a 'Verified' badge."
+    },
+    {
+      "q": "Which cities do you cover?",
+      "a": "We advise on buying and selling in Bengaluru, Mumbai, Pune, Hyderabad, Chennai and Delhi NCR, and list verified properties across all six."
+    }
+  ]
+}

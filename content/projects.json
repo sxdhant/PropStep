@@ -1,0 +1,405 @@
+[
+  {
+    "slug": "aranya",
+    "name": "Propstep Aranya",
+    "short": "Aranya",
+    "category": "luxury",
+    "segment": "Luxury villas",
+    "status": "Under construction",
+    "status_key": "ongoing",
+    "locality": "Devanahalli",
+    "zone": "North Bengaluru",
+    "city": "Bengaluru",
+    "tagline": "62 garden villas on 18 acres, ten minutes from the airport.",
+    "summary": "Low-density 4 and 5 BHK villas arranged around a restored lake and three acres of native woodland.",
+    "description": [
+      "Aranya — Sanskrit for forest — is planned around what was already here: a seasonal lake, more than 400 mature trees and the long, low evening light of North Bengaluru. Just 62 villas sit on 18 acres, each with a private garden, a double-height living room and a courtyard that draws daylight through the centre of the house.",
+      "The landscape uses only native and climate-adapted species. Rainwater harvesting, solar-assisted common areas and a sewage treatment plant sized for full reuse keep running costs low for the long term, and the whole community is designed to be walked, not driven."
+    ],
+    "config": "4 & 5 BHK villas",
+    "size": "3,850 – 6,200 sq ft",
+    "price_from": 68000000,
+    "price_label": "₹6.8 Cr onwards",
+    "possession": "Dec 2027",
+    "land": "18 acres",
+    "units": "62 villas",
+    "open_space": "72% open",
+    "rera": "PRM/KA/RERA/1250/303/PR/240512/006781",
+    "cover": { "id": "1613490493576-7fde63acd811", "alt": "A white two-storey villa with a long pool and timber-lined terraces at dusk" },
+    "gallery": [
+      { "id": "1600573472550-8090b5e0745e", "alt": "Living room opening onto the pool deck through full-height glass" },
+      { "id": "1600607687939-ce8a6c25118c", "alt": "Double-height living room with timber wall panelling" },
+      { "id": "1571896349842-33c89424de2d", "alt": "Clubhouse pool lit at dusk" },
+      { "id": "1616594039964-ae9021a400a0", "alt": "Master bedroom with a soft grey palette and a statement chandelier" },
+      { "id": "1600585152220-90363fe7e115", "alt": "Open kitchen with a white island and oak cabinetry" }
+    ],
+    "highlights": [
+      "Only 3.4 villas per acre — among the lowest densities in North Bengaluru",
+      "Private gardens from 1,400 sq ft and a 40 ft frontage on every villa",
+      "22,000 sq ft clubhouse with a 25 m lap pool and spa",
+      "Restored 2-acre lake with a 1.2 km shaded walking loop",
+      "Home automation, EV charging and solar-ready roofs as standard",
+      "IGBC Green Homes pre-certification applied for"
+    ],
+    "amenities": [
+      { "icon": "waves", "label": "25 m lap pool" },
+      { "icon": "building", "label": "22,000 sq ft clubhouse" },
+      { "icon": "dumbbell", "label": "Gym & yoga pavilion" },
+      { "icon": "trees", "label": "1.2 km lake trail" },
+      { "icon": "sprout", "label": "Organic kitchen gardens" },
+      { "icon": "trophy", "label": "Tennis & pickleball" },
+      { "icon": "smile", "label": "Children's nature play" },
+      { "icon": "laptop", "label": "Co-working lounge" },
+      { "icon": "plug", "label": "EV charging in every villa" },
+      { "icon": "shield", "label": "Three-tier security" }
+    ],
+    "plans": [
+      { "name": "4 BHK Villa", "type": "Type A · G+1", "layout": "villa4", "area": "3,850 sq ft", "plot": "4,000 sq ft plot", "price": "₹6.8 Cr onwards", "rows": [["Built-up area", "3,850 sq ft"], ["Plot area", "4,000 sq ft"], ["Private garden", "1,400 sq ft"], ["Bedrooms / baths", "4 / 5"], ["Car parks", "2 covered"]] },
+      { "name": "5 BHK Villa", "type": "Type B · G+2", "layout": "villa5", "area": "6,200 sq ft", "plot": "6,000 sq ft plot", "price": "₹10.9 Cr onwards", "rows": [["Built-up area", "6,200 sq ft"], ["Plot area", "6,000 sq ft"], ["Private garden", "2,100 sq ft"], ["Bedrooms / baths", "5 / 6"], ["Car parks", "3 covered"]] }
+    ],
+    "location": [
+      { "icon": "plane", "place": "Kempegowda International Airport", "time": "10 min" },
+      { "icon": "briefcase", "place": "KIADB Aerospace & IT Park", "time": "8 min" },
+      { "icon": "train", "place": "Airport metro line (under construction)", "time": "12 min" },
+      { "icon": "school", "place": "Five international schools", "time": "within 15 min" },
+      { "icon": "hospital", "place": "Multi-speciality hospitals", "time": "within 20 min" },
+      { "icon": "mountain", "place": "Nandi Hills", "time": "25 min" }
+    ],
+    "payment": [["On booking", 10], ["Agreement, within 30 days", 10], ["Foundation", 15], ["Ground floor slab", 15], ["First floor slab", 15], ["Terrace & finishes", 15], ["On possession", 20]]
+  },
+  {
+    "slug": "lakeshore",
+    "name": "Propstep Lakeshore",
+    "short": "Lakeshore",
+    "category": "luxury",
+    "segment": "Sky residences",
+    "status": "New launch",
+    "status_key": "launch",
+    "locality": "Hebbal",
+    "zone": "North Bengaluru",
+    "city": "Bengaluru",
+    "tagline": "Lake-facing sky residences, thirty-four floors above Hebbal.",
+    "summary": "Three residences a floor, each with a 10 ft deep wraparound deck over Hebbal lake.",
+    "description": [
+      "Two slender towers, three residences a floor, and a view that nothing will build in front of: 150 acres of protected lake to the west and the city skyline to the south. Lakeshore is designed for people who want the convenience of Hebbal — ten minutes to Manyata, a straight run to the airport — without living at street level.",
+      "Every home has its own lift lobby, a 10 ft deep wraparound deck and floor-to-ceiling glazing with high-performance glass that keeps the heat out. The 33rd-floor Sky Club has an infinity-edge pool, a residents' lounge and a private dining room with the best sunset in North Bengaluru."
+    ],
+    "config": "3 & 4 BHK residences",
+    "size": "2,180 – 3,450 sq ft",
+    "price_from": 39000000,
+    "price_label": "₹3.9 Cr onwards",
+    "possession": "Jun 2029",
+    "land": "5.2 acres",
+    "units": "186 residences",
+    "open_space": "68% open",
+    "rera": "PRM/KA/RERA/1251/309/PR/260214/007452",
+    "cover": { "id": "1551361415-69c87624334f", "alt": "A white residential tower with deep balconies against a clear blue sky" },
+    "gallery": [
+      { "id": "1575429198097-0414ec08e8cd", "alt": "Rooftop infinity pool overlooking the city skyline" },
+      { "id": "1560448204-e02f11c3d0e2", "alt": "Living room with floor-to-ceiling windows and a city view" },
+      { "id": "1600566753086-00f18fb6b3ea", "alt": "Double-height living space with a sculptural staircase" },
+      { "id": "1631049307264-da0ec9d70304", "alt": "Bedroom with a warm timber headboard and soft lighting" },
+      { "id": "1534438327276-14e5300c3a48", "alt": "Fully equipped residents' gym" }
+    ],
+    "highlights": [
+      "Every residence faces the 150-acre Hebbal lake or the city skyline",
+      "Only three residences per floor, each with a private lift lobby",
+      "Sky Club on the 33rd floor with an infinity-edge pool",
+      "10 ft deep wraparound decks on every home",
+      "Four minutes to the Hebbal interchange; 25 minutes to the airport",
+      "Walking distance to the upcoming Hebbal metro interchange"
+    ],
+    "amenities": [
+      { "icon": "waves", "label": "Sky Club infinity pool" },
+      { "icon": "wine", "label": "Private dining room" },
+      { "icon": "dumbbell", "label": "Gym & spin studio" },
+      { "icon": "sparkles", "label": "Spa & steam" },
+      { "icon": "film", "label": "Screening room" },
+      { "icon": "trees", "label": "2-acre podium garden" },
+      { "icon": "smile", "label": "Children's club" },
+      { "icon": "bell", "label": "24-hour concierge" },
+      { "icon": "plug", "label": "EV-ready parking" },
+      { "icon": "shield", "label": "Access-controlled lifts" }
+    ],
+    "plans": [
+      { "name": "3 BHK Residence", "type": "Lake or city facing", "layout": "apt3", "area": "2,180 sq ft", "plot": "", "price": "₹3.9 Cr onwards", "rows": [["Super built-up", "2,180 sq ft"], ["RERA carpet area", "1,512 sq ft"], ["Wraparound deck", "268 sq ft"], ["Bedrooms / baths", "3 / 3"], ["Car parks", "2"]] },
+      { "name": "4 BHK Residence", "type": "Corner · lake facing", "layout": "apt4", "area": "3,450 sq ft", "plot": "", "price": "₹6.2 Cr onwards", "rows": [["Super built-up", "3,450 sq ft"], ["RERA carpet area", "2,395 sq ft"], ["Wraparound deck", "410 sq ft"], ["Bedrooms / baths", "4 / 5"], ["Car parks", "3"]] }
+    ],
+    "location": [
+      { "icon": "briefcase", "place": "Manyata Tech Park", "time": "10 min" },
+      { "icon": "train", "place": "Hebbal metro interchange (under construction)", "time": "6 min walk" },
+      { "icon": "plane", "place": "Kempegowda International Airport", "time": "25 min" },
+      { "icon": "school", "place": "Schools on Bellary Road", "time": "within 10 min" },
+      { "icon": "hospital", "place": "Multi-speciality hospitals", "time": "within 8 min" },
+      { "icon": "bag", "place": "Malls on Bellary Road", "time": "7 min" }
+    ],
+    "payment": [["On booking", 10], ["Agreement, within 30 days", 10], ["Foundation", 10], ["10th floor slab", 15], ["20th floor slab", 15], ["Roof slab", 15], ["Finishes", 15], ["On possession", 10]]
+  },
+  {
+    "slug": "meridian",
+    "name": "Propstep Meridian",
+    "short": "Meridian",
+    "category": "premium",
+    "segment": "Premium apartments",
+    "status": "Under construction",
+    "status_key": "ongoing",
+    "locality": "Sarjapur Road",
+    "zone": "South-East Bengaluru",
+    "city": "Bengaluru",
+    "tagline": "Light-filled 2 & 3 BHK homes on Sarjapur Road's quieter side.",
+    "summary": "Every home is a corner home, with light and cross-ventilation on two sides.",
+    "description": [
+      "Meridian is planned for how Sarjapur Road actually lives: short school runs, long work days and weekends that start at the clubhouse. Six towers are arranged around a one-acre central park, so every living room looks onto green rather than into a neighbour's window.",
+      "We designed the floor plates so that every home is a corner home — light on two sides, genuine cross-ventilation and no shared walls across the corridor. Vehicles stay below ground, leaving the entire podium to people."
+    ],
+    "config": "2 & 3 BHK apartments",
+    "size": "1,245 – 1,980 sq ft",
+    "price_from": 14500000,
+    "price_label": "₹1.45 Cr onwards",
+    "possession": "Mar 2028",
+    "land": "7.5 acres",
+    "units": "540 homes",
+    "open_space": "70% open",
+    "rera": "PRM/KA/RERA/1251/446/PR/250308/007128",
+    "cover": { "id": "1515263487990-61b07816b324", "alt": "Contemporary apartment towers with white and charcoal facades" },
+    "gallery": [
+      { "id": "1522708323590-d24dbb6b0267", "alt": "Bright apartment living room with a dining table and a sofa" },
+      { "id": "1484154218962-a197022b5858", "alt": "White kitchen with open shelving" },
+      { "id": "1576013551627-0cc20b96c2a7", "alt": "Pool surrounded by landscaped gardens" },
+      { "id": "1600607687644-c7171b42498f", "alt": "Calm bedroom with grey linen and floor-length curtains" },
+      { "id": "1616486338812-3dadae4b4ace", "alt": "Sunlit living room in neutral tones" }
+    ],
+    "highlights": [
+      "Every home is a corner home, with light and ventilation on two sides",
+      "A one-acre central park with no vehicles on the podium",
+      "45,000 sq ft clubhouse with an indoor pool and badminton courts",
+      "Six international schools within 5 km",
+      "Tech parks on Sarjapur Road and the Outer Ring Road within 20 minutes",
+      "Dual-pipe water system and 100% treated-water reuse"
+    ],
+    "amenities": [
+      { "icon": "waves", "label": "Indoor & outdoor pools" },
+      { "icon": "building", "label": "45,000 sq ft clubhouse" },
+      { "icon": "trophy", "label": "Badminton & squash" },
+      { "icon": "dumbbell", "label": "Gym & aerobics studio" },
+      { "icon": "trees", "label": "1-acre central park" },
+      { "icon": "smile", "label": "Crèche & play areas" },
+      { "icon": "laptop", "label": "Work-from-home pods" },
+      { "icon": "bag", "label": "Convenience retail" },
+      { "icon": "plug", "label": "EV charging" },
+      { "icon": "shield", "label": "24/7 CCTV & patrols" }
+    ],
+    "plans": [
+      { "name": "2 BHK", "type": "Corner home", "layout": "apt2", "area": "1,245 sq ft", "plot": "", "price": "₹1.45 Cr onwards", "rows": [["Super built-up", "1,245 sq ft"], ["RERA carpet area", "862 sq ft"], ["Balcony", "96 sq ft"], ["Bedrooms / baths", "2 / 2"], ["Car parks", "1"]] },
+      { "name": "3 BHK", "type": "Corner home", "layout": "apt3", "area": "1,640 sq ft", "plot": "", "price": "₹1.92 Cr onwards", "rows": [["Super built-up", "1,640 sq ft"], ["RERA carpet area", "1,138 sq ft"], ["Balconies", "142 sq ft"], ["Bedrooms / baths", "3 / 3"], ["Car parks", "2"]] },
+      { "name": "3 BHK + Study", "type": "Park facing", "layout": "apt3s", "area": "1,980 sq ft", "plot": "", "price": "₹2.3 Cr onwards", "rows": [["Super built-up", "1,980 sq ft"], ["RERA carpet area", "1,372 sq ft"], ["Balconies", "176 sq ft"], ["Bedrooms / baths", "3 + study / 3"], ["Car parks", "2"]] }
+    ],
+    "location": [
+      { "icon": "briefcase", "place": "Tech parks on Sarjapur Road", "time": "within 10 min" },
+      { "icon": "road", "place": "Outer Ring Road, Bellandur", "time": "20 min" },
+      { "icon": "school", "place": "Six international schools", "time": "within 5 km" },
+      { "icon": "hospital", "place": "Multi-speciality hospitals", "time": "within 12 min" },
+      { "icon": "bag", "place": "Retail and dining on Sarjapur Road", "time": "5 min" },
+      { "icon": "train", "place": "Proposed Sarjapur metro corridor", "time": "planned" }
+    ],
+    "payment": [["On booking", 10], ["Agreement, within 30 days", 10], ["Foundation", 10], ["Basement roof slab", 10], ["5th floor slab", 15], ["10th floor slab", 15], ["Roof slab", 15], ["On possession", 15]]
+  },
+  {
+    "slug": "greenacres",
+    "name": "Propstep Greenacres",
+    "short": "Greenacres",
+    "category": "plots",
+    "segment": "Villa plots & managed farmland",
+    "status": "Ready to register",
+    "status_key": "ready",
+    "locality": "Nandi Hills Road",
+    "zone": "Chikkaballapur",
+    "city": "Bengaluru",
+    "tagline": "Villa plots and managed farmland in the foothills of Nandi.",
+    "summary": "64 acres of title-clean land, with roads, power and water in place and ready to register today.",
+    "description": [
+      "Greenacres sits where the plains start to rise towards Nandi Hills — cooler by a few degrees, greener by a long way, and 40 minutes from Hebbal on the airport road. The layout is complete: roads, underground power, water lines and street lighting are in, and plots are ready to register today.",
+      "Choose a villa plot and build to your own design (our architects can help), or buy a managed farmland parcel that our agronomy partners plant and tend for you with fruit orchards and native trees. Every title has been through a 30-year search by our legal team."
+    ],
+    "config": "Villa plots & farmland",
+    "size": "1,200 sq ft – 1 acre",
+    "price_from": 7200000,
+    "price_label": "₹72 L onwards",
+    "possession": "Ready to register",
+    "land": "64 acres",
+    "units": "210 plots · 40 farm parcels",
+    "open_space": "38% open",
+    "rera": "PRM/KA/RERA/1250/301/PR/220917/005236",
+    "cover": { "id": "1470071459604-3b5ec3a7fe05", "alt": "Mist rising over green, forested hills at dawn" },
+    "gallery": [
+      { "id": "1500382017468-9049fed747ef", "alt": "Open grassland lit by the setting sun" },
+      { "id": "1558036117-15d82a90b9b1", "alt": "A farmhouse set in open fields" },
+      { "id": "1523348837708-15d4a09cfac2", "alt": "Seedlings growing in a nursery" },
+      { "id": "1441974231531-c6227db76b6e", "alt": "Sunlight filtering through a dense grove of trees" },
+      { "id": "1577495508048-b635879837f1", "alt": "Moss-covered forest floor" }
+    ],
+    "highlights": [
+      "Ready to register today, with roads, power and water in place",
+      "30-year title search on every plot by our in-house legal team",
+      "Villa plots from 1,200 to 4,000 sq ft; farmland from ¼ acre",
+      "Managed farming by agronomy partners, with a share of the produce",
+      "A 6,000 sq ft clubhouse and 3 km of trails",
+      "40 minutes from Hebbal via the airport road"
+    ],
+    "amenities": [
+      { "icon": "building", "label": "Clubhouse & café" },
+      { "icon": "waves", "label": "Swimming pool" },
+      { "icon": "trees", "label": "3 km nature trails" },
+      { "icon": "sprout", "label": "Managed orchards" },
+      { "icon": "bike", "label": "Cycling loop" },
+      { "icon": "sun", "label": "Solar street lighting" },
+      { "icon": "droplet", "label": "Rainwater recharge ponds" },
+      { "icon": "plug", "label": "Underground utilities" },
+      { "icon": "smile", "label": "Children's play meadow" },
+      { "icon": "shield", "label": "Gated with 24/7 security" }
+    ],
+    "plans": [
+      { "name": "Villa plot · 30 × 40", "type": "East or north facing", "layout": "plot-small", "area": "1,200 sq ft", "plot": "", "price": "₹72 L onwards", "rows": [["Plot size", "30 ft × 40 ft"], ["Area", "1,200 sq ft"], ["Permissible built-up", "Up to 2,160 sq ft"], ["Road width", "30 ft"], ["Title", "Registered, e-Swathu ready"]] },
+      { "name": "Villa plot · 40 × 60", "type": "Corner plots available", "layout": "plot-large", "area": "2,400 sq ft", "plot": "", "price": "₹1.38 Cr onwards", "rows": [["Plot size", "40 ft × 60 ft"], ["Area", "2,400 sq ft"], ["Permissible built-up", "Up to 4,320 sq ft"], ["Road width", "40 ft"], ["Title", "Registered, e-Swathu ready"]] },
+      { "name": "Managed farmland", "type": "¼, ½ and 1 acre", "layout": "farm", "area": "10,890 sq ft – 1 acre", "plot": "", "price": "₹48 L onwards", "rows": [["Parcel size", "¼ to 1 acre"], ["Planting", "Mango, guava, native trees"], ["Management", "3-year agronomy contract"], ["Farm cottage", "Up to 10% of parcel"], ["Title", "Registered agricultural land"]] }
+    ],
+    "location": [
+      { "icon": "mountain", "place": "Nandi Hills", "time": "12 min" },
+      { "icon": "plane", "place": "Kempegowda International Airport", "time": "25 min" },
+      { "icon": "road", "place": "Hebbal via Bellary Road", "time": "40 min" },
+      { "icon": "school", "place": "Schools in Devanahalli", "time": "within 20 min" },
+      { "icon": "hospital", "place": "District hospital, Chikkaballapur", "time": "20 min" },
+      { "icon": "briefcase", "place": "Devanahalli business parks", "time": "22 min" }
+    ],
+    "payment": [["On booking", 10], ["Agreement, within 30 days", 40], ["On registration", 50]]
+  },
+  {
+    "slug": "one",
+    "name": "Propstep One",
+    "short": "One",
+    "category": "commercial",
+    "segment": "Grade-A offices",
+    "status": "Under construction · pre-leasing",
+    "status_key": "ongoing",
+    "locality": "Bellandur, Outer Ring Road",
+    "zone": "East Bengaluru",
+    "city": "Bengaluru",
+    "tagline": "A 1.1 million sq ft workplace campus on the Outer Ring Road.",
+    "summary": "38,000 sq ft floor plates, a metro station at the gate and LEED Platinum targeted.",
+    "description": [
+      "Propstep One brings a campus-grade workplace to the busiest stretch of the Outer Ring Road — two towers linked by a landscaped courtyard, a food hall, a wellness floor and a metro station on the upcoming Blue Line within 400 metres of the gate.",
+      "Large, column-light floor plates of 38,000 sq ft suit everything from a 3,000 sq ft suite to a multi-floor headquarters. The building is designed for LEED Platinum, with 100% fresh-air ventilation, rooftop solar and a target energy intensity well below the Bengaluru Grade-A average."
+    ],
+    "config": "Office suites to full floors",
+    "size": "3,000 – 38,000 sq ft / floor",
+    "price_from": 0,
+    "price_label": "Lease from ₹115 / sq ft",
+    "possession": "Q4 2027",
+    "land": "6.8 acres",
+    "units": "1.1M sq ft",
+    "open_space": "LEED Platinum target",
+    "rera": "PRM/KA/RERA/1251/446/PR/250919/007316",
+    "cover": { "id": "1486406146926-c627a92ad1ab", "alt": "Glass office towers seen from street level against a blue sky" },
+    "gallery": [
+      { "id": "1497366216548-37526070297c", "alt": "Open office floor with plants and natural light" },
+      { "id": "1497366811353-6870744d04b2", "alt": "Collaborative office space with long tables" },
+      { "id": "1449157291145-7efd050a4d0e", "alt": "Office towers photographed from below" },
+      { "id": "1497215728101-856f4ea42174", "alt": "Desk by a window with a laptop and plants" }
+    ],
+    "highlights": [
+      "Metro station on the upcoming Blue Line within 400 m",
+      "Column-light 38,000 sq ft floor plates",
+      "Designed for LEED Platinum and WELL Core",
+      "Food hall, wellness floor and 1,000-seat auditorium",
+      "Three levels of basement parking with 20% EV-ready bays",
+      "Dedicated shuttle to the Bellandur and Kadubeesanahalli clusters"
+    ],
+    "amenities": [
+      { "icon": "train", "label": "Metro within 400 m" },
+      { "icon": "coffee", "label": "Food hall & cafés" },
+      { "icon": "dumbbell", "label": "Wellness floor" },
+      { "icon": "users", "label": "1,000-seat auditorium" },
+      { "icon": "trees", "label": "Landscaped courtyard" },
+      { "icon": "bike", "label": "Cycle parking & showers" },
+      { "icon": "plug", "label": "EV-ready parking" },
+      { "icon": "sun", "label": "Rooftop solar" },
+      { "icon": "wind", "label": "100% fresh-air HVAC" },
+      { "icon": "shield", "label": "Turnstile access control" }
+    ],
+    "plans": [
+      { "name": "Full floor", "type": "Tower A · levels 4–18", "layout": "office-floor", "area": "38,000 sq ft", "plot": "", "price": "From ₹115 / sq ft / month", "rows": [["Floor plate", "38,000 sq ft"], ["Efficiency", "78%"], ["Floor-to-floor height", "4.2 m"], ["Seating (1:80)", "~475 seats"], ["Car parks", "1 per 1,000 sq ft"]] },
+      { "name": "Office suite", "type": "Tower B · levels 3–12", "layout": "office-suite", "area": "6,500 sq ft", "plot": "", "price": "From ₹118 / sq ft / month", "rows": [["Suite area", "6,500 sq ft"], ["Efficiency", "76%"], ["Floor-to-floor height", "4.2 m"], ["Seating (1:80)", "~80 seats"], ["Car parks", "1 per 1,000 sq ft"]] }
+    ],
+    "location": [
+      { "icon": "train", "place": "Bellandur metro station (Blue Line, under construction)", "time": "400 m" },
+      { "icon": "road", "place": "Outer Ring Road", "time": "on the road" },
+      { "icon": "briefcase", "place": "Tech parks in Bellandur and Marathahalli", "time": "within 10 min" },
+      { "icon": "bag", "place": "Hotels and retail on Sarjapur Road", "time": "8 min" },
+      { "icon": "plane", "place": "Kempegowda International Airport", "time": "60 min" },
+      { "icon": "hospital", "place": "Multi-speciality hospitals", "time": "within 10 min" }
+    ],
+    "payment": []
+  },
+  {
+    "slug": "residences-whitefield",
+    "name": "Propstep Residences",
+    "short": "Residences",
+    "category": "premium",
+    "segment": "Apartments",
+    "status": "Completed 2023",
+    "status_key": "completed",
+    "locality": "Whitefield",
+    "zone": "East Bengaluru",
+    "city": "Bengaluru",
+    "tagline": "Our first address in Whitefield — handed over four months early.",
+    "summary": "312 homes, fully occupied, with resales available through Propstep Advisory.",
+    "description": [
+      "Propstep Residences was our first large community, and the project that taught us what we now do on every site: publish the construction schedule, share monthly progress photos with every buyer, and never promise a date we can't beat. It was handed over in July 2023, four months ahead of the RERA-committed date.",
+      "Today it's a settled community of 312 families, ten minutes' walk from the Purple Line. The occupancy certificate is in place, the residents' association is fully handed over, and occasional resales are listed exclusively through Propstep Advisory."
+    ],
+    "config": "2 & 3 BHK apartments",
+    "size": "1,180 – 1,720 sq ft",
+    "price_from": 0,
+    "price_label": "Sold out · resales available",
+    "possession": "Handed over Jul 2023",
+    "land": "4.2 acres",
+    "units": "312 homes",
+    "open_space": "OC received",
+    "rera": "PRM/KA/RERA/1251/446/PR/190611/002874",
+    "cover": { "id": "1460317442991-0ec209397118", "alt": "Apartment building with rows of balconies and warm-toned facades" },
+    "gallery": [
+      { "id": "1502672260266-1c1ef2d93688", "alt": "Airy living room with plants and wooden furniture" },
+      { "id": "1493809842364-78817add7ffb", "alt": "Living room with a blue sofa and large windows" },
+      { "id": "1556912173-3bb406ef7e77", "alt": "White kitchen with a range cooker" },
+      { "id": "1505691938895-1758d7feb511", "alt": "Living room with framed art and cushions" }
+    ],
+    "highlights": [
+      "Handed over four months ahead of the RERA-committed date",
+      "Occupancy certificate received; association fully handed over",
+      "Ten minutes' walk to the Purple Line",
+      "30,000 sq ft clubhouse and a 1.5-acre central lawn",
+      "Resales listed exclusively through Propstep Advisory"
+    ],
+    "amenities": [
+      { "icon": "waves", "label": "Swimming pool" },
+      { "icon": "building", "label": "30,000 sq ft clubhouse" },
+      { "icon": "dumbbell", "label": "Gym" },
+      { "icon": "trees", "label": "1.5-acre lawn" },
+      { "icon": "smile", "label": "Play areas" },
+      { "icon": "shield", "label": "24/7 security" }
+    ],
+    "plans": [
+      { "name": "2 BHK", "type": "East facing", "layout": "apt2", "area": "1,180 sq ft", "plot": "", "price": "Resale on request", "rows": [["Super built-up", "1,180 sq ft"], ["Carpet area", "815 sq ft"], ["Bedrooms / baths", "2 / 2"], ["Car parks", "1"]] },
+      { "name": "3 BHK", "type": "Lawn facing", "layout": "apt3", "area": "1,720 sq ft", "plot": "", "price": "Resale on request", "rows": [["Super built-up", "1,720 sq ft"], ["Carpet area", "1,190 sq ft"], ["Bedrooms / baths", "3 / 3"], ["Car parks", "2"]] }
+    ],
+    "location": [
+      { "icon": "train", "place": "Purple Line, Whitefield", "time": "10 min walk" },
+      { "icon": "briefcase", "place": "ITPL and EPIP tech parks", "time": "within 10 min" },
+      { "icon": "school", "place": "International schools", "time": "within 10 min" },
+      { "icon": "hospital", "place": "Multi-speciality hospitals", "time": "within 10 min" },
+      { "icon": "bag", "place": "Malls in Whitefield", "time": "6 min" },
+      { "icon": "plane", "place": "Kempegowda International Airport", "time": "55 min" }
+    ],
+    "payment": []
+  }
+]
