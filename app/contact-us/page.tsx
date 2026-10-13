@@ -1,17 +1,23 @@
 import type { Metadata } from "next";
 import Icon from "@/components/Icon";
-import { Checklist, ContactLines, NoFooterCta, phoneProps, visitPropertyOptions } from "@/components/blocks";
+import { Checklist, ContactLines, NoFooterCta } from "@/components/blocks";
 import { EnquiryForm, VisitForm } from "@/components/forms";
 import { Crumbs, Split } from "@/components/primitives";
-import { site } from "@/lib/content";
+import { getSite, getPhoneProps, getVisitOptions } from "@/lib/data";
+import ClampText from "@/components/ClampText";
 
-export const metadata: Metadata = {
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSite();
+  return {
   title: "Contact Propstep — book a site visit or talk to an advisor",
   description: `Call ${site.phone}, WhatsApp or email Propstep. Book a site visit to a listed property or talk to an advisor in Bengaluru, Mumbai, Pune, Hyderabad, Chennai or Delhi NCR.`,
   alternates: { canonical: "/contact-us/" },
-};
+  };
+}
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const site = await getSite();
+  const [phoneProps, visitPropertyOptions] = await Promise.all([getPhoneProps(), getVisitOptions()]);
   return (
     <>
       <NoFooterCta />
@@ -30,9 +36,9 @@ export default function ContactPage() {
               </h1>
             </div>
             <div>
-              <p className="lead" data-reveal="">
+              <ClampText className="lead">
                 Whether you’re buying, selling or just thinking about it — tell us a little about what you need, and the right advisor will get back to you within two working hours.
-              </p>
+              </ClampText>
             </div>
           </div>
         </div>
@@ -93,9 +99,9 @@ export default function ContactPage() {
                   Book a <em>private</em> site visit.
                 </Split>
               </h2>
-              <p className="lead" style={{ marginTop: 18 }} data-reveal="">
+              <ClampText className="lead" style={{ marginTop: 18 }}>
                 Choose a property, a day and a time. We’ll confirm within two working hours and send a car to pick you up anywhere in Bengaluru — or set up a live video walkthrough if you’re overseas.
-              </p>
+              </ClampText>
               <Checklist
                 style={{ marginTop: 28 }}
                 items={[

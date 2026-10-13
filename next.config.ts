@@ -4,6 +4,8 @@ const nextConfig: NextConfig = {
   // Keep the same URLs as the static build: /properties/whitefield-4bhk-villa-banyan-grove/
   trailingSlash: true,
   poweredByHeader: false,
+  // Opening the dev site through an ngrok tunnel: the dev server refuses scripts requested from other origins unless they are listed here
+  allowedDevOrigins: ["*.ngrok-free.dev", "*.ngrok-free.app", "*.ngrok.app", "*.ngrok.dev", "*.ngrok.io"],
   // The contact and about pages moved to /contact-us/ and /about-us/: old links and bookmarks keep working (query and #hash included)
   // The Projects pages were removed: their links land on Properties (temporary, so they can come back)
   async redirects() {

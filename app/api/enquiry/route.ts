@@ -1,54 +1,59 @@
+import { db } from "@/lib/db";
+import { hasDb } from "@/lib/data";
+import { clientIp, fail, hashIp, ok, parseBody, rateLimited, sameOrigin } from "@/lib/http";
+import { alertTeam, forwardToWebhook } from "@/lib/notify";
+import { enquirySchema } from "@/lib/validation/forms";
+
 /**
- * POST /api/enquiry — receives every form on the site (site visits, enquiries, newsletter).
- *
- * Set ENQUIRY_WEBHOOK_URL to forward leads as JSON to your CRM, Zapier/Make, a Google Sheet
- * integration or a Slack workflow. Without it (e.g. in development) leads are logged to the
- * server console and the visitor still sees the success message.
+ * POST /api/enquiry: contact, listing and locality enquiry forms.
+ * The lead is saved before the visitor sees "success". Without a database it is forwarded to
+ * ENQUIRY_WEBHOOK_URL instead; with neither, production returns 503 rather than silently dropping it.
  */
-const FIELDS = ["form", "page", "name", "phone", "email", "enquiry", "subject", "property", "date", "time", "mode", "message", "consent"] as const;
-const PHONE = /^(?:\+?91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}$/;
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
 export async function POST(req: Request) {
-  let body: Record<string, unknown>;
-  try {
-    body = await req.json();
-  } catch {
-    return Response.json({ ok: false, error: "Invalid request" }, { status: 400 });
-  }
+  if (!sameOrigin(req)) return fail(403, "Blocked cross-site request");
+  const ip = clientIp(req);
+  if (rateLimited(`enquiry:${ip}`, 6, 10 * 60_000)) return fail(429, "Too many requests. Please try again in a few minutes.");
 
-  // Honeypot: real visitors never fill this in. Pretend success so bots don't retry.
-  if (body.company_website) return Response.json({ ok: true });
+  const parsed = await parseBody(req, enquirySchema.extend({ company_website: enquirySchema.shape.subject }));
+  if ("res" in parsed) return parsed.res;
+  const { company_website, idempotencyKey, ...d } = parsed.data;
+  if (company_website) return ok(); // honeypot: real visitors never fill it, so pretend success
 
-  const lead: Record<string, string> = {};
-  for (const k of FIELDS) {
-    const v = body[k];
-    if (typeof v === "string" && v.trim()) lead[k] = v.trim().slice(0, 2000);
-  }
-
-  if (lead.form === "newsletter") {
-    if (!lead.email || !EMAIL.test(lead.email)) return Response.json({ ok: false, error: "A valid email is required" }, { status: 422 });
-  } else {
-    if (!lead.name || !lead.phone || !PHONE.test(lead.phone.replace(/\s+/g, " "))) {
-      return Response.json({ ok: false, error: "Name and a valid Indian mobile number are required" }, { status: 422 });
+  if (hasDb()) {
+    try {
+      if (idempotencyKey) {
+        const dup = await db.lead.findUnique({ where: { idempotency: idempotencyKey }, select: { id: true } });
+        if (dup) return ok({ duplicate: true });
+      }
+      await db.lead.create({
+        data: {
+          form: d.form || "enquiry",
+          name: d.name,
+          phone: d.phone,
+          email: d.email,
+          enquiryType: d.enquiry,
+          subject: d.subject,
+          message: d.message,
+          page: d.page,
+          consentAt: new Date(),
+          ipHash: hashIp(ip),
+          idempotency: idempotencyKey,
+        },
+      });
+    } catch (err) {
+      console.error("[enquiry] save failed:", err);
+      return fail(500, "Could not save your enquiry");
     }
-    if (lead.consent !== "yes") return Response.json({ ok: false, error: "Consent is required" }, { status: 422 });
+    void forwardToWebhook({ ...d, type: "enquiry" });
+    void alertTeam(`New enquiry: ${d.name}`, { Name: d.name, Phone: d.phone, Email: d.email, Type: d.enquiry, About: d.subject, Message: d.message });
+    return ok();
   }
 
-  const payload = { ...lead, receivedAt: new Date().toISOString(), source: "propstep-website" };
-  const hook = process.env.ENQUIRY_WEBHOOK_URL;
-
-  if (!hook) {
-    console.info("[enquiry] ENQUIRY_WEBHOOK_URL is not set — lead not forwarded:", payload);
-    return Response.json({ ok: true, delivered: false });
+  const delivered = await forwardToWebhook({ ...d, type: "enquiry" });
+  if (delivered) return ok({ delivered: true });
+  if (process.env.NODE_ENV !== "production") {
+    console.info("[enquiry] no database or webhook configured; lead not stored:", d);
+    return ok({ delivered: false });
   }
-
-  try {
-    const res = await fetch(hook, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-    if (!res.ok) throw new Error(`Webhook responded ${res.status}`);
-    return Response.json({ ok: true, delivered: true });
-  } catch (err) {
-    console.error("[enquiry] forwarding failed:", err);
-    return Response.json({ ok: false, error: "Could not deliver enquiry" }, { status: 502 });
-  }
+  return fail(503, "We can't take enquiries right now. Please call us.");
 }

@@ -1,0 +1,98 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import FloorPlan from "./FloorPlan";
+import Icon from "./Icon";
+import { inrGroup, inrShort } from "@/lib/format";
+
+export type PlanUnit = { bhk: number; area: number; price: number; floorplan?: string; floorplan3d?: string };
+
+type Props = {
+  units: PlanUnit[];
+  /** The property's own plan, used by any size without one of its own */
+  fallback: string;
+  fallback3d?: string;
+  type: string;
+  title: string;
+  /** How many floors one plan covers: a "G + 2" house is three floors, so the plan shows a third of the area */
+  floors: number;
+};
+
+/** Floor plans: a tab for each BHK, a tab for each size within it, then the plan with the unit's price and a contact button underneath. Works for any number of BHKs and sizes */
+export default function PlanExplorer({ units, fallback, fallback3d, type, title, floors }: Props) {
+  const bhks = [...new Set(units.map((u) => u.bhk))].sort((a, b) => a - b);
+  const [bhk, setBhk] = useState(bhks[0]);
+  const sizes = units.filter((u) => u.bhk === bhk);
+  const [pick, setPick] = useState(0);
+  const unit = sizes[Math.min(pick, sizes.length - 1)];
+  const key = (u: PlanUnit) => `${u.bhk}-${u.area}`;
+  // A crossfade: the plan being left stays on top of the new one while it fades out
+  const [shown, setShown] = useState(unit);
+  const [leaving, setLeaving] = useState<PlanUnit | null>(null);
+  useEffect(() => {
+    if (key(shown) === key(unit)) return;
+    setLeaving(shown);
+    setShown(unit);
+    const t = setTimeout(() => setLeaving(null), 450);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [unit.bhk, unit.area]);
+
+  const per = Math.round(unit.area / floors);
+  const src = unit.floorplan ?? fallback;
+  // Only the price footer crossfades: the plan image stays mounted (a new <img> blinks on phones) and just its figures fade in
+  const foot = (u: PlanUnit) => (
+    <div className="plans__foot">
+      <div>
+        <h3 className="plans__name">{u.bhk} BHK {inrGroup(u.area)} sq ft {type}</h3>
+        <p className="plans__price">{inrShort(u.price)}</p>
+        <p className="small muted">₹{inrGroup(Math.round(u.price / u.area))} per sq ft · {u.bhk} bedrooms</p>
+      </div>
+      <Link className="btn btn--accent btn--sm plans__cta" href="#enquire">
+        Contact us
+      </Link>
+    </div>
+  );
+
+  return (
+    <div className="plans">
+      <div className="plans__bhk" role="tablist" aria-label="Configuration">
+        {bhks.map((b) => (
+          <button key={b} type="button" role="tab" aria-selected={b === bhk} className="plans__tab" onClick={() => { setBhk(b); setPick(0); }}>
+            {b} BHK
+          </button>
+        ))}
+      </div>
+      <div className="plans__sizes" role="tablist" aria-label="Size">
+        {sizes.map((u, i) => (
+          <button key={u.area} type="button" role="tab" aria-selected={i === pick} className="plans__size" onClick={() => setPick(i)}>
+            <span>{inrGroup(u.area)} sq.ft</span>
+            <b>{inrShort(u.price)}</b>
+          </button>
+        ))}
+      </div>
+      <FloorPlan
+        key={src}
+        reveal={false}
+        src={src}
+        src3d={unit.floorplan3d ?? (src === fallback ? fallback3d : undefined)}
+        alt={`${unit.bhk} BHK floor plan of ${title}, ${inrGroup(unit.area)} sq ft`}
+        rows={[
+          ["Saleable area", `${inrGroup(per)} sq ft`],
+          ["Carpet area", `${inrGroup(Math.round(per * 0.7))} sq ft`],
+          ["Balcony area", `${inrGroup(Math.round(per * 0.055))} sq ft`],
+          ["Bedrooms / bathrooms", `${unit.bhk} / ${unit.bhk + 1}`],
+        ]}
+      />
+      <div className="plans__stack">
+        <div className="plans__swap" key={key(shown)}>{foot(shown)}</div>
+        {leaving ? (
+          <div className="plans__out" key={`out-${key(leaving)}`} aria-hidden="true" inert>
+            {foot(leaving)}
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}

@@ -34,6 +34,8 @@ export type Project = {
   price_from: number;
   price_label: string;
   possession: string;
+  /** Path to the floor-plan image in /public; the Floor plan section is left out when empty */
+  floorplan?: string;
   land: string;
   units: string;
   open_space: string;
@@ -52,6 +54,13 @@ export type Listing = {
   title: string;
   intent: "buy" | "rent";
   type: string;
+  /** The project's card details: who builds it, what it is called, the BHK sizes on offer, how many homes, and the size range */
+  developer?: string;
+  project?: string;
+  configs?: number[];
+  units?: number;
+  area_min?: number;
+  area_max?: number;
   bhk: number;
   city: string;
   locality: string;
@@ -60,11 +69,18 @@ export type Listing = {
   price_label: string;
   area: number;
   baths: number;
-  furnishing: string;
-  facing: string;
   floor: string;
   age: string;
-  parking: number;
+  possession: string;
+  /** Path to the floor-plan image in /public; the Floor plan section is left out when empty */
+  floorplan?: string;
+  /** The sizes on offer, each with its starting price: they fill the Price list and the Floor plans tabs */
+  unit_types?: { bhk: number; area: number; price: number; floorplan?: string }[];
+  amenities?: { icon: IconName; label: string }[];
+  connectivity?: { icon: IconName; place: string; time: string }[];
+  connecting_road?: string;
+  /** RERA registration number(s); "Available on request" shows when empty */
+  rera?: string;
   badge?: string;
   images: Photo[];
   summary: string;
@@ -122,7 +138,8 @@ export type Site = {
   offices: { city: string; label: string; address: string; phone: string }[];
   advisors: Record<string, Advisor>;
   /** linkedin: the person's LinkedIn profile URL */
-  leadership: { name: string; role: string; bio: string; linkedin: string }[];
+  /** photo: optional headshot path under /public (the initials show without it) */
+  leadership: { name: string; role: string; bio: string; linkedin: string; photo?: string }[];
   values: { icon: IconName; title: string; text: string }[];
   milestones: { year: string; title: string; text: string }[];
   testimonials: { quote: string; name: string; meta: string }[];

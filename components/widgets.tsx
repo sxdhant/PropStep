@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
-import Icon from "./Icon";
+import Icon, { WhatsAppIcon } from "./Icon";
 import { Photo, Split } from "./primitives";
 import { initials } from "@/lib/format";
 
@@ -116,7 +116,7 @@ export function Rail({ children, label, className }: { children: ReactNode; labe
       <div className="rail" tabIndex={0} role="region" aria-label={label} ref={rail}>
         {children}
       </div>
-      <div className="container" style={{ marginTop: 28 }}>
+      <div className="container" style={{ marginTop: 16 }}>
         <div className="rail-controls">
           <button className="icon-btn" type="button" onClick={() => page(-1)} disabled={atStart} aria-label={`Scroll ${label} left`}>
             <Icon name="arrow-left" />
@@ -134,9 +134,11 @@ export function Rail({ children, label, className }: { children: ReactNode; labe
 }
 
 /* ============================================================ Pillars (stacked cards) */
-export type Pillar = { title: string; sub: string; tags: string[]; text: string; links: [string, string][]; image: string; alt: string };
+export type Pillar = { title: string; sub: string; tags: string[]; text: string; /** [label, href, look?]: the look ("accent" orange, "light" white) overrides the position-based default */
+  links: [string, string, ("accent" | "light")?][]; image: string; alt: string };
 
-const PILLAR_THEMES = ["navy", "paper", "blue"] as const;
+/** Every card takes the first card's (Discover's) navy theme, buttons included; "paper" and "blue" themes still exist in the CSS */
+const PILLAR_THEMES = ["navy", "navy", "navy"] as const;
 /** Cards stick and stack only where one fits on screen with room to spare; smaller screens get a plain list. */
 const STACK_MQ = "(min-width: 900px) and (min-height: 700px)";
 const clamp01 = (n: number) => Math.min(1, Math.max(0, n));
@@ -199,7 +201,7 @@ export function Pillars({ items }: { items: Pillar[] }) {
     <ol className="pillars" ref={list}>
       {items.map((p, i) => {
         const theme = PILLAR_THEMES[i % PILLAR_THEMES.length];
-        const dark = theme !== "paper";
+        const dark = true; // every card is navy, so light-on-dark buttons
         return (
           <li key={p.title} className={`pillar pillar--${theme}`} style={{ "--n": i } as CSSProperties}>
             <article className="pillar__card">
@@ -216,14 +218,22 @@ export function Pillars({ items }: { items: Pillar[] }) {
                   ))}
                 </ul>
                 <p className="pillar__links">
-                  {p.links.map(([label, href], j) =>
-                    j === 0 ? (
+                  {p.links.map(([label, href, look], j) =>
+                    look ? (
+                      <Link className={`btn btn--sm ${look === "accent" ? "btn--accent" : "btn--light"}`} href={href} key={href}>
+                        {label} <Icon name="arrow-right" className="icon--sm icon--arrow" />
+                      </Link>
+                    ) : j === 0 ? (
                       <Link className={`btn btn--sm${dark ? " btn--light" : ""}`} href={href} key={href}>
                         {label} <Icon name="arrow-right" className="icon--sm icon--arrow" />
                       </Link>
+                    ) : href.endsWith("#visit") ? (
+                      <Link className="btn btn--sm btn--accent" href={href} key={href}>
+                        {label} <Icon name="arrow-right" className="icon--sm icon--arrow" />
+                      </Link>
                     ) : (
-                      <Link className={`link${dark ? " link--light" : ""}`} href={href} key={href}>
-                        {label} <Icon name="arrow-right" className="icon--sm" />
+                      <Link className={`btn btn--sm ${dark ? "btn--ghost-light" : "btn--outline"}`} href={href} key={href}>
+                        {label} <Icon name="arrow-right" className="icon--sm icon--arrow" />
                       </Link>
                     ),
                   )}
@@ -359,7 +369,7 @@ export function Clocks({ zones }: { zones: [string, string][] }) {
 
 /* ============================================================ Leadership card */
 /** A portrait card: name, designation and a LinkedIn link; the double arrow unfolds the bio below. */
-export function LeaderCard({ name, role, bio, linkedin }: { name: string; role: string; bio: string; linkedin: string }) {
+export function LeaderCard({ name, role, bio, linkedin, photo }: { name: string; role: string; bio: string; linkedin: string; photo?: string }) {
   const [open, setOpen] = useState(false);
   const bioId = `bio-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
   const first = name.split(" ")[0];
@@ -367,8 +377,13 @@ export function LeaderCard({ name, role, bio, linkedin }: { name: string; role: 
     // Open state as an attribute, not a class: re-rendering className would drop the reveal's is-in class
     <article className="person" data-reveal="" data-open={open || undefined}>
       {/* Portrait area: the initials until headshots are added */}
-      <span className="person__portrait" aria-hidden="true">
-        {initials(name)}
+      <span className="person__portrait" aria-hidden={photo ? undefined : "true"}>
+        {photo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={photo} alt={name} loading="lazy" />
+        ) : (
+          initials(name)
+        )}
       </span>
       <div className="person__head">
         <div className="person__id">
@@ -462,11 +477,11 @@ export function ActionBar({ phoneHref, wa }: { phoneHref: string; wa: string }) 
   }, []);
   return (
     <nav className={`action-bar${hide ? " is-hidden" : ""}`} aria-label="Quick contact">
-      <a href={`tel:${phoneHref}`}>
+      <a className="call" href={`tel:${phoneHref}`}>
         <Icon name="phone" className="icon--sm" /> Call
       </a>
-      <a href={wa} target="_blank" rel="noopener">
-        <Icon name="chat" className="icon--sm" /> WhatsApp
+      <a className="wa" href={wa} target="_blank" rel="noopener">
+        <WhatsAppIcon /> WhatsApp
       </a>
       <Link className="primary" href="/contact-us/#visit">
         <Icon name="calendar" className="icon--sm" /> Book a visit

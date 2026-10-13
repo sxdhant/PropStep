@@ -2,235 +2,1527 @@
   {
     "slug": "koramangala-3bhk-cedar-court",
     "title": "3 BHK apartment, Cedar Court",
-    "intent": "buy", "type": "Apartment", "bhk": 3,
-    "city": "Bengaluru", "locality": "Koramangala", "locality_slug": "koramangala",
-    "price": 24000000, "price_label": "₹2.4 Cr",
-    "area": 1850, "baths": 3, "furnishing": "Semi-furnished", "facing": "East", "floor": "7th of 14", "age": "6 years", "parking": 2,
+    "developer": "Cedar Group",
+    "project": "Cedar Court",
+    "configs": [
+      2,
+      3
+    ],
+    "units": 56,
+    "area_min": 1180,
+    "area_max": 1850,
+    "intent": "buy",
+    "type": "Apartment",
+    "bhk": 3,
+    "city": "Bengaluru",
+    "locality": "Koramangala",
+    "locality_slug": "koramangala",
+    "price": 15300000,
+    "price_label": "₹1.53 Cr",
+    "area": 1850,
+    "baths": 3,
+    "floor": "7th of 14",
+    "age": "6 years",
+    "possession": "Ready to move",
+    "floorplan": "/floorplans/koramangala-3bhk-cedar-court.svg",
     "badge": "Verified",
     "images": [
-      { "id": "1600210492486-724fe5c67fb0", "alt": "Living room with a leather sofa, gallery wall and plants" },
-      { "id": "1600489000022-c2086d79f9d4", "alt": "Grey modular kitchen with open shelving" },
-      { "id": "1512918728675-ed5a9ecdebfd", "alt": "Bedroom with white linen and a reading chair" }
+      {
+        "id": "1600210492486-724fe5c67fb0",
+        "alt": "Living room with a leather sofa, gallery wall and plants"
+      },
+      {
+        "id": "1600489000022-c2086d79f9d4",
+        "alt": "Grey modular kitchen with open shelving"
+      },
+      {
+        "id": "1512918728675-ed5a9ecdebfd",
+        "alt": "Bedroom with white linen and a reading chair"
+      }
     ],
     "summary": "A bright, east-facing corner home two streets from the Koramangala 5th Block cafés.",
     "description": "Cedar Court is a boutique building of 56 homes on a quiet cross-road off 80 Feet Road. This seventh-floor corner apartment gets morning light in every room, has two balconies and comes with the wardrobes, kitchen and light fittings installed by the current owners in 2024. Khata, EC and building approvals have been checked by our legal team.",
-    "features": ["Corner unit, light on two sides", "Two balconies", "Modular kitchen with hob and chimney", "Power backup for the full home", "Rooftop pool and gym", "A-khata, OC received"],
-    "advisor": "karthik", "posted": "2026-09-12"
+    "features": [
+      "Corner unit, light on two sides",
+      "Two balconies",
+      "Modular kitchen with hob and chimney",
+      "Power backup for the full home",
+      "Rooftop pool and gym",
+      "A-khata, OC received"
+    ],
+    "advisor": "karthik",
+    "posted": "2026-09-12",
+    "unit_types": [
+      {
+        "bhk": 2,
+        "area": 1180,
+        "price": 15300000
+      },
+      {
+        "bhk": 2,
+        "area": 1400,
+        "price": 18200000
+      },
+      {
+        "bhk": 3,
+        "area": 1630,
+        "price": 21100000
+      },
+      {
+        "bhk": 3,
+        "area": 1850,
+        "price": 24000000
+      }
+    ],
+    "amenities": [
+      {
+        "icon": "waves",
+        "label": "Swimming pool"
+      },
+      {
+        "icon": "dumbbell",
+        "label": "Fully equipped gym"
+      },
+      {
+        "icon": "sparkles",
+        "label": "Clubhouse"
+      },
+      {
+        "icon": "users",
+        "label": "Party hall"
+      },
+      {
+        "icon": "smile",
+        "label": "Children's play area"
+      },
+      {
+        "icon": "trees",
+        "label": "Landscaped gardens"
+      },
+      {
+        "icon": "bike",
+        "label": "Jogging track"
+      },
+      {
+        "icon": "shield",
+        "label": "24x7 security with CCTV"
+      },
+      {
+        "icon": "plug",
+        "label": "Power backup"
+      },
+      {
+        "icon": "car",
+        "label": "Covered car parking"
+      },
+      {
+        "icon": "droplet",
+        "label": "Rainwater harvesting"
+      },
+      {
+        "icon": "wind",
+        "label": "Cross-ventilated homes"
+      }
+    ],
+    "connecting_road": "80 Feet Road, Koramangala",
+    "connectivity": [
+      {
+        "icon": "train",
+        "place": "Namma Metro station (nearest)",
+        "time": "15 min"
+      },
+      {
+        "icon": "bag",
+        "place": "Forum Mall and 5th Block cafés",
+        "time": "5 min"
+      },
+      {
+        "icon": "hospital",
+        "place": "St. John's Medical College Hospital",
+        "time": "10 min"
+      },
+      {
+        "icon": "school",
+        "place": "Schools and colleges",
+        "time": "10 min"
+      },
+      {
+        "icon": "plane",
+        "place": "Kempegowda International Airport",
+        "time": "60 min"
+      }
+    ]
   },
   {
     "slug": "whitefield-4bhk-villa-banyan-grove",
     "title": "4 BHK villa, Banyan Grove",
-    "intent": "buy", "type": "Villa", "bhk": 4,
-    "city": "Bengaluru", "locality": "Whitefield", "locality_slug": "whitefield",
-    "price": 56000000, "price_label": "₹5.6 Cr",
-    "area": 4200, "baths": 5, "furnishing": "Furnished", "facing": "North", "floor": "G + 2", "age": "4 years", "parking": 3,
+    "developer": "Banyan Estates",
+    "project": "Banyan Grove",
+    "configs": [
+      3,
+      4
+    ],
+    "units": 40,
+    "area_min": 3200,
+    "area_max": 4200,
+    "intent": "buy",
+    "type": "Villa",
+    "bhk": 4,
+    "city": "Bengaluru",
+    "locality": "Whitefield",
+    "locality_slug": "whitefield",
+    "price": 42700000,
+    "price_label": "₹4.27 Cr",
+    "area": 4200,
+    "baths": 5,
+    "floor": "G + 2",
+    "age": "4 years",
+    "possession": "Ready to move",
+    "floorplan": "/floorplans/whitefield-4bhk-villa-banyan-grove.svg",
     "badge": "Verified",
     "images": [
-      { "id": "1613977257363-707ba9348227", "alt": "White contemporary villa with a pool and palms at dusk" },
-      { "id": "1616137466211-f939a420be84", "alt": "Bright white living room with large windows" },
-      { "id": "1560440021-33f9b867899d", "alt": "Kitchen and dining area with pendant lights" }
+      {
+        "id": "1613977257363-707ba9348227",
+        "alt": "White contemporary villa with a pool and palms at dusk"
+      },
+      {
+        "id": "1616137466211-f939a420be84",
+        "alt": "Bright white living room with large windows"
+      },
+      {
+        "id": "1560440021-33f9b867899d",
+        "alt": "Kitchen and dining area with pendant lights"
+      }
     ],
     "summary": "A furnished, north-facing villa with a private pool in a gated community of 40 homes.",
     "description": "Banyan Grove is a low-rise gated community of 40 villas between Whitefield and Varthur. This four-year-old home has a private plunge pool, a home office on the top floor and a landscaped garden maintained by the association. Sold fully furnished, including appliances and custom joinery.",
-    "features": ["Private plunge pool", "Home office with separate entrance", "Solar water heating", "Fully furnished, appliances included", "Gated community of 40 villas", "Clear title, e-khata"],
-    "advisor": "ananya", "posted": "2026-09-08"
+    "features": [
+      "Private plunge pool",
+      "Home office with separate entrance",
+      "Solar water heating",
+      "Fully furnished, appliances included",
+      "Gated community of 40 villas",
+      "Clear title, e-khata"
+    ],
+    "advisor": "ananya",
+    "posted": "2026-09-08",
+    "unit_types": [
+      {
+        "bhk": 3,
+        "area": 3200,
+        "price": 42700000
+      },
+      {
+        "bhk": 3,
+        "area": 3530,
+        "price": 47100000
+      },
+      {
+        "bhk": 4,
+        "area": 3870,
+        "price": 51600000
+      },
+      {
+        "bhk": 4,
+        "area": 4200,
+        "price": 56000000
+      }
+    ],
+    "amenities": [
+      {
+        "icon": "trees",
+        "label": "Private garden"
+      },
+      {
+        "icon": "car",
+        "label": "Covered car parking"
+      },
+      {
+        "icon": "shield",
+        "label": "Gated community, 24x7 security"
+      },
+      {
+        "icon": "plug",
+        "label": "Power backup"
+      },
+      {
+        "icon": "sparkles",
+        "label": "Clubhouse"
+      },
+      {
+        "icon": "dumbbell",
+        "label": "Gym"
+      },
+      {
+        "icon": "smile",
+        "label": "Children's play area"
+      },
+      {
+        "icon": "droplet",
+        "label": "Rainwater harvesting"
+      },
+      {
+        "icon": "leaf",
+        "label": "Sewage treatment plant"
+      }
+    ],
+    "connecting_road": "ITPL Main Road, Whitefield",
+    "connectivity": [
+      {
+        "icon": "train",
+        "place": "Whitefield (Kadugodi) Metro",
+        "time": "10 min"
+      },
+      {
+        "icon": "bag",
+        "place": "Phoenix Marketcity",
+        "time": "15 min"
+      },
+      {
+        "icon": "hospital",
+        "place": "Columbia Asia / Narayana hospitals",
+        "time": "10 min"
+      },
+      {
+        "icon": "school",
+        "place": "International schools",
+        "time": "8 min"
+      },
+      {
+        "icon": "plane",
+        "place": "Kempegowda International Airport",
+        "time": "50 min"
+      }
+    ]
   },
   {
     "slug": "indiranagar-2bhk-rent-the-arbour",
     "title": "2 BHK apartment, The Arbour",
-    "intent": "rent", "type": "Apartment", "bhk": 2,
-    "city": "Bengaluru", "locality": "Indiranagar", "locality_slug": "indiranagar",
-    "price": 68000, "price_label": "₹68,000 / month",
-    "area": 1250, "baths": 2, "furnishing": "Fully furnished", "facing": "West", "floor": "3rd of 5", "age": "3 years", "parking": 1,
+    "intent": "rent",
+    "type": "Apartment",
+    "bhk": 2,
+    "city": "Bengaluru",
+    "locality": "Indiranagar",
+    "locality_slug": "indiranagar",
+    "price": 68000,
+    "price_label": "₹68,000 / month",
+    "area": 1250,
+    "baths": 2,
+    "floor": "3rd of 5",
+    "age": "3 years",
+    "possession": "Ready to move",
     "badge": "New",
     "images": [
-      { "id": "1554995207-c18c203602cb", "alt": "Living room with a burnt-orange sofa and white walls" },
-      { "id": "1560185893-a55cbc8c57e8", "alt": "Bedroom with a large bed and a dark accent wall" },
-      { "id": "1507089947368-19c1da9775ae", "alt": "White kitchen with a breakfast counter" }
+      {
+        "id": "1554995207-c18c203602cb",
+        "alt": "Living room with a burnt-orange sofa and white walls"
+      },
+      {
+        "id": "1560185893-a55cbc8c57e8",
+        "alt": "Bedroom with a large bed and a dark accent wall"
+      },
+      {
+        "id": "1507089947368-19c1da9775ae",
+        "alt": "White kitchen with a breakfast counter"
+      }
     ],
     "summary": "A designer-furnished two-bedroom on a tree-lined street, five minutes from the Indiranagar metro.",
     "description": "A calm, fully furnished apartment on the third floor of a five-storey building off 12th Main. Walk to the metro, 100 Feet Road and the best dining in the city. Available from 1 October for a minimum 11-month lease; pets considered.",
-    "features": ["Fully furnished, move-in ready", "5 min walk to Indiranagar metro", "Air-conditioned bedrooms", "Covered parking for one car", "Pets considered", "Deposit: 3 months"],
-    "advisor": "karthik", "posted": "2026-09-18"
+    "features": [
+      "Fully furnished, move-in ready",
+      "5 min walk to Indiranagar metro",
+      "Air-conditioned bedrooms",
+      "Covered parking for one car",
+      "Pets considered",
+      "Deposit: 3 months"
+    ],
+    "advisor": "karthik",
+    "posted": "2026-09-18"
   },
   {
     "slug": "hsr-layout-3bhk-rent-kora-greens",
     "title": "3 BHK apartment, Kora Greens",
-    "intent": "rent", "type": "Apartment", "bhk": 3,
-    "city": "Bengaluru", "locality": "HSR Layout", "locality_slug": "hsr-layout",
-    "price": 82000, "price_label": "₹82,000 / month",
-    "area": 1720, "baths": 3, "furnishing": "Semi-furnished", "facing": "East", "floor": "11th of 18", "age": "5 years", "parking": 2,
+    "intent": "rent",
+    "type": "Apartment",
+    "bhk": 3,
+    "city": "Bengaluru",
+    "locality": "HSR Layout",
+    "locality_slug": "hsr-layout",
+    "price": 82000,
+    "price_label": "₹82,000 / month",
+    "area": 1720,
+    "baths": 3,
+    "floor": "11th of 18",
+    "age": "5 years",
+    "possession": "Ready to move",
     "badge": "Verified",
     "images": [
-      { "id": "1618221195710-dd6b41faaea6", "alt": "Warm living room with timber furniture and plants" },
-      { "id": "1617806118233-18e1de247200", "alt": "Dining area with green chairs and a pendant light" },
-      { "id": "1582719478250-c89cae4dc85b", "alt": "Bedroom with soft neutral bedding" }
+      {
+        "id": "1618221195710-dd6b41faaea6",
+        "alt": "Warm living room with timber furniture and plants"
+      },
+      {
+        "id": "1617806118233-18e1de247200",
+        "alt": "Dining area with green chairs and a pendant light"
+      },
+      {
+        "id": "1582719478250-c89cae4dc85b",
+        "alt": "Bedroom with soft neutral bedding"
+      }
     ],
     "summary": "A park-facing family home in HSR Sector 2, close to schools and the upcoming metro.",
     "description": "An eleventh-floor apartment in a well-run gated community with a pool, a large clubhouse and a quiet internal park. Semi-furnished with wardrobes, kitchen appliances, fans and lights throughout. Ideal for a family — three well-regarded schools are within 2 km.",
-    "features": ["Park-facing living room and balcony", "Wardrobes in all bedrooms", "Clubhouse with pool and gym", "Two covered car parks", "Close to the upcoming HSR metro station", "Deposit: 4 months"],
-    "advisor": "karthik", "posted": "2026-09-15"
+    "features": [
+      "Park-facing living room and balcony",
+      "Wardrobes in all bedrooms",
+      "Clubhouse with pool and gym",
+      "Two covered car parks",
+      "Close to the upcoming HSR metro station",
+      "Deposit: 4 months"
+    ],
+    "advisor": "karthik",
+    "posted": "2026-09-15"
   },
   {
     "slug": "sadashivanagar-penthouse-lalbagh-terraces",
     "title": "Penthouse, Palace Terraces",
-    "intent": "buy", "type": "Penthouse", "bhk": 5,
-    "city": "Bengaluru", "locality": "Sadashivanagar", "locality_slug": "",
-    "price": 165000000, "price_label": "₹16.5 Cr",
-    "area": 7400, "baths": 6, "furnishing": "Semi-furnished", "facing": "South", "floor": "11th & 12th of 12", "age": "2 years", "parking": 4,
+    "developer": "Lalbagh Developers",
+    "project": "Palace Terraces",
+    "configs": [
+      4,
+      5
+    ],
+    "units": 24,
+    "area_min": 5200,
+    "area_max": 7400,
+    "intent": "buy",
+    "type": "Penthouse",
+    "bhk": 5,
+    "city": "Bengaluru",
+    "locality": "Sadashivanagar",
+    "locality_slug": "",
+    "price": 115900000,
+    "price_label": "₹11.59 Cr",
+    "area": 7400,
+    "baths": 6,
+    "floor": "11th & 12th of 12",
+    "age": "2 years",
+    "possession": "Ready to move",
+    "floorplan": "/floorplans/sadashivanagar-penthouse-lalbagh-terraces.svg",
     "badge": "Exclusive",
     "images": [
-      { "id": "1613545325278-f24b0cae1224", "alt": "White double-height living room with a glass balustrade" },
-      { "id": "1600047508788-786f3865b4b9", "alt": "Timber staircase in a bright, open-plan penthouse" },
-      { "id": "1600566752355-35792bedcfea", "alt": "Marble bathroom with a freestanding bathtub" }
+      {
+        "id": "1613545325278-f24b0cae1224",
+        "alt": "White double-height living room with a glass balustrade"
+      },
+      {
+        "id": "1600047508788-786f3865b4b9",
+        "alt": "Timber staircase in a bright, open-plan penthouse"
+      },
+      {
+        "id": "1600566752355-35792bedcfea",
+        "alt": "Marble bathroom with a freestanding bathtub"
+      }
     ],
     "summary": "A duplex penthouse with a private terrace garden over the trees of Sadashivanagar.",
     "description": "One of only two penthouses in a twelve-storey building on one of Bengaluru's most established residential streets. The duplex has a 2,200 sq ft private terrace with a pool, a formal dining room for twelve and a staff suite with separate access. Offered exclusively through Propstep.",
-    "features": ["2,200 sq ft private terrace with pool", "Private lift lobby", "Staff quarters with separate entry", "Four car parks and a chauffeur's lounge", "Italian marble and engineered oak floors", "Exclusive to Propstep"],
-    "advisor": "ananya", "posted": "2026-08-30"
+    "features": [
+      "2,200 sq ft private terrace with pool",
+      "Private lift lobby",
+      "Staff quarters with separate entry",
+      "Four car parks and a chauffeur's lounge",
+      "Italian marble and engineered oak floors",
+      "Exclusive to Propstep"
+    ],
+    "advisor": "ananya",
+    "posted": "2026-08-30",
+    "unit_types": [
+      {
+        "bhk": 4,
+        "area": 5200,
+        "price": 115900000
+      },
+      {
+        "bhk": 4,
+        "area": 5930,
+        "price": 132200000
+      },
+      {
+        "bhk": 5,
+        "area": 6670,
+        "price": 148700000
+      },
+      {
+        "bhk": 5,
+        "area": 7400,
+        "price": 165000000
+      }
+    ],
+    "amenities": [
+      {
+        "icon": "waves",
+        "label": "Swimming pool"
+      },
+      {
+        "icon": "dumbbell",
+        "label": "Fully equipped gym"
+      },
+      {
+        "icon": "sparkles",
+        "label": "Clubhouse"
+      },
+      {
+        "icon": "users",
+        "label": "Party hall"
+      },
+      {
+        "icon": "smile",
+        "label": "Children's play area"
+      },
+      {
+        "icon": "trees",
+        "label": "Landscaped gardens"
+      },
+      {
+        "icon": "bike",
+        "label": "Jogging track"
+      },
+      {
+        "icon": "shield",
+        "label": "24x7 security with CCTV"
+      },
+      {
+        "icon": "plug",
+        "label": "Power backup"
+      },
+      {
+        "icon": "car",
+        "label": "Covered car parking"
+      },
+      {
+        "icon": "droplet",
+        "label": "Rainwater harvesting"
+      },
+      {
+        "icon": "wind",
+        "label": "Cross-ventilated homes"
+      }
+    ],
+    "connecting_road": "Sankey Road, Sadashivanagar",
+    "connectivity": [
+      {
+        "icon": "train",
+        "place": "Mekhri Circle / Palace Grounds",
+        "time": "10 min"
+      },
+      {
+        "icon": "bag",
+        "place": "UB City and MG Road",
+        "time": "20 min"
+      },
+      {
+        "icon": "hospital",
+        "place": "Sankara / Columbia Asia hospitals",
+        "time": "12 min"
+      },
+      {
+        "icon": "school",
+        "place": "Bishop Cotton and Baldwin schools",
+        "time": "15 min"
+      },
+      {
+        "icon": "plane",
+        "place": "Kempegowda International Airport",
+        "time": "40 min"
+      }
+    ]
   },
   {
     "slug": "jp-nagar-4bhk-independent-house",
     "title": "4 BHK independent house",
-    "intent": "buy", "type": "Independent house", "bhk": 4,
-    "city": "Bengaluru", "locality": "JP Nagar", "locality_slug": "",
-    "price": 48000000, "price_label": "₹4.8 Cr",
-    "area": 3600, "baths": 4, "furnishing": "Unfurnished", "facing": "East", "floor": "G + 2", "age": "8 years", "parking": 2,
+    "developer": "Southline Homes",
+    "project": "Rosewood Residences",
+    "configs": [
+      3,
+      4
+    ],
+    "units": 18,
+    "area_min": 2400,
+    "area_max": 3600,
+    "intent": "buy",
+    "type": "Independent house",
+    "bhk": 4,
+    "city": "Bengaluru",
+    "locality": "JP Nagar",
+    "locality_slug": "",
+    "price": 32000000,
+    "price_label": "₹3.2 Cr",
+    "area": 3600,
+    "baths": 4,
+    "floor": "G + 2",
+    "age": "8 years",
+    "possession": "Ready to move",
+    "floorplan": "/floorplans/jp-nagar-4bhk-independent-house.svg",
     "badge": "Verified",
     "images": [
-      { "id": "1600047509807-ba8f99d2cdde", "alt": "Modern house with white render and timber cladding" },
-      { "id": "1586023492125-27b2c045efd7", "alt": "Minimal room with a yellow armchair" },
-      { "id": "1519643381401-22c77e60520e", "alt": "Dining table set beneath a skylight" }
+      {
+        "id": "1600047509807-ba8f99d2cdde",
+        "alt": "Modern house with white render and timber cladding"
+      },
+      {
+        "id": "1586023492125-27b2c045efd7",
+        "alt": "Minimal room with a yellow armchair"
+      },
+      {
+        "id": "1519643381401-22c77e60520e",
+        "alt": "Dining table set beneath a skylight"
+      }
     ],
     "summary": "An architect-designed house on a 40 × 60 plot in JP Nagar 6th Phase.",
     "description": "A generous family home on a quiet 40 ft road, with a ground-floor rental unit that currently brings in ₹38,000 a month. The main residence spans two floors with a rooftop terrace. A-khata, with all approvals and a completion certificate on file.",
-    "features": ["40 × 60 east-facing plot", "Ground-floor rental unit (₹38,000 / month)", "Rooftop terrace", "Borewell and Cauvery water", "A-khata with completion certificate", "Walking distance to JP Nagar metro"],
-    "advisor": "ananya", "posted": "2026-09-05"
+    "features": [
+      "40 × 60 east-facing plot",
+      "Ground-floor rental unit (₹38,000 / month)",
+      "Rooftop terrace",
+      "Borewell and Cauvery water",
+      "A-khata with completion certificate",
+      "Walking distance to JP Nagar metro"
+    ],
+    "advisor": "ananya",
+    "posted": "2026-09-05",
+    "unit_types": [
+      {
+        "bhk": 3,
+        "area": 2400,
+        "price": 32000000
+      },
+      {
+        "bhk": 3,
+        "area": 2800,
+        "price": 37300000
+      },
+      {
+        "bhk": 4,
+        "area": 3200,
+        "price": 42700000
+      },
+      {
+        "bhk": 4,
+        "area": 3600,
+        "price": 48000000
+      }
+    ],
+    "amenities": [
+      {
+        "icon": "trees",
+        "label": "Private garden"
+      },
+      {
+        "icon": "car",
+        "label": "Covered car parking"
+      },
+      {
+        "icon": "shield",
+        "label": "Gated community, 24x7 security"
+      },
+      {
+        "icon": "plug",
+        "label": "Power backup"
+      },
+      {
+        "icon": "sparkles",
+        "label": "Clubhouse"
+      },
+      {
+        "icon": "dumbbell",
+        "label": "Gym"
+      },
+      {
+        "icon": "smile",
+        "label": "Children's play area"
+      },
+      {
+        "icon": "droplet",
+        "label": "Rainwater harvesting"
+      },
+      {
+        "icon": "leaf",
+        "label": "Sewage treatment plant"
+      }
+    ],
+    "connecting_road": "Bannerghatta Road, JP Nagar",
+    "connectivity": [
+      {
+        "icon": "train",
+        "place": "JP Nagar Metro (Green Line)",
+        "time": "8 min"
+      },
+      {
+        "icon": "bag",
+        "place": "JP Nagar shopping streets",
+        "time": "6 min"
+      },
+      {
+        "icon": "hospital",
+        "place": "Apollo and Fortis hospitals",
+        "time": "12 min"
+      },
+      {
+        "icon": "school",
+        "place": "Schools and colleges",
+        "time": "8 min"
+      },
+      {
+        "icon": "plane",
+        "place": "Kempegowda International Airport",
+        "time": "75 min"
+      }
+    ]
   },
   {
     "slug": "bellandur-office-lease-orr",
     "title": "Office floor, Outer Ring Road",
-    "intent": "rent", "type": "Office", "bhk": 0,
-    "city": "Bengaluru", "locality": "Bellandur", "locality_slug": "",
-    "price": 1260000, "price_label": "₹12.6 L / month",
-    "area": 12000, "baths": 6, "furnishing": "Warm shell", "facing": "East", "floor": "6th of 12", "age": "7 years", "parking": 12,
+    "intent": "rent",
+    "type": "Office",
+    "bhk": 0,
+    "city": "Bengaluru",
+    "locality": "Bellandur",
+    "locality_slug": "",
+    "price": 1260000,
+    "price_label": "₹12.6 L / month",
+    "area": 12000,
+    "baths": 6,
+    "floor": "6th of 12",
+    "age": "7 years",
+    "possession": "Ready to move",
     "badge": "Verified",
     "images": [
-      { "id": "1497215728101-856f4ea42174", "alt": "Office desk by a window with plants" },
-      { "id": "1497366216548-37526070297c", "alt": "Open-plan office with plants and natural light" },
-      { "id": "1449157291145-7efd050a4d0e", "alt": "Office towers photographed from below" }
+      {
+        "id": "1497215728101-856f4ea42174",
+        "alt": "Office desk by a window with plants"
+      },
+      {
+        "id": "1497366216548-37526070297c",
+        "alt": "Open-plan office with plants and natural light"
+      },
+      {
+        "id": "1449157291145-7efd050a4d0e",
+        "alt": "Office towers photographed from below"
+      }
     ],
     "summary": "A 12,000 sq ft warm-shell floor in a LEED Gold building on the Outer Ring Road.",
     "description": "A full floor in an established tech park on the Outer Ring Road, offered as warm shell with HVAC, false ceiling and washrooms in place. The landlord will consider a fit-out contribution for a lease of nine years or more. Quoted rent is ₹105 per sq ft per month, plus maintenance.",
-    "features": ["12,000 sq ft full floor", "LEED Gold certified building", "₹105 / sq ft / month + maintenance", "Fit-out contribution negotiable", "12 car parks included", "Food court and 24/7 power backup"],
-    "advisor": "vikram", "posted": "2026-09-10"
+    "features": [
+      "12,000 sq ft full floor",
+      "LEED Gold certified building",
+      "₹105 / sq ft / month + maintenance",
+      "Fit-out contribution negotiable",
+      "12 car parks included",
+      "Food court and 24/7 power backup"
+    ],
+    "advisor": "vikram",
+    "posted": "2026-09-10"
   },
   {
     "slug": "electronic-city-2bhk-silicon-heights",
     "title": "2 BHK apartment, Silicon Heights",
-    "intent": "buy", "type": "Apartment", "bhk": 2,
-    "city": "Bengaluru", "locality": "Electronic City", "locality_slug": "electronic-city",
-    "price": 9200000, "price_label": "₹92 L",
-    "area": 1180, "baths": 2, "furnishing": "Semi-furnished", "facing": "North", "floor": "9th of 16", "age": "3 years", "parking": 1,
+    "developer": "Heights Realty",
+    "project": "Silicon Heights",
+    "configs": [
+      1,
+      2
+    ],
+    "units": 220,
+    "area_min": 640,
+    "area_max": 1180,
+    "intent": "buy",
+    "type": "Apartment",
+    "bhk": 2,
+    "city": "Bengaluru",
+    "locality": "Electronic City",
+    "locality_slug": "electronic-city",
+    "price": 5000000,
+    "price_label": "₹50 L",
+    "area": 1180,
+    "baths": 2,
+    "floor": "9th of 16",
+    "age": "3 years",
+    "possession": "Ready to move",
+    "floorplan": "/floorplans/electronic-city-2bhk-silicon-heights.svg",
     "badge": "Price reduced",
     "images": [
-      { "id": "1560185007-cde436f6a4d0", "alt": "Open dining and living space in soft neutral tones" },
-      { "id": "1600121848594-d8644e57abab", "alt": "Grey sofa in a bright living room" },
-      { "id": "1631049307264-da0ec9d70304", "alt": "Bedroom with a warm timber headboard" }
+      {
+        "id": "1560185007-cde436f6a4d0",
+        "alt": "Open dining and living space in soft neutral tones"
+      },
+      {
+        "id": "1600121848594-d8644e57abab",
+        "alt": "Grey sofa in a bright living room"
+      },
+      {
+        "id": "1631049307264-da0ec9d70304",
+        "alt": "Bedroom with a warm timber headboard"
+      }
     ],
     "summary": "A well-kept two-bedroom a short walk from the Yellow Line and Phase 1 tech parks.",
     "description": "A north-facing apartment in a large, amenity-rich community. The owners are relocating and have reduced the price for a quick sale. Currently tenanted at ₹26,000 a month until February, which suits an investor — or vacant possession can be arranged.",
-    "features": ["Walk to the Yellow Line metro", "Tenanted at ₹26,000 / month", "Clubhouse, pool and courts", "Semi-furnished", "Price reduced from ₹98 L", "OC received"],
-    "advisor": "ananya", "posted": "2026-09-01"
+    "features": [
+      "Walk to the Yellow Line metro",
+      "Tenanted at ₹26,000 / month",
+      "Clubhouse, pool and courts",
+      "Semi-furnished",
+      "Price reduced from ₹98 L",
+      "OC received"
+    ],
+    "advisor": "ananya",
+    "posted": "2026-09-01",
+    "unit_types": [
+      {
+        "bhk": 1,
+        "area": 640,
+        "price": 5000000
+      },
+      {
+        "bhk": 1,
+        "area": 820,
+        "price": 6400000
+      },
+      {
+        "bhk": 2,
+        "area": 1000,
+        "price": 7800000
+      },
+      {
+        "bhk": 2,
+        "area": 1180,
+        "price": 9200000
+      }
+    ],
+    "amenities": [
+      {
+        "icon": "waves",
+        "label": "Swimming pool"
+      },
+      {
+        "icon": "dumbbell",
+        "label": "Fully equipped gym"
+      },
+      {
+        "icon": "sparkles",
+        "label": "Clubhouse"
+      },
+      {
+        "icon": "users",
+        "label": "Party hall"
+      },
+      {
+        "icon": "smile",
+        "label": "Children's play area"
+      },
+      {
+        "icon": "trees",
+        "label": "Landscaped gardens"
+      },
+      {
+        "icon": "bike",
+        "label": "Jogging track"
+      },
+      {
+        "icon": "shield",
+        "label": "24x7 security with CCTV"
+      },
+      {
+        "icon": "plug",
+        "label": "Power backup"
+      },
+      {
+        "icon": "car",
+        "label": "Covered car parking"
+      },
+      {
+        "icon": "droplet",
+        "label": "Rainwater harvesting"
+      },
+      {
+        "icon": "wind",
+        "label": "Cross-ventilated homes"
+      }
+    ],
+    "connecting_road": "Hosur Road, Electronic City",
+    "connectivity": [
+      {
+        "icon": "train",
+        "place": "Electronic City station (Yellow Line)",
+        "time": "10 min"
+      },
+      {
+        "icon": "bag",
+        "place": "Tech parks and Phase 1 market",
+        "time": "8 min"
+      },
+      {
+        "icon": "hospital",
+        "place": "Narayana Health City",
+        "time": "12 min"
+      },
+      {
+        "icon": "school",
+        "place": "Schools and colleges",
+        "time": "10 min"
+      },
+      {
+        "icon": "plane",
+        "place": "Kempegowda International Airport",
+        "time": "85 min"
+      }
+    ]
   },
   {
     "slug": "whitefield-4bhk-villa-rent-palmyra",
     "title": "4 BHK villa, Palmyra Enclave",
-    "intent": "rent", "type": "Villa", "bhk": 4,
-    "city": "Bengaluru", "locality": "Whitefield", "locality_slug": "whitefield",
-    "price": 185000, "price_label": "₹1.85 L / month",
-    "area": 4600, "baths": 5, "furnishing": "Semi-furnished", "facing": "East", "floor": "G + 2", "age": "6 years", "parking": 3,
+    "intent": "rent",
+    "type": "Villa",
+    "bhk": 4,
+    "city": "Bengaluru",
+    "locality": "Whitefield",
+    "locality_slug": "whitefield",
+    "price": 185000,
+    "price_label": "₹1.85 L / month",
+    "area": 4600,
+    "baths": 5,
+    "floor": "G + 2",
+    "age": "6 years",
+    "possession": "Ready to move",
     "badge": "Verified",
     "images": [
-      { "id": "1600563438938-a9a27216b4f5", "alt": "Contemporary villa with a reflecting pool" },
-      { "id": "1542314831-068cd1dbfeeb", "alt": "Community pool lit at night" },
-      { "id": "1615529182904-14819c35db37", "alt": "Living room with rattan chairs and natural textures" }
+      {
+        "id": "1600563438938-a9a27216b4f5",
+        "alt": "Contemporary villa with a reflecting pool"
+      },
+      {
+        "id": "1542314831-068cd1dbfeeb",
+        "alt": "Community pool lit at night"
+      },
+      {
+        "id": "1615529182904-14819c35db37",
+        "alt": "Living room with rattan chairs and natural textures"
+      }
     ],
     "summary": "A family villa in a gated community, ten minutes from the international schools of Whitefield.",
     "description": "A spacious villa with a private garden, a family lounge on the first floor and a guest suite on the ground floor. The community has a clubhouse, pool, tennis courts and a private school shuttle. Suited to corporate leases; minimum term two years.",
-    "features": ["Private garden", "Ground-floor guest suite", "Community clubhouse, pool and tennis", "School shuttle service", "Corporate leases preferred", "Deposit: 6 months"],
-    "advisor": "ananya", "posted": "2026-09-14"
+    "features": [
+      "Private garden",
+      "Ground-floor guest suite",
+      "Community clubhouse, pool and tennis",
+      "School shuttle service",
+      "Corporate leases preferred",
+      "Deposit: 6 months"
+    ],
+    "advisor": "ananya",
+    "posted": "2026-09-14"
   },
   {
     "slug": "mumbai-bandra-3bhk-sea-view",
     "title": "3 BHK sea-view apartment",
-    "intent": "buy", "type": "Apartment", "bhk": 3,
-    "city": "Mumbai", "locality": "Bandra West", "locality_slug": "",
-    "price": 115000000, "price_label": "₹11.5 Cr",
-    "area": 1650, "baths": 3, "furnishing": "Furnished", "facing": "West", "floor": "18th of 24", "age": "5 years", "parking": 2,
+    "developer": "Carter Realty",
+    "project": "Carter Heights",
+    "configs": [
+      2,
+      3
+    ],
+    "units": 96,
+    "area_min": 1150,
+    "area_max": 1650,
+    "intent": "buy",
+    "type": "Apartment",
+    "bhk": 3,
+    "city": "Mumbai",
+    "locality": "Bandra West",
+    "locality_slug": "",
+    "price": 80200000,
+    "price_label": "₹8.02 Cr",
+    "area": 1650,
+    "baths": 3,
+    "floor": "18th of 24",
+    "age": "5 years",
+    "possession": "Ready to move",
+    "floorplan": "/floorplans/mumbai-bandra-3bhk-sea-view.svg",
     "badge": "Verified",
     "images": [
-      { "id": "1519974719765-e6559eac2575", "alt": "Airy white living room with sheer curtains and a reading nook" },
-      { "id": "1616594039964-ae9021a400a0", "alt": "Master bedroom with a statement chandelier" },
-      { "id": "1567157577867-05ccb1388e66", "alt": "Mumbai's seafront skyline curving along the Arabian Sea" }
+      {
+        "id": "1519974719765-e6559eac2575",
+        "alt": "Airy white living room with sheer curtains and a reading nook"
+      },
+      {
+        "id": "1616594039964-ae9021a400a0",
+        "alt": "Master bedroom with a statement chandelier"
+      },
+      {
+        "id": "1567157577867-05ccb1388e66",
+        "alt": "Mumbai's seafront skyline curving along the Arabian Sea"
+      }
     ],
     "summary": "Uninterrupted views of the Arabian Sea from a high floor off Carter Road.",
     "description": "A furnished high-floor home in one of Bandra West's newer towers, with the sea visible from the living room and the master suite. The building has a rooftop pool and a gym, and Carter Road promenade is a two-minute walk away.",
-    "features": ["Uninterrupted sea view", "Two minutes to Carter Road", "Rooftop pool and gym", "Furnished by a leading design studio", "Two car parks", "OC received"],
-    "advisor": "neha", "posted": "2026-09-09"
+    "features": [
+      "Uninterrupted sea view",
+      "Two minutes to Carter Road",
+      "Rooftop pool and gym",
+      "Furnished by a leading design studio",
+      "Two car parks",
+      "OC received"
+    ],
+    "advisor": "neha",
+    "posted": "2026-09-09",
+    "unit_types": [
+      {
+        "bhk": 2,
+        "area": 1150,
+        "price": 80200000
+      },
+      {
+        "bhk": 2,
+        "area": 1320,
+        "price": 92000000
+      },
+      {
+        "bhk": 3,
+        "area": 1480,
+        "price": 103200000
+      },
+      {
+        "bhk": 3,
+        "area": 1650,
+        "price": 115000000
+      }
+    ],
+    "amenities": [
+      {
+        "icon": "waves",
+        "label": "Swimming pool"
+      },
+      {
+        "icon": "dumbbell",
+        "label": "Fully equipped gym"
+      },
+      {
+        "icon": "sparkles",
+        "label": "Clubhouse"
+      },
+      {
+        "icon": "users",
+        "label": "Party hall"
+      },
+      {
+        "icon": "smile",
+        "label": "Children's play area"
+      },
+      {
+        "icon": "trees",
+        "label": "Landscaped gardens"
+      },
+      {
+        "icon": "bike",
+        "label": "Jogging track"
+      },
+      {
+        "icon": "shield",
+        "label": "24x7 security with CCTV"
+      },
+      {
+        "icon": "plug",
+        "label": "Power backup"
+      },
+      {
+        "icon": "car",
+        "label": "Covered car parking"
+      },
+      {
+        "icon": "droplet",
+        "label": "Rainwater harvesting"
+      },
+      {
+        "icon": "wind",
+        "label": "Cross-ventilated homes"
+      }
+    ],
+    "connecting_road": "Linking Road, Bandra West",
+    "connectivity": [
+      {
+        "icon": "train",
+        "place": "Bandra railway station",
+        "time": "8 min"
+      },
+      {
+        "icon": "bag",
+        "place": "Linking Road and Hill Road",
+        "time": "5 min"
+      },
+      {
+        "icon": "hospital",
+        "place": "Lilavati Hospital",
+        "time": "10 min"
+      },
+      {
+        "icon": "school",
+        "place": "Schools and colleges",
+        "time": "10 min"
+      },
+      {
+        "icon": "plane",
+        "place": "Mumbai International Airport",
+        "time": "25 min"
+      }
+    ]
   },
   {
     "slug": "pune-koregaon-park-3bhk",
     "title": "3 BHK apartment, Koregaon Park",
-    "intent": "buy", "type": "Apartment", "bhk": 3,
-    "city": "Pune", "locality": "Koregaon Park", "locality_slug": "",
-    "price": 34000000, "price_label": "₹3.4 Cr",
-    "area": 2150, "baths": 3, "furnishing": "Semi-furnished", "facing": "North-east", "floor": "5th of 9", "age": "4 years", "parking": 2,
+    "developer": "Mulberry Builders",
+    "project": "Park Avenue Residences",
+    "configs": [
+      3,
+      4
+    ],
+    "units": 48,
+    "area_min": 1750,
+    "area_max": 2150,
+    "intent": "buy",
+    "type": "Apartment",
+    "bhk": 3,
+    "city": "Pune",
+    "locality": "Koregaon Park",
+    "locality_slug": "",
+    "price": 27700000,
+    "price_label": "₹2.77 Cr",
+    "area": 2150,
+    "baths": 3,
+    "floor": "5th of 9",
+    "age": "4 years",
+    "possession": "Ready to move",
+    "floorplan": "/floorplans/pune-koregaon-park-3bhk.svg",
     "badge": "Verified",
     "images": [
-      { "id": "1493809842364-78817add7ffb", "alt": "Living room with a blue sofa and large windows" },
-      { "id": "1616486338812-3dadae4b4ace", "alt": "Sunlit living room in neutral tones" },
-      { "id": "1556912173-3bb406ef7e77", "alt": "White kitchen with a range cooker" }
+      {
+        "id": "1493809842364-78817add7ffb",
+        "alt": "Living room with a blue sofa and large windows"
+      },
+      {
+        "id": "1616486338812-3dadae4b4ace",
+        "alt": "Sunlit living room in neutral tones"
+      },
+      {
+        "id": "1556912173-3bb406ef7e77",
+        "alt": "White kitchen with a range cooker"
+      }
     ],
     "summary": "A leafy, low-rise home in one of Pune's most sought-after neighbourhoods.",
     "description": "A generous three-bedroom in a nine-storey building surrounded by the old rain trees of Koregaon Park. Large balconies off every room, a clubhouse, and walking distance to the lanes' cafés and the German Bakery junction.",
-    "features": ["Balcony off every room", "Low-density building, two homes per floor", "Clubhouse and pool", "Semi-furnished", "Two covered car parks", "Clear title"],
-    "advisor": "neha", "posted": "2026-09-03"
+    "features": [
+      "Balcony off every room",
+      "Low-density building, two homes per floor",
+      "Clubhouse and pool",
+      "Semi-furnished",
+      "Two covered car parks",
+      "Clear title"
+    ],
+    "advisor": "neha",
+    "posted": "2026-09-03",
+    "unit_types": [
+      {
+        "bhk": 3,
+        "area": 1750,
+        "price": 27700000
+      },
+      {
+        "bhk": 3,
+        "area": 1880,
+        "price": 29700000
+      },
+      {
+        "bhk": 4,
+        "area": 2020,
+        "price": 31900000
+      },
+      {
+        "bhk": 4,
+        "area": 2150,
+        "price": 34000000
+      }
+    ],
+    "amenities": [
+      {
+        "icon": "waves",
+        "label": "Swimming pool"
+      },
+      {
+        "icon": "dumbbell",
+        "label": "Fully equipped gym"
+      },
+      {
+        "icon": "sparkles",
+        "label": "Clubhouse"
+      },
+      {
+        "icon": "users",
+        "label": "Party hall"
+      },
+      {
+        "icon": "smile",
+        "label": "Children's play area"
+      },
+      {
+        "icon": "trees",
+        "label": "Landscaped gardens"
+      },
+      {
+        "icon": "bike",
+        "label": "Jogging track"
+      },
+      {
+        "icon": "shield",
+        "label": "24x7 security with CCTV"
+      },
+      {
+        "icon": "plug",
+        "label": "Power backup"
+      },
+      {
+        "icon": "car",
+        "label": "Covered car parking"
+      },
+      {
+        "icon": "droplet",
+        "label": "Rainwater harvesting"
+      },
+      {
+        "icon": "wind",
+        "label": "Cross-ventilated homes"
+      }
+    ],
+    "connecting_road": "North Main Road, Koregaon Park",
+    "connectivity": [
+      {
+        "icon": "train",
+        "place": "Pune railway station",
+        "time": "12 min"
+      },
+      {
+        "icon": "bag",
+        "place": "Koregaon Park cafés and malls",
+        "time": "5 min"
+      },
+      {
+        "icon": "hospital",
+        "place": "Ruby Hall Clinic",
+        "time": "10 min"
+      },
+      {
+        "icon": "school",
+        "place": "Schools and colleges",
+        "time": "10 min"
+      },
+      {
+        "icon": "plane",
+        "place": "Pune International Airport",
+        "time": "20 min"
+      }
+    ]
   },
   {
     "slug": "hyderabad-jubilee-hills-villa",
     "title": "5 BHK villa, Jubilee Hills",
-    "intent": "buy", "type": "Villa", "bhk": 5,
-    "city": "Hyderabad", "locality": "Jubilee Hills", "locality_slug": "",
-    "price": 128000000, "price_label": "₹12.8 Cr",
-    "area": 8200, "baths": 6, "furnishing": "Semi-furnished", "facing": "East", "floor": "G + 2", "age": "3 years", "parking": 4,
+    "developer": "Crest Homes",
+    "project": "Jubilee Crest",
+    "configs": [
+      4,
+      5
+    ],
+    "units": 32,
+    "area_min": 6400,
+    "area_max": 8200,
+    "intent": "buy",
+    "type": "Villa",
+    "bhk": 5,
+    "city": "Hyderabad",
+    "locality": "Jubilee Hills",
+    "locality_slug": "",
+    "price": 99900000,
+    "price_label": "₹9.99 Cr",
+    "area": 8200,
+    "baths": 6,
+    "floor": "G + 2",
+    "age": "3 years",
+    "possession": "Ready to move",
+    "floorplan": "/floorplans/hyderabad-jubilee-hills-villa.svg",
     "badge": "Exclusive",
     "images": [
-      { "id": "1600585153490-76fb20a32601", "alt": "Dark contemporary villa lit warmly at night" },
-      { "id": "1566073771259-6a8506099945", "alt": "Pool with sun loungers and a timber deck" },
-      { "id": "1600573472592-401b489a3cdc", "alt": "Modern home with white walls and timber screens" }
+      {
+        "id": "1600585153490-76fb20a32601",
+        "alt": "Dark contemporary villa lit warmly at night"
+      },
+      {
+        "id": "1566073771259-6a8506099945",
+        "alt": "Pool with sun loungers and a timber deck"
+      },
+      {
+        "id": "1600573472592-401b489a3cdc",
+        "alt": "Modern home with white walls and timber screens"
+      }
     ],
     "summary": "A contemporary villa on a 1,000 sq yd plot with a pool and a basement entertainment level.",
     "description": "Designed by a Hyderabad studio for a family who have since relocated abroad, this villa has a double-height living room, a pool courtyard and a basement with a home theatre and wine room. Offered exclusively through Propstep.",
-    "features": ["1,000 sq yd plot", "Pool courtyard", "Basement theatre and wine room", "Lift to all floors", "Four car parks", "Exclusive to Propstep"],
-    "advisor": "rohan", "posted": "2026-08-28"
+    "features": [
+      "1,000 sq yd plot",
+      "Pool courtyard",
+      "Basement theatre and wine room",
+      "Lift to all floors",
+      "Four car parks",
+      "Exclusive to Propstep"
+    ],
+    "advisor": "rohan",
+    "posted": "2026-08-28",
+    "unit_types": [
+      {
+        "bhk": 4,
+        "area": 6400,
+        "price": 99900000
+      },
+      {
+        "bhk": 4,
+        "area": 7000,
+        "price": 109300000
+      },
+      {
+        "bhk": 5,
+        "area": 7600,
+        "price": 118600000
+      },
+      {
+        "bhk": 5,
+        "area": 8200,
+        "price": 128000000
+      }
+    ],
+    "amenities": [
+      {
+        "icon": "trees",
+        "label": "Private garden"
+      },
+      {
+        "icon": "car",
+        "label": "Covered car parking"
+      },
+      {
+        "icon": "shield",
+        "label": "Gated community, 24x7 security"
+      },
+      {
+        "icon": "plug",
+        "label": "Power backup"
+      },
+      {
+        "icon": "sparkles",
+        "label": "Clubhouse"
+      },
+      {
+        "icon": "dumbbell",
+        "label": "Gym"
+      },
+      {
+        "icon": "smile",
+        "label": "Children's play area"
+      },
+      {
+        "icon": "droplet",
+        "label": "Rainwater harvesting"
+      },
+      {
+        "icon": "leaf",
+        "label": "Sewage treatment plant"
+      }
+    ],
+    "connecting_road": "Road No. 36, Jubilee Hills",
+    "connectivity": [
+      {
+        "icon": "train",
+        "place": "Jubilee Hills Check Post Metro",
+        "time": "8 min"
+      },
+      {
+        "icon": "bag",
+        "place": "Inorbit Mall",
+        "time": "15 min"
+      },
+      {
+        "icon": "hospital",
+        "place": "Apollo Hospitals",
+        "time": "8 min"
+      },
+      {
+        "icon": "school",
+        "place": "Schools and colleges",
+        "time": "10 min"
+      },
+      {
+        "icon": "plane",
+        "place": "Rajiv Gandhi International Airport",
+        "time": "40 min"
+      }
+    ]
   },
   {
     "slug": "gurugram-golf-course-road-4bhk",
     "title": "4 BHK residence, Golf Course Road",
-    "intent": "buy", "type": "Apartment", "bhk": 4,
-    "city": "Delhi NCR", "locality": "Golf Course Road, Gurugram", "locality_slug": "",
-    "price": 92000000, "price_label": "₹9.2 Cr",
-    "area": 4100, "baths": 5, "furnishing": "Semi-furnished", "facing": "North", "floor": "22nd of 36", "age": "2 years", "parking": 3,
+    "developer": "Fairway Developers",
+    "project": "Golf Greens",
+    "configs": [
+      3,
+      4
+    ],
+    "units": 120,
+    "area_min": 2800,
+    "area_max": 4100,
+    "intent": "buy",
+    "type": "Apartment",
+    "bhk": 4,
+    "city": "Delhi NCR",
+    "locality": "Golf Course Road, Gurugram",
+    "locality_slug": "",
+    "price": 62800000,
+    "price_label": "₹6.28 Cr",
+    "area": 4100,
+    "baths": 5,
+    "floor": "22nd of 36",
+    "age": "2 years",
+    "possession": "Ready to move",
+    "floorplan": "/floorplans/gurugram-golf-course-road-4bhk.svg",
     "badge": "Verified",
     "images": [
-      { "id": "1600573472550-8090b5e0745e", "alt": "Living room opening onto a pool deck" },
-      { "id": "1600607687939-ce8a6c25118c", "alt": "Living room with timber panelling" },
-      { "id": "1600566752355-35792bedcfea", "alt": "Marble bathroom with a freestanding tub" }
+      {
+        "id": "1600573472550-8090b5e0745e",
+        "alt": "Living room opening onto a pool deck"
+      },
+      {
+        "id": "1600607687939-ce8a6c25118c",
+        "alt": "Living room with timber panelling"
+      },
+      {
+        "id": "1600566752355-35792bedcfea",
+        "alt": "Marble bathroom with a freestanding tub"
+      }
     ],
     "summary": "A high-floor residence overlooking the golf course, with a private lift and staff room.",
     "description": "A north-facing four-bedroom residence in one of Golf Course Road's newest towers, with views across the greens. Private lift, a separate staff room and a 1.2-acre clubhouse. Rapid Metro and the Golf Course Extension are minutes away.",
-    "features": ["Golf course views", "Private lift", "Staff room with separate entry", "1.2-acre clubhouse", "Three car parks", "OC received"],
-    "advisor": "rohan", "posted": "2026-09-11"
+    "features": [
+      "Golf course views",
+      "Private lift",
+      "Staff room with separate entry",
+      "1.2-acre clubhouse",
+      "Three car parks",
+      "OC received"
+    ],
+    "advisor": "rohan",
+    "posted": "2026-09-11",
+    "unit_types": [
+      {
+        "bhk": 3,
+        "area": 2800,
+        "price": 62800000
+      },
+      {
+        "bhk": 3,
+        "area": 3230,
+        "price": 72500000
+      },
+      {
+        "bhk": 4,
+        "area": 3670,
+        "price": 82400000
+      },
+      {
+        "bhk": 4,
+        "area": 4100,
+        "price": 92000000
+      }
+    ],
+    "amenities": [
+      {
+        "icon": "waves",
+        "label": "Swimming pool"
+      },
+      {
+        "icon": "dumbbell",
+        "label": "Fully equipped gym"
+      },
+      {
+        "icon": "sparkles",
+        "label": "Clubhouse"
+      },
+      {
+        "icon": "users",
+        "label": "Party hall"
+      },
+      {
+        "icon": "smile",
+        "label": "Children's play area"
+      },
+      {
+        "icon": "trees",
+        "label": "Landscaped gardens"
+      },
+      {
+        "icon": "bike",
+        "label": "Jogging track"
+      },
+      {
+        "icon": "shield",
+        "label": "24x7 security with CCTV"
+      },
+      {
+        "icon": "plug",
+        "label": "Power backup"
+      },
+      {
+        "icon": "car",
+        "label": "Covered car parking"
+      },
+      {
+        "icon": "droplet",
+        "label": "Rainwater harvesting"
+      },
+      {
+        "icon": "wind",
+        "label": "Cross-ventilated homes"
+      }
+    ],
+    "connecting_road": "Golf Course Road, Gurugram",
+    "connectivity": [
+      {
+        "icon": "train",
+        "place": "Sikanderpur Metro station",
+        "time": "8 min"
+      },
+      {
+        "icon": "bag",
+        "place": "DLF Mall of India area malls",
+        "time": "10 min"
+      },
+      {
+        "icon": "hospital",
+        "place": "Medanta / Artemis hospitals",
+        "time": "15 min"
+      },
+      {
+        "icon": "school",
+        "place": "Schools and colleges",
+        "time": "10 min"
+      },
+      {
+        "icon": "plane",
+        "place": "Indira Gandhi International Airport",
+        "time": "35 min"
+      }
+    ]
   }
 ]

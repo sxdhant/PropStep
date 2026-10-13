@@ -3,51 +3,81 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import EmiCalculator from "@/components/EmiCalculator";
 import Gallery from "@/components/Gallery";
-import Icon, { type IconName } from "@/components/Icon";
-import { AdvisorCard, phoneProps } from "@/components/blocks";
+import Icon, { WhatsAppIcon, type IconName } from "@/components/Icon";
+import { AdvisorCard } from "@/components/blocks";
 import { ListingCard } from "@/components/cards";
 import { EnquiryForm } from "@/components/forms";
-import { Crumbs, JsonLd, SectionHead, Split } from "@/components/primitives";
-import { getListing, listings, localities, site, SITE_URL } from "@/lib/content";
-import { inrGroup, waLink } from "@/lib/format";
+import { Crumbs, JsonLd, SectionHead } from "@/components/primitives";
+import { getListing, getListings, getLocalities, getPhoneProps, getSite, SITE_URL } from "@/lib/data";
+import { inrGroup, inrShort, waLink } from "@/lib/format";
 import { photoUrl } from "@/lib/img";
+import fs from "node:fs";
+import path from "node:path";
+import ClampText from "@/components/ClampText";
+import { Rail } from "@/components/widgets";
+import PlanExplorer from "@/components/PlanExplorer";
 
-export const dynamicParams = false;
-export const generateStaticParams = () => listings.map((l) => ({ slug: l.slug }));
+/** The property's 3D image, if one has been added: public/floorplans/<slug>-3d.(webp|jpg|jpeg|png|avif|svg). The 2D / 3D button shows only when it exists */
+function floorplan3d(slug: string) {
+  const ext = ["webp", "jpg", "jpeg", "png", "avif", "svg"].find((e) => fs.existsSync(path.join(process.cwd(), "public", "floorplans", `${slug}-3d.${e}`)));
+  return ext ? `/floorplans/${slug}-3d.${ext}` : undefined;
+}
+
+export const revalidate = 3600; // admin edits also revalidate by tag
+// Existing listings are prerendered; ones added in the admin panel render on first visit (dynamicParams stays on)
+export const generateStaticParams = async () => (await getListings()).map((l) => ({ slug: l.slug }));
 
 type Params = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  const l = getListing((await params).slug);
+  const l = await getListing((await params).slug);
   if (!l) return {};
   return {
     title: `${l.title}, ${l.locality} — ${l.price_label}`,
-    description: `${l.summary} ${l.area} sq ft · ${l.furnishing} · ${l.locality}, ${l.city}. Verified by Propstep.`,
+    description: `${l.summary} ${l.area} sq ft · ${l.locality}, ${l.city}. Verified by Propstep.`,
     alternates: { canonical: `/properties/${l.slug}/` },
     openGraph: { images: [photoUrl(l.images[0].id, 1200, [1200, 630], 75)] },
   };
 }
 
 export default async function ListingPage({ params }: Params) {
-  const l = getListing((await params).slug);
+  const l = await getListing((await params).slug);
   if (!l) notFound();
+  const [site, listings, localities, phoneProps] = await Promise.all([getSite(), getListings(), getLocalities(), getPhoneProps()]);
   const adv = site.advisors[l.advisor];
-  let specs: [IconName, string, string][] = [];
-  if (l.bhk) specs.push(["bed", "Bedrooms", `${l.bhk} BHK`], ["bath", "Bathrooms", String(l.baths)]);
-  specs.push(
-    ["area", "Area", `${inrGroup(l.area)} sq ft`],
-    ["sofa", "Furnishing", l.furnishing],
-    ["compass", "Facing", l.facing],
-    ["layers", "Floor", l.floor],
-    ["clock", "Age", l.age],
-    ["car", "Parking", String(l.parking)],
-  );
-  if (!l.bhk) specs.unshift(["users", "Washrooms", String(l.baths)]);
-  specs = specs.slice(0, 8);
+  const project = l.project ?? l.title;
+  const configs = l.configs?.length ? l.configs : l.bhk ? [l.bhk] : [];
+  const units = l.unit_types ?? [];
+  const lo = l.area_min ?? l.area;
+  const hi = l.area_max ?? l.area;
+  const prices = units.map((u) => u.price);
+  const priceRange = prices.length > 1 ? `${inrShort(Math.min(...prices))} - ${inrShort(Math.max(...prices))}` : l.price_label;
+  // The plan shows one floor: a house of "G + 2" has three, a duplex penthouse ("11th & 12th") two
+  const floors = l.floor.includes("G + 2") ? 3 : l.floor.includes("&") ? 2 : 1;
   const loc = l.locality_slug ? localities.find((x) => x.slug === l.locality_slug) : undefined;
-  let similar = listings.filter((x) => x.slug !== l.slug && x.intent === l.intent && x.city === l.city);
-  similar = [...similar, ...listings.filter((x) => x.slug !== l.slug && !similar.includes(x) && x.intent === l.intent)].slice(0, 3);
+  const others = listings.filter((x) => x.slug !== l.slug);
+  const sameDev = l.developer ? others.filter((x) => x.developer === l.developer) : [];
+  const rest = others.filter((x) => !sameDev.includes(x));
+  const sameLoc = rest.filter((x) => x.locality === l.locality);
+  const otherDev = (sameLoc.length ? sameLoc : [...rest.filter((x) => x.city === l.city), ...rest.filter((x) => x.city !== l.city)]).slice(0, 8);
   const wa = waLink(site.whatsapp, `Hi Propstep, I'm interested in ${l.title} in ${l.locality} (${l.price_label}).`);
+  const configText = configs.length > 1 ? `${configs.slice(0, -1).join(", ")} & ${configs[configs.length - 1]}` : String(configs[0] ?? "");
+  const config: [IconName, string, string][] = [
+    ["bed", "Bedrooms", configs.length ? `${configText} BHK` : "-"],
+    ["area", "Size", lo === hi ? `${inrGroup(lo)} sq ft` : `${inrGroup(lo)} - ${inrGroup(hi)} sq ft`],
+    ["building", "Number of units", l.units ? inrGroup(l.units) : "-"],
+    ["rupee", "Price range", priceRange],
+    ["clock", "Age", l.age],
+    ["key", "Possession", l.possession],
+  ];
+  const about: [string, string][] = [
+    ["Project name", project],
+    ["Developer", l.developer ?? "-"],
+    ["Location", `${l.locality}, ${l.city}`],
+    ["Status", l.possession],
+    ["Connecting road", l.connecting_road ?? "-"],
+    ["RERA numbers", l.rera ?? "Available on request"],
+  ];
 
   return (
     <>
@@ -64,26 +94,26 @@ export default async function ListingPage({ params }: Params) {
       />
       <section className="pd-hero">
         <div className="container">
-          <Crumbs items={[["Home", "/"], ["Properties", "/properties/"], [l.title, `/properties/${l.slug}/`]]} />
-          <div className="pd-hero__head">
-            <div>
-              <div className="chip-group" data-reveal="">
-                <span className="tag">For sale</span>
-                {l.badge ? <span className="tag tag--accent">{l.badge}</span> : null}
-                <span className="tag">{l.type}</span>
-              </div>
-              <h1 className="pd-hero__title" style={{ fontSize: "var(--fs-h2)" }} data-split="">
-                <Split>{l.title}</Split>
-              </h1>
-              <p className="p-card__loc" style={{ marginTop: 12, fontSize: "1rem" }} data-reveal="">
-                <Icon name="pin" className="icon--sm" />
-                {l.locality}, {l.city}
-              </p>
+          <Crumbs items={[["Home", "/"], ["Properties", "/properties/"], [project, `/properties/${l.slug}/`]]} />
+          <div className="pd-intro">
+            <div className="chip-group" data-reveal="">
+              <span className="tag tag--gold">For sale</span>
+              {l.badge ? (
+                <span className={`tag ${l.badge === "Verified" ? "tag--blue" : ["Exclusive", "Price reduced", "New"].includes(l.badge) ? "tag--accent" : "tag--glass"}`}>
+                  {l.badge === "Verified" ? <Icon name="verified" className="icon--sm" /> : null}
+                  {l.badge}
+                </span>
+              ) : null}
             </div>
-            <div data-reveal="" style={{ textAlign: "left" }}>
-              <p className="ld-price">{l.price_label}</p>
-              <p className="small muted">₹{inrGroup(l.price / l.area)} per sq ft</p>
-            </div>
+            {l.developer ? <p className="pd-dev">{l.developer}</p> : null}
+            <h1 className="pd-project">{project}</h1>
+            <p className="pd-loc">
+              <Icon name="pin" className="icon--sm" />
+              {l.locality}, {l.city}
+            </p>
+            <ClampText className="pd-desc">
+              {l.summary} {l.description}
+            </ClampText>
           </div>
           <Gallery images={l.images} variant="listing" />
         </div>
@@ -91,78 +121,127 @@ export default async function ListingPage({ params }: Params) {
 
       <section className="section" style={{ paddingTop: "clamp(40px,5vw,64px)" }}>
         <div className="container ld-layout">
-          <div>
-            <dl className="spec-grid" data-reveal="">
-              {specs.map(([ic, k, v]) => (
-                <div key={k}>
-                  <Icon name={ic} />
-                  <dt>{k}</dt>
-                  <dd>{v}</dd>
-                </div>
-              ))}
-            </dl>
-            <div style={{ marginTop: 48 }} data-reveal="">
-              <h2 className="h3">About this {l.type === "Office" ? "space" : "home"}</h2>
-              <p className="lead" style={{ marginTop: 14 }}>
-                {l.summary}
-              </p>
-              <div className="prose" style={{ marginTop: 14 }}>
-                <p>{l.description}</p>
-              </div>
-            </div>
-            <div style={{ marginTop: 48 }}>
-              <h2 className="h3" data-reveal="">
-                Features
-              </h2>
-              <ul className="checklist feature-list" role="list" style={{ marginTop: 20 }} data-stagger="">
-                {l.features.map((f) => (
-                  <li data-reveal="" key={f}>
-                    <span className="tick">
-                      <Icon name="check" />
-                    </span>
-                    <span>{f}</span>
-                  </li>
+          <div className="pd-main">
+            <div className="pd-sec">
+              <h2 className="h3" data-reveal="">Configuration</h2>
+              <dl className="spec-grid spec-grid--3" data-reveal="">
+                {config.map(([ic, k, v]) => (
+                  <div key={k}>
+                    <Icon name={ic} />
+                    <dt>{k}</dt>
+                    <dd>{v}</dd>
+                  </div>
                 ))}
-              </ul>
+              </dl>
             </div>
-            <div className="panel" style={{ marginTop: 48, display: "flex", gap: 16, alignItems: "flex-start" }} data-reveal="">
-              <span style={{ display: "grid", placeItems: "center", width: 44, height: 44, borderRadius: "50%", background: "var(--blue-50)", color: "var(--blue-700)", flex: "none" }}>
-                <Icon name="shield" />
-              </span>
-              <div>
-                <h3 className="h4">Checked by Propstep</h3>
-                <p className="small muted" style={{ marginTop: 6 }}>
-                  Ownership documents, encumbrance certificate, khata and building approvals reviewed by our legal team; property visited in person by {adv.name.split(" ")[0]}. Listed {l.posted}.
-                </p>
-              </div>
+
+            <div className="pd-sec">
+              <h2 className="h3" data-reveal="">About the project</h2>
+              <table className="pd-table" data-reveal="">
+                <thead>
+                  <tr><th scope="col">Parameters</th><th scope="col">Details</th></tr>
+                </thead>
+                <tbody>
+                  {about.map(([k, v]) => (
+                    <tr key={k}><th scope="row">{k}</th><td>{v}</td></tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            {loc ? (
-              <div className="panel panel--cool" style={{ marginTop: 24 }}>
-                <p className="eyebrow">Locality guide</p>
-                <h3 className="h4" style={{ margin: "12px 0 8px" }}>
-                  {loc.name}: {loc.tagline}
-                </h3>
-                <p className="small muted">
-                  Avg. ₹{inrGroup(loc.price_mid)} / sq ft · 2 BHK rent {loc.rent_2bhk} · {loc.metro_short}
-                </p>
-                <Link className="link" style={{ marginTop: 14 }} href={`/localities/${loc.slug}/`}>
-                  Read the {loc.name} guide <Icon name="arrow-right" className="icon--sm" />
-                </Link>
+
+            {units.length ? (
+              <div className="pd-sec">
+                <h2 className="h3" data-reveal="">Price list</h2>
+                <p className="small muted" style={{ marginTop: 6 }}>View the latest price list for {project}.</p>
+                <table className="pd-table pd-table--price" data-reveal="">
+                  <thead>
+                    <tr><th scope="col">Unit type (saleable)</th><th scope="col">Price*</th></tr>
+                  </thead>
+                  <tbody>
+                    {units.map((u) => (
+                      <tr key={`${u.bhk}-${u.area}`}>
+                        <th scope="row">{u.bhk} BHK {l.type} {inrGroup(u.area)} sq ft</th>
+                        <td><b>{inrShort(u.price)}</b></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <p className="small muted" style={{ marginTop: 10 }}>*Prices are indicative and subject to applicable charges and project terms.</p>
               </div>
             ) : null}
-            <div style={{ marginTop: 48 }}>
+
+            {l.floorplan && units.length ? (
+              <div className="pd-sec">
+                <h2 className="h3" data-reveal="">{project} floor plans</h2>
+                <PlanExplorer units={units} fallback={l.floorplan} fallback3d={floorplan3d(l.slug)} type={l.type} title={project} floors={floors} />
+              </div>
+            ) : null}
+
+            {l.amenities?.length ? (
+              <div className="pd-sec pd-sec--tight">
+                <h2 className="h3" data-reveal="">Amenities</h2>
+                <ul className="amen" role="list" data-stagger="">
+                  {l.amenities.map((a) => (
+                    <li data-reveal="" key={a.label}>
+                      <span><Icon name={a.icon} /></span>
+                      {a.label}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
+            <div className="pd-sec">
+              <h2 className="h3" data-reveal="">Location and connectivity</h2>
+              <p className="small muted" style={{ marginTop: 6 }}>
+                {project} is in {l.locality}, {l.city}{l.connecting_road ? `, off ${l.connecting_road}` : ""}. Travel times are approximate.
+              </p>
+              <div className="map-embed map-embed--wide" data-reveal="">
+                <iframe
+                  title={`Map of ${project}, ${l.locality}`}
+                  src={`https://www.google.com/maps?q=${encodeURIComponent(`${project}, ${l.locality}, ${l.city}`)}&z=15&output=embed`}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                />
+              </div>
+              {l.connectivity?.length ? (
+                <h3 className="conn-title">Nearest places</h3>
+              ) : null}
+              {l.connectivity?.length ? (
+                <ul className="conn" style={{ marginTop: 12 }} role="list" data-stagger="">
+                  {l.connectivity.map((c) => (
+                    <li data-reveal="" key={c.place}>
+                      <span><Icon name={c.icon} /></span>
+                      <b>{c.place}</b>
+                      <em>{c.time}</em>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+              <div className="conn-guide">
+                {loc ? (
+                  <Link className="btn btn--accent btn--sm" href={`/localities/${loc.slug}/`}>
+                    {loc.name} locality guide <Icon name="arrow-right" className="icon--sm" />
+                  </Link>
+                ) : null}
+              </div>
+            </div>
+
+            <div className="pd-sec">
+              <h2 className="h3" data-reveal="">EMI calculator</h2>
               <EmiCalculator price={l.price} heading="What would the EMI be?" />
             </div>
           </div>
-          <aside className="ld-aside" aria-label="Enquire">
+          <aside className="ld-aside" id="enquire" aria-label="Enquire">
             <div className="form-card">
               <AdvisorCard adv={adv} />
               <div className="btn-row" style={{ margin: "20px 0 24px" }}>
-                <a className="btn btn--outline btn--sm" href={`tel:${site.phone_href}`}>
+                <a className="btn btn--call btn--sm" href={`tel:${site.phone_href}`}>
                   <Icon name="phone" className="icon--sm" /> Call
                 </a>
-                <a className="btn btn--outline btn--sm" href={wa} target="_blank" rel="noopener">
-                  <Icon name="chat" className="icon--sm" /> WhatsApp
+                <a className="btn btn--wa btn--sm" href={wa} target="_blank" rel="noopener">
+                  <WhatsAppIcon className="icon--sm" /> WhatsApp
                 </a>
               </div>
               <EnquiryForm prefix="ld" phone={phoneProps} subject={`${l.title} — ${l.locality}`} title="Arrange a viewing" compact types={false} />
@@ -171,29 +250,40 @@ export default async function ListingPage({ params }: Params) {
         </div>
       </section>
 
-      <section className="section section--paper" aria-labelledby="sim-title">
-        <div className="container">
-          <SectionHead
-            id="sim-title"
-            eyebrow="You may also like"
-            title={
-              <>
-                Similar <em>properties</em>
-              </>
-            }
-            link={
-              <Link className="link" href="/properties/">
-                See all homes for sale <Icon name="arrow-right" className="icon--sm" />
-              </Link>
-            }
-          />
-          <div className="card-grid card-grid--3" data-stagger="">
-            {similar.map((x) => (
-              <ListingCard key={x.slug} l={x} />
-            ))}
+      {sameDev.length ? (
+        <section className="section section--paper" aria-labelledby="dev-title" style={{ overflow: "hidden" }}>
+          <div className="container">
+            <SectionHead id="dev-title" eyebrow="Same developer" title={<>More from <em>{l.developer}</em></>} />
+            </div>
+          <Rail label={`More from ${l.developer}`}>
+            {sameDev.slice(0, 8).map((x) => <ListingCard key={x.slug} l={x} reveal={false} />)}
+          </Rail>
+          <div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
+
+      {otherDev.length ? (
+        <section className={`section${sameDev.length ? "" : " section--paper"}`} aria-labelledby="sim-title" style={{ overflow: "hidden" }}>
+          <div className="container">
+            <SectionHead
+              id="sim-title"
+              eyebrow="You may also like"
+              title={sameLoc.length ? <>Similar properties in <em>{l.locality}</em></> : <>Similar <em>properties</em></>}
+              link={
+                <Link className="link" href="/properties/">
+                  See all homes for sale <Icon name="arrow-right" className="icon--sm" />
+                </Link>
+              }
+            />
+            </div>
+          <Rail label="Similar properties">
+            {otherDev.map((x) => <ListingCard key={x.slug} l={x} reveal={false} />)}
+          </Rail>
+          <div>
+          </div>
+        </section>
+      ) : null}
     </>
   );
 }

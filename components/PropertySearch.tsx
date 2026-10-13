@@ -162,7 +162,13 @@ export default function PropertySearch({ listings, cities, zones, areas }: Props
               className="dd--field"
               label="Locality"
               value={draft.locality}
-              onChange={(locality) => setDraft((d) => ({ ...d, locality }))}
+              // Choosing a locality selects its zone (keeping the current one if the locality falls in several)
+              onChange={(locality) =>
+                setDraft((d) => {
+                  const zs = (areas[d.city] ?? []).find((a) => a.name === locality)?.zones ?? [];
+                  return { ...d, locality, zone: zs.length && !zs.includes(d.zone) ? zs[0] : d.zone };
+                })
+              }
               options={[{ value: "", label: "All localities" }, ...areasOf(draft).map((a) => ({ value: a.name, label: a.name }))]}
             />
             <Dropdown
@@ -187,7 +193,7 @@ export default function PropertySearch({ listings, cities, zones, areas }: Props
           </form>
         </div>
       </div>
-      <section className="section" style={{ paddingTop: "clamp(28px,4vw,44px)" }}>
+      <section className="section" style={{ paddingTop: "clamp(28px,4vw,44px)", paddingBottom: "clamp(16px,2.5vw,28px)" }}>
         <div className="container">
           <div className="results-bar">
             <div className="results-bar__meta">
@@ -203,7 +209,7 @@ export default function PropertySearch({ listings, cities, zones, areas }: Props
             <Dropdown
               label="Sort by"
               icon="sort"
-              width={218}
+              width={168}
               className="dd--inline"
               emptyValue="recommended"
               value={sort}

@@ -10,7 +10,7 @@ import { useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEv
 import Icon, { type IconName } from "./Icon";
 import { placeMenu, trackPosition } from "@/lib/popover";
 
-export type DropdownOption = { value: string; label: string };
+export type DropdownOption = { value: string; label: string; /** A second, quieter line under the label */ sub?: string };
 
 type Props = {
   label: string;
@@ -40,7 +40,7 @@ const rank = (label: string, q: string) => {
 const matching = (options: readonly DropdownOption[], query: string) => {
   const q = fold(query);
   return [...options.keys()]
-    .map((i) => [i, rank(options[i].label, q)])
+    .map((i) => [i, rank(options[i].sub ? `${options[i].label} ${options[i].sub}` : options[i].label, q)])
     .filter(([, r]) => r >= 0)
     .sort((a, b) => a[1] - b[1] || a[0] - b[0])
     .map(([i]) => i);
@@ -241,7 +241,14 @@ export default function Dropdown({ label, value, options, onChange, icon, emptyV
         btnRef.current?.focus();
       }}
     >
-      <span>{o.label}</span>
+      {o.sub ? (
+        <span className="dd__opt-text">
+          <span className="dd__opt-main">{o.label}</span>
+          <span className="dd__opt-sub">{o.sub}</span>
+        </span>
+      ) : (
+        <span>{o.label}</span>
+      )}
       {i === selected ? <Icon name="check" className="icon--sm dd__tick" /> : null}
     </li>
   );

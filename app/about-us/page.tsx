@@ -1,17 +1,20 @@
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import Icon from "@/components/Icon";
 import { StatsBlock } from "@/components/blocks";
 import { Crumbs, Photo, SectionHead, Split } from "@/components/primitives";
 import { LeaderCard } from "@/components/widgets";
-import { site } from "@/lib/content";
+import { getSite } from "@/lib/data";
+import ClampText from "@/components/ClampText";
 
 export const metadata: Metadata = {
-  title: "About Propstep — property advisory & consulting since 2011",
-  description: "Propstep has advised property buyers since 2011: verified listings from across the market and an advisor at every step. Meet the team, our values and our story.",
+  title: "About Propstep — property advisory & consulting since 2026",
+  description: "Propstep has advised property buyers since 2026: verified listings from across the market and an advisor at every step. Meet the team, our values and our story.",
   alternates: { canonical: "/about-us/" },
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const site = await getSite();
   return (
     <>
       <section className="page-hero">
@@ -29,9 +32,9 @@ export default function AboutPage() {
               </h1>
             </div>
             <div>
-              <p className="lead" data-reveal="">
+              <ClampText className="lead">
                 For fifteen years we’ve sat on the buyer’s side of the table: finding properties from across the market, checking every one, and staying with our clients from the first shortlist to the day they get the keys.
-              </p>
+              </ClampText>
             </div>
           </div>
         </div>
@@ -100,29 +103,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="section section--cool" aria-labelledby="tl-title">
-        <div className="container">
-          <SectionHead
-            id="tl-title"
-            eyebrow="Milestones"
-            title={
-              <>
-                Fifteen years, <em>step</em> by step.
-              </>
-            }
-          />
-          <div className="timeline">
-            {site.milestones.map((m) => (
-              <div className="tl-item" data-reveal="" key={m.year}>
-                <p className="tl-year">{m.year}</p>
-                <h3>{m.title}</h3>
-                <p>{m.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section className="section" aria-labelledby="ppl-title">
         <div className="container">
           <SectionHead
@@ -134,7 +114,7 @@ export default function AboutPage() {
               </>
             }
           />
-          <div className="people" data-stagger="">
+          <div className="people" data-stagger="" style={{ "--n": site.leadership.length } as CSSProperties}>
             {site.leadership.map((p) => (
               <LeaderCard key={p.name} {...p} />
             ))}

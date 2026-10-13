@@ -3,8 +3,9 @@ import Link from "next/link";
 import { LocalityCard } from "@/components/cards";
 import { Crumbs, SectionHead, Split } from "@/components/primitives";
 import { SortableTable, type Cell, type Column } from "@/components/widgets";
-import { localities } from "@/lib/content";
+import { getLocalities } from "@/lib/data";
 import { inrGroup } from "@/lib/format";
+import ClampText from "@/components/ClampText";
 
 export const metadata: Metadata = {
   title: "Bengaluru locality guides — prices, yields & metro access",
@@ -23,7 +24,8 @@ const columns: Column[] = [
   { key: "metro", label: "Metro" },
 ];
 
-export default function LocalitiesPage() {
+export default async function LocalitiesPage() {
+  const localities = await getLocalities();
   const rows: Record<string, Cell>[] = localities.map((l) => ({
     name: { v: l.name, node: <Link href={`/localities/${l.slug}/`}>{l.name}</Link> },
     zone: { v: l.zone, node: l.zone },
@@ -50,9 +52,9 @@ export default function LocalitiesPage() {
               </h1>
             </div>
             <div>
-              <p className="lead" data-reveal="">
+              <ClampText className="lead">
                 Where should you buy? It depends on your commute, your school run and your time horizon. These guides give you the numbers and the honest trade-offs — the same briefing our advisors give clients.
-              </p>
+              </ClampText>
             </div>
           </div>
         </div>

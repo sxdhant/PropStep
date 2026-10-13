@@ -1,0 +1,218 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+}
+
+enum PublishStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  CLOSED
+}
+
+enum VisitStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  name         String?
+  passwordHash String
+  role         Role       @default(EDITOR)
+  active       Boolean    @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  audits       AuditLog[]
+}
+
+model Advisor {
+  id        String    @id @default(cuid())
+  key       String    @unique
+  name      String
+  role      String
+  languages String
+  years     Int
+  listings  Listing[]
+}
+
+model Locality {
+  id         String    @id @default(cuid())
+  slug       String    @unique
+  name       String
+  zone       String
+  tagline    String
+  imageId    String
+  imageAlt   String
+  priceSqft  String
+  priceMid   Int
+  rent2bhk   String
+  yield      String
+  growth     String
+  metro      String
+  metroShort String
+  trend      Json
+  overview   Json
+  bestFor    Json
+  pros       Json
+  cons       Json
+  schools    Json
+  hospitals  Json
+  work       Json
+  status     PublishStatus @default(PUBLISHED)
+  listings   Listing[]
+  updatedAt  DateTime  @updatedAt
+}
+
+model Area {
+  id   String @id @default(cuid())
+  name String
+  zone String
+  city String @default("Bengaluru")
+
+  @@unique([city, name])
+}
+
+model Listing {
+  id             String        @id @default(cuid())
+  slug           String        @unique
+  title          String
+  intent         String        @default("buy")
+  type           String
+  developer      String?
+  project        String?
+  bhk            Int
+  baths          Int
+  area           Int
+  city           String
+  locality       String
+  localityId     String?
+  localityRef    Locality?     @relation(fields: [localityId], references: [id])
+  price          BigInt
+  priceLabel     String
+  floor          String?
+  age            String?
+  possession     String?
+  rera           String?
+  badge          String?
+  advisorId      String
+  advisor        Advisor       @relation(fields: [advisorId], references: [id])
+  postedAt       DateTime      @default(now())
+  units          Int?
+  configs        Json?
+  areaMin        Int?
+  areaMax        Int?
+  unitTypes      Json?
+  floorplan      String?
+  connectingRoad String?
+  summary        String
+  description    String
+  features       Json
+  amenities      Json?
+  connectivity   Json?
+  images         Json
+  status         PublishStatus @default(DRAFT)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  leads          Lead[]
+  visits         SiteVisit[]
+
+  @@index([status, city, locality])
+}
+
+model SiteSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model Testimonial {
+  id    String @id @default(cuid())
+  quote String
+  name  String
+  meta  String
+  sort  Int    @default(0)
+}
+
+model Faq {
+  id       String @id @default(cuid())
+  question String
+  answer   String
+  sort     Int    @default(0)
+}
+
+model Lead {
+  id           String      @id @default(cuid())
+  form         String
+  name         String
+  phone        String
+  email        String?
+  enquiryType  String?
+  message      String?
+  subject      String?
+  page         String?
+  listingId    String?
+  listing      Listing?    @relation(fields: [listingId], references: [id])
+  status       LeadStatus  @default(NEW)
+  consentAt    DateTime
+  ipHash       String?
+  idempotency  String?     @unique
+  createdAt    DateTime    @default(now())
+  visit        SiteVisit?
+
+  @@index([status, createdAt])
+}
+
+model SiteVisit {
+  id        String      @id @default(cuid())
+  leadId    String      @unique
+  lead      Lead        @relation(fields: [leadId], references: [id])
+  listingId String?
+  listing   Listing?    @relation(fields: [listingId], references: [id])
+  date      DateTime    @db.Date
+  slot      String
+  mode      String
+  status    VisitStatus @default(PENDING)
+  createdAt DateTime    @default(now())
+
+  @@index([date, slot])
+}
+
+model Subscriber {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  token          String    @unique
+  confirmedAt    DateTime?
+  unsubscribedAt DateTime?
+  createdAt      DateTime  @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  entity    String
+  entityId  String?
+  diff      Json?
+  createdAt DateTime @default(now())
+
+  @@index([entity, createdAt])
+}

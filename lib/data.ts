@@ -1,0 +1,172 @@
+import { unstable_cache } from "next/cache";
+import { cache } from "react";
+import { db } from "./db";
+import * as fallback from "./content";
+import type { Listing, Locality, Site } from "./types";
+
+/**
+ * Async data layer. Reads Neon through Prisma, cached with tags so admin edits can revalidate instantly.
+ * Without DATABASE_URL (local setup, first deploy) it serves the bundled content/ files instead.
+ */
+export const hasDb = () => !!process.env.DATABASE_URL;
+export const SITE_URL = fallback.SITE_URL;
+export const SEARCH_CITIES = fallback.SEARCH_CITIES;
+export const ZONES = fallback.ZONES;
+
+export const TAGS = { listings: "listings", localities: "localities", site: "site", areas: "areas" } as const;
+const cached = <T>(fn: () => Promise<T>, key: string, tag: string) => unstable_cache(fn, [key], { tags: [tag], revalidate: 3600 });
+
+/* ---------- row -> domain mappers ---------- */
+type ListingRow = Awaited<ReturnType<typeof queryListings>>[number];
+export const toListing = (r: ListingRow): Listing => ({
+  slug: r.slug,
+  title: r.title,
+  intent: r.intent as "buy" | "rent",
+  type: r.type,
+  developer: r.developer ?? undefined,
+  project: r.project ?? undefined,
+  configs: (r.configs as number[] | null) ?? undefined,
+  units: r.units ?? undefined,
+  area_min: r.areaMin ?? undefined,
+  area_max: r.areaMax ?? undefined,
+  bhk: r.bhk,
+  city: r.city,
+  locality: r.locality,
+  locality_slug: r.localityRef?.slug ?? "",
+  price: Number(r.price),
+  price_label: r.priceLabel,
+  area: r.area,
+  baths: r.baths,
+  floor: r.floor ?? "",
+  age: r.age ?? "",
+  possession: r.possession ?? "",
+  floorplan: r.floorplan ?? undefined,
+  unit_types: (r.unitTypes as Listing["unit_types"]) ?? undefined,
+  amenities: (r.amenities as Listing["amenities"]) ?? undefined,
+  connectivity: (r.connectivity as Listing["connectivity"]) ?? undefined,
+  connecting_road: r.connectingRoad ?? undefined,
+  rera: r.rera ?? undefined,
+  badge: r.badge ?? undefined,
+  images: r.images as Listing["images"],
+  summary: r.summary,
+  description: r.description,
+  features: r.features as string[],
+  advisor: r.advisor.key,
+  posted: r.postedAt.toISOString().slice(0, 10),
+});
+
+const queryListings = () =>
+  db.listing.findMany({
+    where: { status: "PUBLISHED", intent: "buy" },
+    include: { advisor: true, localityRef: { select: { slug: true } } },
+    orderBy: [{ postedAt: "desc" }, { slug: "asc" }],
+  });
+
+type LocalityRow = Awaited<ReturnType<typeof db.locality.findMany>>[number];
+const toLocality = (r: LocalityRow): Locality => ({
+  slug: r.slug,
+  name: r.name,
+  zone: r.zone,
+  tagline: r.tagline,
+  image: { id: r.imageId, alt: r.imageAlt },
+  price_sqft: r.priceSqft,
+  price_mid: r.priceMid,
+  rent_2bhk: r.rent2bhk,
+  yield: r.yield,
+  growth: r.growth,
+  metro: r.metro,
+  metro_short: r.metroShort,
+  trend: r.trend as number[],
+  overview: r.overview as string[],
+  best_for: r.bestFor as string[],
+  pros: r.pros as string[],
+  cons: r.cons as string[],
+  schools: r.schools as string[],
+  hospitals: r.hospitals as string[],
+  work: r.work as string[],
+});
+
+/* ---------- loaders ---------- */
+const loadListings = cached(async () => (await queryListings()).map(toListing), "listings", TAGS.listings);
+const loadLocalities = cached(
+  async () => (await db.locality.findMany({ where: { status: "PUBLISHED" }, orderBy: { name: "asc" } })).map(toLocality),
+  "localities",
+  TAGS.localities,
+);
+const loadAreas = cached(
+  async () => (await db.area.findMany({ orderBy: { name: "asc" } })).map((a) => ({ name: a.name, zone: a.zone })),
+  "areas",
+  TAGS.areas,
+);
+const loadSite = cached(
+  async (): Promise<Site> => {
+    const [settings, advisors, testimonials, faqs] = await Promise.all([
+      db.siteSetting.findMany(),
+      db.advisor.findMany(),
+      db.testimonial.findMany({ orderBy: { sort: "asc" } }),
+      db.faq.findMany({ orderBy: { sort: "asc" } }),
+    ]);
+    const base = Object.fromEntries(settings.map((s) => [s.key, s.value]));
+    return {
+      ...(fallback.site as Site),
+      ...base,
+      advisors: Object.fromEntries(advisors.map((a) => [a.key, { name: a.name, role: a.role, languages: a.languages, years: a.years }])),
+      testimonials: testimonials.map((t) => ({ quote: t.quote, name: t.name, meta: t.meta })),
+      faqs: faqs.map((f) => ({ q: f.question, a: f.answer })),
+    } as Site;
+  },
+  "site",
+  TAGS.site,
+);
+
+/** Run a DB loader; if the database is missing or unreachable, serve the bundled content. */
+async function withFallback<T>(load: () => Promise<T>, local: () => T): Promise<T> {
+  if (!hasDb()) return local();
+  try {
+    return await load();
+  } catch (e) {
+    console.error("[data] database read failed, using bundled content:", e);
+    return local();
+  }
+}
+
+// React cache() dedupes repeat calls within one render
+export const getSite = cache(() => withFallback(loadSite, () => fallback.site));
+export const getListings = cache(() => withFallback(loadListings, () => fallback.listings));
+export const getLocalities = cache(() => withFallback(loadLocalities, () => fallback.localities));
+const getAreas = cache(() => withFallback(loadAreas, () => fallback.areasIn("Bengaluru").map((name) => ({ name, zone: fallback.zonesOf(name).join("-") }))));
+
+export const getListing = async (slug: string) => (await getListings()).find((l) => l.slug === slug);
+export const getLocality = async (slug: string) => (await getLocalities()).find((l) => l.slug === slug);
+
+/** A city's localities for search: those with listings, plus (Bengaluru) the search list, A–Z */
+export async function areasIn(city: string) {
+  const [listings, areas] = await Promise.all([getListings(), getAreas()]);
+  return [...new Set([...listings.filter((l) => l.city === city).map((l) => l.locality), ...(city === "Bengaluru" ? areas.map((a) => a.name) : [])])].sort((a, b) =>
+    a.localeCompare(b),
+  );
+}
+
+/** The search zones a locality falls in ("South-East" is in both South and East) */
+export async function zonesOf(locality: string) {
+  const [areas, localities] = await Promise.all([getAreas(), getLocalities()]);
+  const zone = areas.find((a) => a.name === locality)?.zone ?? localities.find((l) => l.name === locality)?.zone ?? "";
+  return ZONES.filter((z) => zone.includes(z));
+}
+/** Sync version when the caller already holds the data (avoids awaiting in loops) */
+export const zoneResolver = async () => {
+  const [areas, localities] = await Promise.all([getAreas(), getLocalities()]);
+  return (locality: string) => {
+    const zone = areas.find((a) => a.name === locality)?.zone ?? localities.find((l) => l.name === locality)?.zone ?? "";
+    return ZONES.filter((z) => zone.includes(z));
+  };
+};
+
+/** The site-visit form's choices: [slug, label] for every published listing */
+export async function getVisitOptions() {
+  return (await getListings()).map((l) => [l.slug, `${l.title} — ${l.locality}`] as [string, string]);
+}
+export async function getPhoneProps() {
+  const s = await getSite();
+  return { href: s.phone_href, label: s.phone };
+}

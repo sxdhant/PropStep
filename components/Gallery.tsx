@@ -57,10 +57,6 @@ export default function Gallery({ images, variant, vt }: Props) {
         <span className="g-item__more">
           <Icon name="image" className="icon--sm" /> View all {n}
         </span>
-      ) : variant === "listing" && i === 0 ? (
-        <span className="g-item__more">
-          <Icon name="image" className="icon--sm" /> {n} photos
-        </span>
       ) : null;
     const ratio: [number, number] = variant === "project" && i > 0 ? [4, 3] : [3, 2];
     const sizes = i === 0 ? (variant === "project" ? "(min-width: 900px) 50vw, 100vw" : "(min-width: 900px) 60vw, 100vw") : variant === "project" ? "(min-width: 900px) 25vw, 50vw" : "30vw";
@@ -82,7 +78,22 @@ export default function Gallery({ images, variant, vt }: Props) {
   const current = images[idx];
   return (
     <>
-      <div className={variant === "project" ? "gallery-grid" : "ld-gallery"}>{tiles}</div>
+      <div className={variant === "project" ? "gallery-grid" : "ld-gallery"}>
+        {tiles}
+        {variant === "listing" && n > 1 ? (
+          // The end of the swipeable row on phones: the last photo blurred, opening the full gallery
+          <button className="g-item g-item--end" type="button" aria-label={`View all ${n} photos`} onClick={(e) => open(0, e.currentTarget)}>
+            <span className="g-item__bg" aria-hidden="true">
+              <Photo id={images[n - 1].id} ratio={[3, 2]} sizes="86vw" fade={false} />
+            </span>
+            <span className="g-item__end-body">
+              <Icon name="image" />
+              <b>View all {n} photos</b>
+              <Icon name="arrow-right" className="icon--sm" />
+            </span>
+          </button>
+        ) : null}
+      </div>
       <dialog
         className="lightbox"
         ref={dialog}

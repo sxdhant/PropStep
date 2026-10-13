@@ -2,10 +2,15 @@
 
 import Link from "next/link";
 import { createContext, useContext, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import Dropdown from "./Dropdown";
 import Icon from "./Icon";
 
 /* ============================================================ Validation */
-const PHONE = /^(?:\+?91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}$/;
+/** Indian mobiles (optionally +91 / 91 / 0) or an international number starting with + (8-15 digits): same rule as the server */
+const PHONE = (v: string) => {
+  const t = v.replace(/[\s\-().]/g, "");
+  return /^(?:\+?91|0)?[6-9]\d{9}$/.test(t) || /^\+[1-9]\d{7,14}$/.test(t);
+};
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 type Control = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
@@ -26,7 +31,7 @@ function errorFor(el: Control, form: HTMLFormElement): string {
   const v = el.value.trim();
   const label = labelOf(el);
   if (el.required && !v) return `${el.tagName === "SELECT" ? "Please choose " : "Please enter "}${/^(a|an|your)\s/.test(label) ? "" : "your "}${label}.`;
-  if (v && el.dataset.validate === "phone" && !PHONE.test(v.replace(/\s+/g, " "))) return "Enter a 10-digit Indian mobile number, for example 98450 12345.";
+  if (v && el.dataset.validate === "phone" && !PHONE(v)) return "Enter a 10-digit Indian mobile number, for example 98450 12345. Outside India? Start with + and your country code.";
   if (v && el instanceof HTMLInputElement && el.type === "email" && !EMAIL.test(v)) return "Enter an email address like name@example.com.";
   return "";
 }
@@ -56,6 +61,7 @@ export function LeadForm({ label, formName, children, heading, success, classNam
   const [summary, setSummary] = useState<{ id: string; msg: string }[] | null>(null);
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "failed">("idle");
   const [firstName, setFirstName] = useState("");
+  const idemKey = useRef<string | null>(null);
 
   useEffect(() => {
     if (summary && summary.length) summaryRef.current?.focus();
@@ -102,12 +108,22 @@ export function LeadForm({ label, formName, children, heading, success, classNam
     }
     setSummary(null);
     setStatus("sending");
-    const data: Record<string, string> = { form: formName, page: window.location.pathname };
+    // One key per form instance: a retry after a dropped connection can't create a duplicate lead
+    const data: Record<string, string> = { form: formName, page: window.location.pathname, idempotencyKey: (idemKey.current ??= crypto.randomUUID()) };
     new FormData(form).forEach((v, k) => (data[k] = String(v)));
+    const endpoint = formName === "newsletter" ? "/api/newsletter/subscribe" : formName === "site-visit" ? "/api/visits" : "/api/enquiry";
     try {
-      const res = await fetch("/api/enquiry", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+      const res = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+      const out = await res.json().catch(() => ({}));
+      if (res.status === 422 && out.errors) {
+        // The server's field messages (e.g. a date that just filled up) show beside the fields
+        setErrors(out.errors);
+        setSummary(Object.values(out.errors as Record<string, string>).filter(Boolean).map((msg) => ({ id: "", msg })));
+        setStatus("idle");
+        return;
+      }
       if (!res.ok) throw new Error(String(res.status));
-      setFirstName((data.name || "").split(" ")[0]);
+      setFirstName(variant === "newsletter" && out.pending ? "pending" : (data.name || "").split(" ")[0]);
       setStatus("done");
     } catch {
       setStatus("failed");
@@ -177,7 +193,7 @@ export function LeadForm({ label, formName, children, heading, success, classNam
         </div>
         {children}
         <button
-          className={`btn ${variant === "newsletter" ? "btn--light" : "btn--block"}${status === "sending" ? " is-loading" : ""}`}
+          className={`btn ${variant === "newsletter" ? "btn--accent" : "btn--block"}${status === "sending" ? " is-loading" : ""}`}
           type="submit"
           disabled={status === "sending"}
           aria-busy={status === "sending"}
@@ -316,6 +332,43 @@ export function SelectField({ id, label, name, required, dataLabel, options, pla
   );
 }
 
+/** A select with the site's designed option list (the native select can't be styled). A hidden proxy input carries the value, so the form's validation and submit work as with a plain select. */
+export function DropdownField({ id, label, name, required, dataLabel, options, placeholder }: FieldBase & { options: [string, string][]; placeholder: string }) {
+  const f = useField(name);
+  const [value, setValue] = useState("");
+  // Once a choice is made, clear a "choose a property" error
+  useEffect(() => {
+    const el = document.getElementById(id) as HTMLInputElement | null;
+    if (el && value) f.onChange({ currentTarget: el });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+  // "Title — Locality" labels become a title with the locality under it
+  const items = [
+    { value: "", label: placeholder },
+    ...options.map(([v, l]) => {
+      const [main, ...rest] = l.split(" — ");
+      return { value: v, label: main, sub: rest.join(" — ") || undefined };
+    }),
+  ];
+  return (
+    <div className={`field${f.error ? " has-error" : ""}`} data-label={dataLabel}>
+      <span className="label" aria-hidden="true">
+        {label}
+        <Req required={required} />
+      </span>
+      <Dropdown
+        className="dd--form"
+        label={label}
+        value={value}
+        options={items}
+        onChange={setValue}
+      />
+      <input className="dd-form__proxy" id={id} name={name} value={value} required={required} tabIndex={-1} aria-hidden="true" onChange={f.onChange} />
+      <ErrorText id={`${id}-err`} msg={f.error} />
+    </div>
+  );
+}
+
 export function TextArea({ id, label, name, placeholder }: { id: string; label: string; name: string; placeholder?: string }) {
   return (
     <div className="field">
@@ -344,39 +397,86 @@ export function ConsentField({ id }: { id: string }) {
   );
 }
 
-/** Date chips for the next N days. Rendered after mount so server and client agree on "today". */
+/** Date chips for the next N days, plus a calendar for any later date. Rendered after mount so server and client agree on "today". */
 export function DateSlots({ id, days = 12 }: { id: string; days?: number }) {
   const f = useField("date");
   const [dates, setDates] = useState<Date[] | null>(null);
+  const [sel, setSel] = useState("");
+  const [custom, setCustom] = useState("");
+  const [bounds, setBounds] = useState({ min: "", max: "" });
+  const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   useEffect(() => {
     const out: Date[] = [];
-    for (let i = 1; i <= days; i++) {
+    for (let i = 1; out.length < days; i++) {
       const d = new Date();
       d.setDate(d.getDate() + i);
+      if (d.getDay() === 0) continue; // no visits on Sundays (the server enforces this too)
       out.push(d);
     }
     setDates(out);
+    const max = new Date();
+    max.setFullYear(max.getFullYear() + 1);
+    setBounds({ min: iso(out[0]), max: iso(max) });
   }, [days]);
   const fmtW = new Intl.DateTimeFormat("en-IN", { weekday: "short" });
   const fmtM = new Intl.DateTimeFormat("en-IN", { month: "short" });
-  const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  const customDate = custom ? new Date(`${custom}T00:00:00`) : null;
+  const pick = (v: string) => setSel(v);
+  // A date chosen in the calendar has no radio change event: once its chip is checked, clear any "choose a date" error
+  useEffect(() => {
+    const el = document.getElementById(`${id}-first`) as HTMLInputElement | null;
+    if (el && sel) f.onChange({ currentTarget: el });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sel]);
+  const chip = (d: Date, first: boolean) => (
+    <label className="slot" key={iso(d)}>
+      <input type="radio" name="date" value={iso(d)} required={first} id={first ? `${id}-first` : undefined} checked={sel === iso(d)} onChange={(e) => { pick(iso(d)); f.onChange(e); }} />
+      <span>
+        <small>{fmtW.format(d)}</small>
+        <b>{d.getDate()}</b>
+        <small>{fmtM.format(d)}</small>
+      </span>
+    </label>
+  );
   return (
     <fieldset className={`slot-group field${f.error ? " has-error" : ""}`} data-label="date">
       <legend className="label">
         Preferred date<span className="req" aria-hidden="true">*</span>
       </legend>
       <div className="slots">
+        {dates ? (
+          <label className="slot slot--cal">
+            <input
+              type="date"
+              aria-label="Pick another date from the calendar"
+              min={bounds.min}
+              max={bounds.max}
+              value={custom}
+              onClick={(e) => {
+                // Open the calendar wherever on the chip it is tapped (a bare date field only opens it from its own icon)
+                try {
+                  e.currentTarget.showPicker?.();
+                } catch {
+                  /* already open, or not allowed: the browser's own handling applies */
+                }
+              }}
+              onChange={(e) => {
+                const v = e.currentTarget.value;
+                if (!v) return;
+                setCustom(v);
+                pick(v);
+              }}
+            />
+            <span>
+              <small>More</small>
+              <Icon name="calendar" />
+              <small>Calendar</small>
+            </span>
+          </label>
+        ) : null}
+        {dates && customDate && !dates.some((d) => iso(d) === custom) ? chip(customDate, false) : null}
         {dates
-          ? dates.map((d, i) => (
-              <label className="slot" key={iso(d)}>
-                <input type="radio" name="date" value={iso(d)} required={i === 0} id={i === 0 ? `${id}-first` : undefined} onChange={f.onChange} />
-                <span>
-                  <small>{fmtW.format(d)}</small>
-                  <b>{d.getDate()}</b>
-                  <small>{fmtM.format(d)}</small>
-                </span>
-              </label>
-            ))
+          ? dates.map((d, i) => chip(d, i === 0))
           : Array.from({ length: 7 }, (_, i) => (
               <span className="slot" key={i} aria-hidden="true">
                 <span style={{ opacity: 0.35 }}>
@@ -392,7 +492,7 @@ export function DateSlots({ id, days = 12 }: { id: string; days?: number }) {
   );
 }
 
-export function RadioSlots({ id, name, legend, required, dataLabel, options, defaultValue }: { id: string; name: string; legend: string; required?: boolean; dataLabel: string; options: { value: string; main: string; sub: string }[]; defaultValue?: string }) {
+export function RadioSlots({ id, name, legend, required, dataLabel, options, defaultValue, layout = "wrap" }: { id: string; name: string; legend: string; required?: boolean; dataLabel: string; options: { value: string; main: string; sub: string }[]; defaultValue?: string; /** wrap: chips wrap; scroll: one row that scrolls sideways; equal: one row, every option the same width */ layout?: "wrap" | "scroll" | "equal" }) {
   const f = useField(name);
   const big = options.some((o) => o.main.length > 6);
   return (
@@ -405,11 +505,11 @@ export function RadioSlots({ id, name, legend, required, dataLabel, options, def
           </span>
         ) : null}
       </legend>
-      <div className="slots slots--wrap">
+      <div className={layout === "scroll" ? "slots" : layout === "equal" ? "slots slots--equal" : "slots slots--wrap"}>
         {options.map((o, i) => (
           <label className="slot" key={o.value}>
             <input type="radio" name={name} value={o.value} required={required && i === 0} id={i === 0 ? id : undefined} defaultChecked={defaultValue === o.value} onChange={f.onChange} />
-            <span style={big ? { padding: "12px 16px" } : undefined}>
+            <span style={big && layout !== "equal" ? { padding: "12px 16px" } : undefined}>
               <b style={big ? { fontSize: ".95rem" } : undefined}>{o.main}</b>
               <small>{o.sub}</small>
             </span>
@@ -432,12 +532,9 @@ const ENQUIRY_TYPES: [string, string][] = [
   ["other", "Something else"],
 ];
 const TIMES = [
-  ["10:00", "am"],
-  ["11:30", "am"],
-  ["1:00", "pm"],
-  ["3:00", "pm"],
-  ["4:30", "pm"],
-  ["6:00", "pm"],
+  ["Morning", "10 AM – 1 PM"],
+  ["Afternoon", "1 PM – 4 PM"],
+  ["Evening", "4 PM – 7 PM"],
 ];
 
 type VisitProps = { prefix: string; phone: Phone; property?: string; properties?: [string, string][]; heading?: boolean };
@@ -472,7 +569,7 @@ export function VisitForm({ prefix, phone, property, properties = [], heading = 
       {property ? (
         <input type="hidden" name="property" value={property} />
       ) : (
-        <SelectField
+        <DropdownField
           id={`${prefix}-property`}
           label="Property"
           name="property"
@@ -483,13 +580,22 @@ export function VisitForm({ prefix, phone, property, properties = [], heading = 
         />
       )}
       <DateSlots id={`${prefix}-date`} />
-      <RadioSlots id={`${prefix}-time`} name="time" legend="Preferred time" required dataLabel="time" options={TIMES.map(([t, m]) => ({ value: `${t} ${m}`, main: t, sub: m }))} />
+      <RadioSlots
+        id={`${prefix}-time`}
+        name="time"
+        legend="Preferred time"
+        required
+        dataLabel="time"
+        layout="equal"
+        options={TIMES.map(([label, range]) => ({ value: `${label} (${range})`, main: label, sub: range }))}
+      />
       <RadioSlots
         id={`${prefix}-mode`}
         name="mode"
         legend="How would you like to visit?"
         dataLabel="visit type"
         defaultValue="In person"
+        layout="equal"
         options={[
           { value: "In person", main: "At the site", sub: "Free pickup in Bengaluru" },
           { value: "Video tour", main: "Live video tour", sub: "Ideal for NRIs" },
@@ -561,7 +667,7 @@ export function NewsletterForm({ phone }: { phone: Phone }) {
       className="news"
       variant="newsletter"
       phone={phone}
-      success={{ title: () => "You’re subscribed. Our first note arrives next month.", text: null }}
+      success={{ title: (n) => (n === "pending" ? "Almost there. Check your inbox to confirm your subscription." : "You’re subscribed. Our first note arrives next month."), text: null }}
       submit="Subscribe"
     >
       <NewsletterEmail />

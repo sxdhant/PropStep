@@ -4,17 +4,20 @@ import type { CSSProperties } from "react";
 import HeroSearch from "@/components/HeroSearch";
 import SplashIntro from "@/components/SplashIntro";
 import Icon from "@/components/Icon";
-import { ListingCard, LocalityFlipCard } from "@/components/cards";
+import { BrowseAllCard, ListingCard, LocalityFlipCard } from "@/components/cards";
 import { CtaSection, Marquee, NoFooterCta, NriBand, Process, StatsBlock } from "@/components/blocks";
 import { SectionHead, Split } from "@/components/primitives";
-import { Cities, Pillars, Rail, Testimonials, type Pillar } from "@/components/widgets";
-import { areasIn, listings, localities, site, ZONES, zonesOf } from "@/lib/content";
+import { Pillars, Rail, Testimonials, type Pillar } from "@/components/widgets";
+import { areasIn, getListings, getLocalities, getSite, zoneResolver, ZONES } from "@/lib/data";
 
-export const metadata: Metadata = {
-  title: { absolute: `${site.name} — Property advisory & verified listings in Bengaluru | Across India` },
-  description: site.description,
-  alternates: { canonical: "/" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSite();
+  return {
+    title: { absolute: `${site.name} — Property advisory & verified listings in Bengaluru | Across India` },
+    description: site.description,
+    alternates: { canonical: "/" },
+  };
+}
 
 // One villa by day and at night from the same camera (public/hero): aligned so the two frames overlay exactly, graded
 // to read as photographs, and given more sky above the roof (the same extension on both). The theme switch
@@ -44,7 +47,7 @@ const PILLARS: Pillar[] = [
   {
     title: "Discover",
     sub: "Verified listings",
-    tags: ["Apartments", "Villas", "Plots", "Farmhouses", "Penthouses"],
+    tags: ["Apartments", "Villas", "Plots", "Farmlands", "Penthouses"],
     text: "Homes, land and offices from across the market — new launches and resale — listed only after our legal team has checked the title and an advisor has visited in person.",
     links: [["Browse properties", "/properties/"], ["Book a site visit", "/contact-us/#visit"]],
     image: "1580587771525-78b9dba3b914",
@@ -55,7 +58,7 @@ const PILLARS: Pillar[] = [
     sub: "Buy & sell",
     tags: ["New homes", "Resale", "Selling", "Home loans"],
     text: "Independent advice on new and resale homes in six cities: shortlists to your brief, prices benchmarked against actual registrations — not asking prices — and negotiation on your side.",
-    links: [["Homes to buy", "/properties/"], ["Sell with us", "/services/#sell"], ["Home loans", "/services/#loans"]],
+    links: [["Homes to buy", "/properties/", "accent"], ["Sell with us", "/services/#sell", "light"], ["Home loans", "/services/#loans", "light"]],
     image: "1560448204-e02f11c3d0e2",
     alt: "Bright living room with floor-to-ceiling windows",
   },
@@ -64,20 +67,22 @@ const PILLARS: Pillar[] = [
     sub: "Land, offices & NRI",
     tags: ["Plots & farmland", "Pre-leased offices", "NRI Desk"],
     text: "Title-clean plots and managed farmland, pre-leased offices, and an NRI Desk that handles everything from video walkthroughs to power of attorney.",
-    links: [["NRI Desk", "/services/#nri"]],
+    links: [["NRI Desk", "/services/#nri", "accent"]],
     image: "1500382017468-9049fed747ef",
     alt: "Open grassland at sunset",
   },
 ];
 
-export default function Home() {
-  const buy = ["whitefield-4bhk-villa-banyan-grove", "koramangala-3bhk-cedar-court", "sadashivanagar-penthouse-lalbagh-terraces"]
-    .map((s) => listings.find((l) => l.slug === s)!)
-    .sort((a, b) => listings.indexOf(a) - listings.indexOf(b));
+export default async function Home() {
+  const [site, listings, localities, areaNames, zonesFor] = await Promise.all([getSite(), getListings(), getLocalities(), areasIn("Bengaluru"), zoneResolver()]);
+  // Handpicked: Bengaluru's listings, in a horizontal rail
+  const buy = listings.filter((l) => l.city === "Bengaluru");
+  // Hot selling: six listings in a horizontal rail
+  const hot = listings.slice(0, 6);
   // Search: Bengaluru's localities and the zones each falls in
-  const areas = areasIn("Bengaluru").map((name) => ({ name, zones: zonesOf(name) }));
+  const areas = areaNames.map((name) => ({ name, zones: zonesFor(name) }));
   // The map card's count: Bengaluru listings in each zone (the same ones the Properties search finds)
-  const counts = Object.fromEntries(ZONES.map((z) => [z, listings.filter((l) => l.city === "Bengaluru" && zonesOf(l.locality).includes(z)).length]));
+  const counts = Object.fromEntries(ZONES.map((z) => [z, listings.filter((l) => l.city === "Bengaluru" && zonesFor(l.locality).includes(z)).length]));
 
   return (
     <>
@@ -113,18 +118,18 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section section--tight" aria-label="Propstep in numbers">
+      <section className="section section--tight" aria-label="Propstep in numbers" style={{ paddingBottom: "clamp(12px,2vw,20px)" }}>
         <div className="container">
           <StatsBlock />
         </div>
-        <div style={{ marginTop: "clamp(48px,6vw,80px)" }}>
+        <div style={{ marginTop: "clamp(18px,2.5vw,32px)" }}>
           <Marquee
             items={[
               "Karnataka RERA-registered agent",
               "40-point legal due diligence",
               "Every listing visited in person",
               "12+ partner lenders",
-              "Advisory in six cities",
+              "Best Advisory in Bengaluru",
               "New launches and resale, side by side",
               "Chauffeured site visits",
             ]}
@@ -132,14 +137,38 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section section--paper" aria-labelledby="pillars-title">
+      <section className="section" aria-labelledby="hot-title" style={{ overflow: "hidden", paddingTop: "clamp(20px,3vw,36px)", paddingBottom: "clamp(16px,2.5vw,28px)" }}>
+        <div className="container">
+          <SectionHead
+            id="hot-title"
+            eyebrow="Trending now"
+            title={
+              <>
+                Hot selling <em>properties</em>.
+              </>
+            }
+            link={
+              <Link className="btn btn--outline" href="/properties/">
+                Browse all properties <Icon name="arrow-right" className="icon--arrow" />
+              </Link>
+            }
+          />
+        </div>
+        <Rail label="Hot selling properties">
+          {hot.map((l) => (
+            <ListingCard key={l.slug} l={l} reveal={false} />
+          ))}
+        </Rail>
+      </section>
+
+      <section className="section section--paper" aria-labelledby="pillars-title" style={{ paddingTop: "clamp(28px,3.5vw,44px)" }}>
         <div className="container">
           <SectionHead
             id="pillars-title"
             eyebrow="What we do"
             title={
               <>
-                One team for every <em>step</em> of property.
+                Dedicated team for every <em>step</em> of property.
               </>
             }
           />
@@ -147,7 +176,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section" aria-labelledby="listings-title">
+      <section className="section" aria-labelledby="listings-title" style={{ overflow: "hidden", paddingBottom: "clamp(6px,1vw,12px)" }}>
         <div className="container">
           <SectionHead
             id="listings-title"
@@ -157,22 +186,28 @@ export default function Home() {
                 Verified homes, <em>ready</em> when you are.
               </>
             }
-            lead="Every resale listing is checked for title, approvals and khata, and visited in person, before it appears here."
-            link={
-              <Link className="btn btn--outline" href="/properties/">
-                Browse all properties <Icon name="arrow-right" className="icon--arrow" />
-              </Link>
-            }
+            lead="Every resale listing is checked for title, approvals and khata, and visited in person,"
+            leadMore=" before it appears here."
           />
-          <div className="card-grid card-grid--3" data-stagger="" style={{ marginTop: 32 }}>
-            {buy.map((l) => (
-              <ListingCard key={l.slug} l={l} />
-            ))}
-          </div>
         </div>
+        <Rail label="Handpicked properties">
+          {buy.map((l) => (
+            <ListingCard key={l.slug} l={l} reveal={false} />
+          ))}
+          <BrowseAllCard
+            image={buy[buy.length - 1].images[0].id}
+            eyebrow={`${listings.length}+ verified homes`}
+            title={
+              <>
+                See every home <em>we’ve checked</em>
+              </>
+            }
+            text="Filter by area, budget and bedrooms, then book a visit with an advisor in a few taps."
+          />
+        </Rail>
       </section>
 
-      <section className="section section--cool" aria-labelledby="loc-title" style={{ overflow: "hidden" }}>
+      <section className="section section--cool" aria-labelledby="loc-title" style={{ overflow: "hidden", paddingTop: "clamp(16px,2vw,24px)", paddingBottom: "clamp(16px,2.5vw,28px)" }}>
         <div className="container">
           <SectionHead
             id="loc-title"
@@ -182,22 +217,30 @@ export default function Home() {
                 Know Bengaluru, <em>neighbourhood</em> by neighbourhood.
               </>
             }
-            lead="Prices, yields, metro access and honest trade-offs for the city’s most asked-about areas — refreshed every quarter by our research team."
-            link={
-              <Link className="btn btn--outline" href="/localities/">
-                All locality guides <Icon name="arrow-right" className="icon--arrow" />
-              </Link>
-            }
+            lead="Prices, yields, metro access and honest trade-offs for the city’s most asked-about areas,"
+            leadMore=" refreshed every quarter by our research team."
           />
         </div>
         <Rail label="Locality guides" className="rail-wrap--flip">
           {localities.map((l) => (
             <LocalityFlipCard key={l.slug} loc={l} />
           ))}
+          <BrowseAllCard
+            image={localities[localities.length - 1].image.id}
+            href="/localities/"
+            label="All locality guides"
+            eyebrow={`${localities.length} area guides`}
+            title={
+              <>
+                Find your <em>neighbourhood</em>
+              </>
+            }
+            text="Prices, yields, metro access and honest trade-offs for every area we cover, refreshed every quarter."
+          />
         </Rail>
       </section>
 
-      <section className="section" aria-labelledby="way-title">
+      <section className="section" aria-labelledby="way-title" style={{ paddingTop: "clamp(28px,3.5vw,44px)", paddingBottom: "clamp(16px,2.5vw,28px)" }}>
         <div className="container">
           <SectionHead
             id="way-title"
@@ -213,28 +256,13 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section" style={{ paddingBlock: "clamp(8px,1.5vw,16px)" }}>
         <div className="container">
           <NriBand />
         </div>
       </section>
 
-      <section className="section" aria-labelledby="cities-title" style={{ paddingTop: 0 }}>
-        <div className="container">
-          <SectionHead
-            id="cities-title"
-            eyebrow="Where we work"
-            title={
-              <>
-                Rooted in Bengaluru. <em>Advising</em> across India.
-              </>
-            }
-          />
-        </div>
-        <Cities cities={site.cities} />
-      </section>
-
-      <section className="section section--paper">
+      <section className="section section--paper" style={{ paddingBlock: "clamp(28px,3.5vw,44px) clamp(14px,2vw,24px)" }}>
         <div className="container">
           <Testimonials items={site.testimonials} />
         </div>

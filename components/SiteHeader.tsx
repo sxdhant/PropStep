@@ -113,7 +113,7 @@ export default function SiteHeader({ name, phone, phoneHref }: Props) {
     { label: "Properties", href: "/properties/", note: "Verified homes" },
     { label: "Localities", href: "/localities/", note: "Bengaluru guides" },
     { label: "Services", href: "/services/", note: "Advisory & NRI" },
-    { label: "About Us", href: "/about-us/", note: "Since 2011" },
+    { label: "About Us", href: "/about-us/", note: "Since 2026" },
     { label: "Contact Us", href: "/contact-us/", note: "Bengaluru" },
   ];
 
@@ -177,7 +177,7 @@ export default function SiteHeader({ name, phone, phoneHref }: Props) {
           <Link className="btn btn--block" href="/contact-us/#visit" onClick={() => setMenuOpen(false)}>
             Book a site visit <Icon name="arrow-right" className="icon--arrow" />
           </Link>
-          <a className="btn btn--outline btn--block" href={`tel:${phoneHref}`}>
+          <a className="btn btn--call btn--block" href={`tel:${phoneHref}`}>
             <Icon name="phone" /> {phone}
           </a>
         </div>

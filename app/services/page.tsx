@@ -3,7 +3,8 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import { Faq, NriBand, Process } from "@/components/blocks";
 import { Crumbs, JsonLd, SectionHead, Split } from "@/components/primitives";
-import { site } from "@/lib/content";
+import { getSite } from "@/lib/data";
+import ClampText from "@/components/ClampText";
 
 export const metadata: Metadata = {
   title: "Property advisory services — buy, sell, NRI, plots & commercial",
@@ -18,12 +19,13 @@ const contactType = (slug: string) =>
 const FEES: [string, string][] = [
   ["New launches", "No fee to buyers"],
   ["Resale purchase", "1% of value + GST"],
-  ["Selling your property", "2% of value + GST"],
+  ["Selling your property", "1% of value + GST"],
   ["Commercial leasing", "Agreed in writing upfront"],
   ["Legal due diligence only", "Fixed fee from ₹25,000"],
 ];
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const site = await getSite();
   return (
     <>
       <JsonLd
@@ -48,9 +50,9 @@ export default function ServicesPage() {
               </h1>
             </div>
             <div>
-              <p className="lead" data-reveal="">
+              <ClampText className="lead">
                 Ninety advisors, an in-house legal team and a loans desk, working across six cities. We’re paid on client satisfaction as well as transactions, so sometimes our advice is to wait.
-              </p>
+              </ClampText>
             </div>
           </div>
         </div>

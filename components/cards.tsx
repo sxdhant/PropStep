@@ -1,43 +1,39 @@
 import Link from "next/link";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import Icon from "./Icon";
 import { Photo } from "./primitives";
 import { PerspectiveFlipCard } from "./ui/card-14";
 import { inrGroup } from "@/lib/format";
 import type { Listing, Locality } from "@/lib/types";
 
+/** Three tiles: BHK sizes on offer, how many homes, and the size range */
 export function ListingFacts({ l }: { l: Listing }) {
+  const configs = l.configs?.length ? l.configs : l.bhk ? [l.bhk] : [];
+  const lo = l.area_min ?? l.area;
+  const hi = l.area_max ?? l.area;
+  const facts: { icon: "bed" | "building" | "area"; value: string; label: string }[] = [];
+  if (configs.length) facts.push({ icon: "bed", value: `${configs.length > 1 ? `${configs.slice(0, -1).join(", ")} & ${configs[configs.length - 1]}` : configs[0]} BHK`, label: "Configurations" });
+  if (l.units) facts.push({ icon: "building", value: inrGroup(l.units), label: "Units" });
+  facts.push({ icon: "area", value: lo === hi ? inrGroup(lo) : `${inrGroup(lo)} - ${inrGroup(hi)}`, label: "Size (sq ft)" });
   return (
-    <p className="l-card__facts">
-      {l.bhk ? (
-        <>
-          <span>
-            <Icon name="bed" className="icon--sm" />
-            {l.bhk} BHK
-          </span>
-          <span>
-            <Icon name="bath" className="icon--sm" />
-            {l.baths} baths
-          </span>
-        </>
-      ) : (
-        <span>
-          <Icon name="briefcase" className="icon--sm" />
-          {l.furnishing}
-        </span>
-      )}
-      <span>
-        <Icon name="area" className="icon--sm" />
-        {inrGroup(l.area)} sq ft
-      </span>
-    </p>
+    <ul className="l-card__facts" role="list">
+      {facts.map((f) => (
+        <li key={f.label}>
+          <span className="l-card__fact-label">{f.label}</span>
+          <strong>
+            <Icon name={f.icon} className="icon--sm" />
+            {f.value}
+          </strong>
+        </li>
+      ))}
+    </ul>
   );
 }
 
 type ListingCardProps = { l: Listing; reveal?: boolean; hidden?: boolean; className?: string; eager?: boolean };
 
 export function ListingCard({ l, reveal = true, hidden, className, eager = false }: ListingCardProps) {
-  const badgeCls = l.badge && ["Exclusive", "Price reduced", "New"].includes(l.badge) ? "tag--accent" : "tag--glass";
+  const badgeCls = l.badge && ["Exclusive", "Price reduced", "New"].includes(l.badge) ? "tag--accent" : l.badge === "Verified" ? "tag--blue" : "tag--glass";
   return (
     <Link
       className={`l-card${className ? ` ${className}` : ""}`}
@@ -49,7 +45,7 @@ export function ListingCard({ l, reveal = true, hidden, className, eager = false
       <div className="media">
         <Photo id={l.images[0].id} alt={l.images[0].alt} ratio={[3, 2]} sizes="(min-width: 1000px) 30vw, (min-width: 640px) 46vw, 92vw" eager={eager} />
         <div className="l-card__tags">
-          <span className="tag tag--glass">For sale</span>
+          <span className="tag tag--gold">For sale</span>
           {l.badge ? (
             <span className={`tag ${badgeCls}`}>
               {l.badge === "Verified" ? <Icon name="verified" className="icon--sm" /> : null}
@@ -59,12 +55,21 @@ export function ListingCard({ l, reveal = true, hidden, className, eager = false
         </div>
       </div>
       <div className="l-card__body">
-        <p className="l-card__price">{l.price_label}</p>
-        <h3 className="l-card__title">{l.title}</h3>
-        <p className="l-card__loc">
-          <Icon name="pin" className="icon--sm" />
-          {l.locality}, {l.city}
-        </p>
+        <div className="l-card__head">
+          <div className="l-card__who">
+            {l.developer ? <p className="l-card__dev">{l.developer}</p> : null}
+            <h3 className="l-card__title">{l.project ?? l.title}</h3>
+            <p className="l-card__loc">
+              <Icon name="pin" className="icon--sm" />
+              {l.locality}, {l.city}
+            </p>
+          </div>
+          <div className="l-card__cost">
+            <span className="l-card__from">Starting from</span>
+            <p className="l-card__price">{l.price_label}<sup>*</sup></p>
+            <span className="l-card__psf">₹{inrGroup(Math.round(l.price / (l.area_min ?? l.area)))} per sq ft</span>
+          </div>
+        </div>
         <ListingFacts l={l} />
       </div>
     </Link>
@@ -107,12 +112,32 @@ const rentShort = (range: string) => {
   return hi ? `₹${lo}–${hi}k` : range;
 };
 
+/** The last card of a rail: a frosted, blurred-photo card that leads to the full list */
+export function BrowseAllCard({ image, href = "/properties/", eyebrow, title, text, label = "Browse all properties" }: { image: string; href?: string; eyebrow: string; title: ReactNode; text: string; label?: string }) {
+  return (
+    <Link className="l-card l-card--all" href={href} aria-label={label}>
+      <span className="l-card--all__bg" aria-hidden="true">
+        <Photo id={image} ratio={[3, 4]} sizes="(min-width: 1000px) 25vw, 82vw" fade={false} />
+      </span>
+      <span className="l-card--all__veil" aria-hidden="true" />
+      <span className="l-card--all__body">
+        <span className="l-card--all__eyebrow">{eyebrow}</span>
+        <span className="l-card--all__title">{title}</span>
+        <span className="l-card--all__text">{text}</span>
+        <span className="l-card--all__go" aria-hidden="true">
+          <Icon name="arrow-right" />
+        </span>
+      </span>
+    </Link>
+  );
+}
+
 /** Home-page locality guide: photo and name in front, the numbers on the back (a PerspectiveFlipCard). */
 export function LocalityFlipCard({ loc }: { loc: Locality }) {
   const stats = [
-    { icon: "rupee", value: `₹${inrGroup(loc.price_mid)}`, label: "per sq ft", z: 130 },
-    { icon: "trending", value: loc.growth, label: "in 5 years", z: 160 },
-    { icon: "key", value: rentShort(loc.rent_2bhk), label: "2BHK rent", z: 130 },
+    { icon: "rupee", value: `₹${inrGroup(loc.price_mid)}`, label: "per sq ft", z: 60 },
+    { icon: "trending", value: loc.growth, label: "in 5 years", z: 80 },
+    { icon: "key", value: rentShort(loc.rent_2bhk), label: "2BHK rent", z: 60 },
   ] as const;
   const [first, ...rest] = loc.best_for;
   const bestFor = listFormat.format([first, ...rest.map((b) => b.charAt(0).toLowerCase() + b.slice(1))]);
@@ -121,7 +146,7 @@ export function LocalityFlipCard({ loc }: { loc: Locality }) {
     <div className="loc-flip__front flip-3d">
       <div className="loc-flip__media flip-3d flip-z" style={lift(50)}>
         <div className="loc-flip__img">
-          <Photo id={loc.image.id} alt={loc.image.alt} ratio={[1, 1]} sizes="(min-width: 1280px) 22vw, (min-width: 1000px) 30vw, 84vw" />
+          <Photo id={loc.image.id} alt={loc.image.alt} ratio={[16, 9]} sizes="(min-width: 1280px) 22vw, (min-width: 1000px) 30vw, 84vw" />
         </div>
         <span className="tag tag--glass loc-flip__badge flip-z" style={lift(30)}>
           <Icon name="train" className="icon--sm" />
@@ -136,6 +161,11 @@ export function LocalityFlipCard({ loc }: { loc: Locality }) {
           </p>
           <h3 className="loc-flip__name">{loc.name}</h3>
           <p className="loc-flip__tagline">{loc.tagline}</p>
+          <ul className="loc-flip__points" role="list">
+            {[loc.pros[0], loc.pros[1], `Rental yield around ${loc.yield}`].filter(Boolean).map((t) => (
+              <li key={t}>{t}</li>
+            ))}
+          </ul>
         </div>
         <p className="loc-flip__hint flip-z" style={lift(40)} aria-hidden="true">
           <span className="loc-flip__hint-hover">Hover for the numbers</span>
@@ -151,7 +181,7 @@ export function LocalityFlipCard({ loc }: { loc: Locality }) {
       <ul className="loc-flip__stats flip-3d">
         {stats.map((s) => (
           <li key={s.label} className="loc-flip__stat flip-3d flip-z" style={lift(s.z)}>
-            <span className="loc-flip__stat-icon flip-z" style={lift(s.z === 160 ? 25 : 20)}>
+            <span className="loc-flip__stat-icon flip-z" style={lift(s.z === 80 ? 25 : 20)}>
               <Icon name={s.icon} />
             </span>
             <strong className="flip-z" style={lift(10)}>{s.value}</strong>
@@ -174,5 +204,5 @@ export function LocalityFlipCard({ loc }: { loc: Locality }) {
     </div>
   );
 
-  return <PerspectiveFlipCard className="loc-flip" front={front} back={back} />;
+  return <PerspectiveFlipCard className="loc-flip" h="384px" front={front} back={back} />;
 }

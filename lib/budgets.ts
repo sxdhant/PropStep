@@ -9,4 +9,4 @@ export const BUDGETS = [
 ] as const;
 
 /** Listing types the property search filters by (the hero search and /properties/) */
-export const PROPERTY_TYPES = ["Apartment", "Villa", "Plot", "Farmhouse", "Studio apartment", "Penthouse"];
+export const PROPERTY_TYPES = ["Apartment", "Villa", "Plot", "Farmland", "Studio apartment", "Penthouse"];

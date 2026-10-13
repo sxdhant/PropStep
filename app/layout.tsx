@@ -5,7 +5,7 @@ import MotionRoot from "@/components/MotionRoot";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { JsonLd } from "@/components/primitives";
-import { site, SITE_URL } from "@/lib/content";
+import { getSite, SITE_URL } from "@/lib/data";
 import { photoUrl } from "@/lib/img";
 import { splashBoot } from "@/lib/splash";
 import { themeBoot } from "@/lib/theme";
@@ -16,7 +16,9 @@ const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", displa
 const instrument = Instrument_Serif({ subsets: ["latin"], weight: "400", style: "italic", variable: "--font-instrument", display: "swap" });
 
 
-export const metadata: Metadata = {
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSite();
+  return {
   metadataBase: new URL(SITE_URL),
   title: { default: `${site.name} — Property advisory & verified listings in Bengaluru`, template: `%s | ${site.name}` },
   description: site.description,
@@ -27,7 +29,8 @@ export const metadata: Metadata = {
     images: [photoUrl("1600585154340-be6161a56a0c", 1200, [1200, 630], 75)],
   },
   twitter: { card: "summary_large_image" },
-};
+  };
+}
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -41,7 +44,7 @@ export const viewport: Viewport = {
 const bootScript =
   "document.documentElement.classList.add('js');setTimeout(function(){if(!window.__ps)document.documentElement.classList.remove('js')},3500)";
 
-const org = {
+const orgData = (site: Awaited<ReturnType<typeof getSite>>) => ({
   "@context": "https://schema.org",
   "@type": "RealEstateAgent",
   name: site.name,
@@ -60,9 +63,11 @@ const org = {
     addressCountry: "IN",
   },
   areaServed: site.cities.map((c) => c.name),
-};
+});
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const site = await getSite();
+  const org = orgData(site);
   return (
     <html lang="en-IN" className={`${manrope.variable} ${instrument.variable}`} suppressHydrationWarning>
       <head>

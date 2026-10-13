@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
-import { listings, localities, SITE_URL } from "@/lib/content";
+import { getListings, getLocalities, SITE_URL } from "@/lib/data";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [listings, localities] = await Promise.all([getListings(), getLocalities()]);
   const now = new Date();
   const paths = [
     "/",

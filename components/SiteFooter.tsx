@@ -1,12 +1,13 @@
 import Link from "next/link";
-import Icon from "./Icon";
+import Icon, { WhatsAppIcon } from "./Icon";
 import { Brand } from "./primitives";
 import { NewsletterForm } from "./forms";
 import { ActionBar } from "./widgets";
-import { site } from "@/lib/content";
+import { getSite } from "@/lib/data";
 import { waLink } from "@/lib/format";
 
-export default function SiteFooter() {
+export default async function SiteFooter() {
+  const site = await getSite();
   const wa = waLink(site.whatsapp, "Hi Propstep, I'd like to know more.");
   const phone = { href: site.phone_href, label: site.phone };
   return (
@@ -16,23 +17,23 @@ export default function SiteFooter() {
           <div className="footer-cta">
             <div>
               <p className="eyebrow eyebrow--light">Talk to an advisor</p>
-              <h2 style={{ marginTop: 18 }}>
-                Let’s find your <em style={{ color: "var(--blue-300)" }}>next</em> address.
+              <h2 style={{ marginTop: 10 }}>
+                Let’s find your <em style={{ color: "var(--orange-400)" }}>next</em> address.
               </h2>
             </div>
             <div className="btn-row">
               <Link className="btn btn--light" href="/contact-us/#visit">
                 Book a site visit <Icon name="arrow-right" className="icon--arrow" />
               </Link>
-              <a className="btn btn--ghost-light" href={wa} target="_blank" rel="noopener">
-                <Icon name="chat" /> WhatsApp us
+              <a className="btn btn--wa" href={wa} target="_blank" rel="noopener">
+                <WhatsAppIcon /> WhatsApp us
               </a>
             </div>
           </div>
           <div className="footer-grid">
             <div>
               <Brand name={site.name} />
-              <p style={{ marginTop: 18, maxWidth: "40ch" }}>{site.description}</p>
+              <p style={{ marginTop: 10, maxWidth: "none", fontSize: "0.78rem", lineHeight: 1.55 }}>{site.description}</p>
               <div>
                 <NewsletterForm phone={phone} />
               </div>

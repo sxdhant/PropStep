@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Children, cloneElement, isValidElement, type CSSProperties, type ReactElement, type ReactNode } from "react";
 import { photoSrc, type Ratio } from "@/lib/img";
+import ClampText from "./ClampText";
 
 /* ---------- Brand ----------
    Recreated from the supplied Propstep logo artwork: the house mark is clean geometry fitted to the
@@ -108,12 +109,14 @@ type SectionHeadProps = {
   eyebrow: string;
   title: ReactNode;
   lead?: ReactNode;
+  /** Rest of the lead: the lead folds to two lines behind a "Read more" link only when it would run longer */
+  leadMore?: string;
   link?: ReactNode;
   id?: string;
   split?: boolean;
 };
 
-export function SectionHead({ eyebrow, title, lead, link, id, split = true }: SectionHeadProps) {
+export function SectionHead({ eyebrow, title, lead, leadMore, link, id, split = true }: SectionHeadProps) {
   return (
     <div className={`section-head${link ? " section-head--split" : ""}`}>
       <div>
@@ -124,9 +127,10 @@ export function SectionHead({ eyebrow, title, lead, link, id, split = true }: Se
           {split ? <Split>{title}</Split> : title}
         </h2>
         {lead ? (
-          <p className="lead" data-reveal="" style={{ "--delay": "120ms" } as CSSProperties}>
+          <ClampText className="lead">
             {lead}
-          </p>
+            {leadMore}
+          </ClampText>
         ) : null}
       </div>
       {link ? (

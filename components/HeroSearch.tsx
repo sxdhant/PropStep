@@ -33,6 +33,13 @@ export default function HeroSearch({ zones, areas, counts }: Props) {
     if (location && !areas.some((a) => a.name === location && inZone(a, z))) setLocation("");
   };
 
+  // Choosing a location selects its zone (keeping the current one if the location falls in several)
+  const chooseLocation = (name: string) => {
+    setLocation(name);
+    const zs = areas.find((a) => a.name === name)?.zones ?? [];
+    if (zs.length && !zs.includes(zone)) setZone(zs[0]);
+  };
+
   const locations: DropdownOption[] = [{ value: "", label: "All locations" }, ...areas.filter((a) => inZone(a, zone)).map((a) => ({ value: a.name, label: a.name }))];
 
   // Bengaluru is the search's only city, so it needs no parameter
@@ -64,7 +71,7 @@ export default function HeroSearch({ zones, areas, counts }: Props) {
             options={[{ value: "", label: "All zones" }, ...zones.map((z) => ({ value: z, label: z }))]}
             onChange={chooseZone}
           />
-          <Dropdown className="dd--field" label="Location" icon="pin" search="Search location…" value={location} options={locations} onChange={setLocation} />
+          <Dropdown className="dd--field" label="Location" icon="pin" search="Search location…" value={location} options={locations} onChange={chooseLocation} />
           <Dropdown className="dd--field" label="Property type" icon="building" value={type} options={TYPE_OPTIONS} onChange={setType} />
           <Dropdown className="dd--field" label="Price range" icon="rupee" value={price} options={PRICE_OPTIONS} onChange={setPrice} />
           {[...params].map(([name, value]) => (

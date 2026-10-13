@@ -1,12 +1,28 @@
+import fs from "node:fs";
+import path from "node:path";
 import siteJson from "@/content/site.json";
+import { buildListings, CSV_PATH } from "./listings-csv.mjs";
 import listingsJson from "@/content/listings.json";
 import localitiesJson from "@/content/localities.json";
 import areasJson from "@/content/areas.json";
 import type { Listing, Locality, Site } from "./types";
 
 export const site = siteJson as unknown as Site;
-// Propstep lists homes for sale only: rental listings in listings.json are kept but not published
-export const listings = (listingsJson as unknown as Listing[]).filter((l) => l.intent === "buy");
+/**
+ * Listings come from the spreadsheet content/listings.csv (one row per property, see lib/listings-csv.mjs).
+ * A mistake in the sheet fails the build/dev server with the row number; without a sheet, listings.json is used.
+ * Edits to the sheet show up after the dev server restarts or on the next build.
+ */
+function loadListings(): Listing[] {
+  const file = path.join(/*turbopackIgnore: true*/ process.cwd(), CSV_PATH);
+  if (!fs.existsSync(file)) return listingsJson as unknown as Listing[];
+  const { listings, errors, warnings } = buildListings(fs.readFileSync(file, "utf8"));
+  warnings.forEach((w) => console.warn(`[listings] ${w}`));
+  if (errors.length) throw new Error(`${CSV_PATH} has ${errors.length} problem(s):\n${errors.map((e) => `  - ${e}`).join("\n")}`);
+  return listings as Listing[];
+}
+// Propstep lists homes for sale only: rental listings in the sheet are kept but not published
+export const listings = loadListings().filter((l) => l.intent === "buy");
 export const localities = localitiesJson as unknown as Locality[];
 
 /** Public site URL for canonical links and the sitemap. Override with NEXT_PUBLIC_SITE_URL. */

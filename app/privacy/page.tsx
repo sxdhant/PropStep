@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Crumbs } from "@/components/primitives";
-import { site } from "@/lib/content";
+import { getSite } from "@/lib/data";
+import ClampText from "@/components/ClampText";
 
 export const metadata: Metadata = {
   title: "Privacy policy",
@@ -8,7 +9,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/privacy/" },
 };
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const site = await getSite();
   return (
     <>
       <section className="page-hero">
@@ -18,9 +20,9 @@ export default function PrivacyPage() {
             Legal
           </p>
           <h1 className="h1">Privacy policy</h1>
-          <p className="lead" style={{ marginTop: 18 }}>
+          <ClampText className="lead" style={{ marginTop: 18 }}>
             How {site.legal_name} collects and uses your personal data. Last updated September 2026.
-          </p>
+          </ClampText>
         </div>
       </section>
       <section className="section" style={{ paddingTop: 0 }}>

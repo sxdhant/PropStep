@@ -1,19 +1,19 @@
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
-import Icon from "./Icon";
+import Icon, { WhatsAppIcon } from "./Icon";
 import { Photo, Split } from "./primitives";
 import { Clocks } from "./widgets";
 import { VisitForm } from "./forms";
 import { inrGroup, initials, waLink } from "@/lib/format";
-import { listings, site } from "@/lib/content";
+import { getPhoneProps, getSite, getVisitOptions } from "@/lib/data";
 import type { Advisor } from "@/lib/types";
+import ClampText from "./ClampText";
+import GmailLink from "./GmailLink";
 
-export const phoneProps = { href: site.phone_href, label: site.phone };
-/** The site-visit form's choices: the properties we list */
-export const visitPropertyOptions = listings.map((l) => [l.title, `${l.title} — ${l.locality}`] as [string, string]);
 
 /* ---------- Stats with count-up ---------- */
-export function StatsBlock() {
+export async function StatsBlock() {
+  const site = await getSite();
   return (
     <div className="stats" data-stagger="" style={{ "--n": site.stats.length } as CSSProperties}>
       {site.stats.map((s) => {
@@ -44,8 +44,8 @@ export function Marquee({ items }: { items: string[] }) {
   return (
     <div className="marquee" aria-label="Highlights">
       <div className="marquee__track">
-        <div style={{ display: "flex", gap: 56 }}>{row}</div>
-        <div style={{ display: "flex", gap: 56 }} aria-hidden="true">
+        <div style={{ display: "flex", gap: 40 }}>{row}</div>
+        <div style={{ display: "flex", gap: 40 }} aria-hidden="true">
           {row}
         </div>
       </div>
@@ -53,10 +53,11 @@ export function Marquee({ items }: { items: string[] }) {
   );
 }
 
-export function ContactLines({ waText = "Hi Propstep, I'd like to talk to an advisor." }: { waText?: string }) {
+export async function ContactLines({ waText = "Hi Propstep, I'd like to talk to an advisor." }: { waText?: string }) {
+  const site = await getSite();
   return (
     <div className="contact-lines">
-      <a className="contact-line" href={`tel:${site.phone_href}`}>
+      <a className="contact-line contact-line--phone" href={`tel:${site.phone_href}`}>
         <span className="icon-wrap">
           <Icon name="phone" />
         </span>
@@ -65,15 +66,15 @@ export function ContactLines({ waText = "Hi Propstep, I'd like to talk to an adv
           <small>{site.hours}</small>
         </span>
       </a>
-      <a className="contact-line" href={waLink(site.whatsapp, waText)} target="_blank" rel="noopener">
+      <a className="contact-line contact-line--wa" href={waLink(site.whatsapp, waText)} target="_blank" rel="noopener">
         <span className="icon-wrap">
-          <Icon name="chat" />
+          <WhatsAppIcon />
         </span>
         <span>
           WhatsApp an advisor<small>Replies in under 15 minutes during office hours</small>
         </span>
       </a>
-      <a className="contact-line" href={`mailto:${site.email}`}>
+      <GmailLink className="contact-line contact-line--mail" email={site.email}>
         <span className="icon-wrap">
           <Icon name="mail" />
         </span>
@@ -81,7 +82,7 @@ export function ContactLines({ waText = "Hi Propstep, I'd like to talk to an adv
           {site.email}
           <small>For documents, brochures and NRI queries</small>
         </span>
-      </a>
+      </GmailLink>
     </div>
   );
 }
@@ -101,12 +102,12 @@ export function NriBand() {
         </p>
         <h2 className="h2" style={{ marginTop: 18 }} data-split="">
           <Split>
-            Buying from Dubai, Singapore or <em style={{ color: "var(--blue-300)" }}>San Jose?</em>
+            Buying from Dubai, Singapore or <em style={{ color: "var(--orange-400)" }}>San Jose?</em>
           </Split>
         </h2>
-        <p className="lead" style={{ marginTop: 18 }} data-reveal="">
+        <ClampText className="lead" style={{ marginTop: 18 }}>
           A third of our clients live outside India. Our NRI Desk works your hours and handles every step, so you can buy with confidence without flying in.
-        </p>
+        </ClampText>
         <ul className="band__list" role="list" data-stagger="">
           {points.map((p) => (
             <li data-reveal="" key={p}>
@@ -122,6 +123,7 @@ export function NriBand() {
             ["Singapore", "Asia/Singapore"],
             ["London", "Europe/London"],
             ["San Jose", "America/Los_Angeles"],
+            
           ]}
         />
         <div className="btn-row" style={{ marginTop: 32 }}>
@@ -140,7 +142,8 @@ export function NriBand() {
   );
 }
 
-export function Process() {
+export async function Process() {
+  const site = await getSite();
   return (
     <ol className="process" role="list" data-inview="" data-stagger="">
       <span className="process__line" aria-hidden="true">
@@ -191,9 +194,10 @@ export function Faq({ items }: { items: { q: string; a: string }[] }) {
 }
 
 /* ---------- CTA with site-visit form ---------- */
-export function CtaSection({ title, text, form }: { title?: ReactNode; text?: string; form?: ReactNode }) {
+export async function CtaSection({ title, text, form }: { title?: ReactNode; text?: string; form?: ReactNode }) {
+  const [phoneProps, visitPropertyOptions] = form ? [null, null] : await Promise.all([getPhoneProps(), getVisitOptions()]);
   return (
-    <section className="section" id="visit">
+    <section className="section" id="visit" style={{ paddingTop: "clamp(20px,3vw,36px)" }}>
       <div className="container">
         <div className="cta">
           <div>
@@ -209,15 +213,15 @@ export function CtaSection({ title, text, form }: { title?: ReactNode; text?: st
                 )}
               </Split>
             </h2>
-            <p className="lead" style={{ marginTop: 18 }} data-reveal="">
+            <ClampText className="lead" style={{ marginTop: 18 }}>
               {text ?? "Tell us when suits you and we'll do the rest — a chauffeured visit in Bengaluru, or a live video walkthrough from anywhere in the world."}
-            </p>
+            </ClampText>
             <div data-reveal="">
               <ContactLines />
             </div>
           </div>
           <div className="form-card" data-reveal="">
-            {form ?? <VisitForm prefix="home-visit" phone={phoneProps} properties={visitPropertyOptions} />}
+            {form ?? (phoneProps && visitPropertyOptions && <VisitForm prefix="home-visit" phone={phoneProps} properties={visitPropertyOptions} />)}
           </div>
         </div>
       </div>

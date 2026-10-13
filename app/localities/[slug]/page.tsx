@@ -2,21 +2,22 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Icon from "@/components/Icon";
 import TrendChart from "@/components/TrendChart";
-import { NoFooterCta, phoneProps } from "@/components/blocks";
+import { NoFooterCta } from "@/components/blocks";
 import { ListingCard, LocalityCard } from "@/components/cards";
 import { EnquiryForm } from "@/components/forms";
 import { Crumbs, JsonLd, Photo, SectionHead, Split } from "@/components/primitives";
 import { Rail } from "@/components/widgets";
-import { getLocality, listings, localities, SITE_URL } from "@/lib/content";
+import { getListings, getLocalities, getLocality, getPhoneProps, SITE_URL } from "@/lib/data";
 import { photoUrl } from "@/lib/img";
+import ClampText from "@/components/ClampText";
 
-export const dynamicParams = false;
-export const generateStaticParams = () => localities.map((l) => ({ slug: l.slug }));
+export const revalidate = 3600; // admin edits also revalidate by tag
+export const generateStaticParams = async () => (await getLocalities()).map((l) => ({ slug: l.slug }));
 
 type Params = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  const loc = getLocality((await params).slug);
+  const loc = await getLocality((await params).slug);
   if (!loc) return {};
   return {
     title: `${loc.name}, Bengaluru — locality guide: prices, yields & metro`,
@@ -27,8 +28,9 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 }
 
 export default async function LocalityPage({ params }: Params) {
-  const loc = getLocality((await params).slug);
+  const loc = await getLocality((await params).slug);
   if (!loc) notFound();
+  const [listings, localities, phoneProps] = await Promise.all([getListings(), getLocalities(), getPhoneProps()]);
   const relListings = listings.filter((l) => l.locality_slug === loc.slug);
   const others = localities.filter((o) => o.slug !== loc.slug);
 
@@ -58,9 +60,9 @@ export default async function LocalityPage({ params }: Params) {
           <h1 className="h1" data-split="">
             <Split>{loc.name}</Split>
           </h1>
-          <p className="lead" style={{ marginTop: 16 }} data-reveal="">
+          <ClampText className="lead" style={{ marginTop: 16 }}>
             {loc.tagline}
-          </p>
+          </ClampText>
           <dl className="lo-stats" data-reveal="">
             <div>
               <dt>Avg. price / sq ft</dt>
@@ -235,9 +237,9 @@ export default async function LocalityPage({ params }: Params) {
                   Get the <em>{loc.name}</em> shortlist.
                 </Split>
               </h2>
-              <p className="lead" style={{ marginTop: 18 }} data-reveal="">
+              <ClampText className="lead" style={{ marginTop: 18 }}>
                 Tell us your budget and timelines. An advisor who works this area every day will send you five homes worth seeing — including some that aren’t online yet.
-              </p>
+              </ClampText>
               <p className="small muted" style={{ marginTop: 24 }}>
                 Figures on this page are indicative averages for Q3 2026 from Propstep research and are not a valuation or an offer.
               </p>
