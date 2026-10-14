@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { fail, ok, parseBody, requireAdmin } from "@/lib/http";
 import { audit, bust } from "@/lib/admin/ops";
 import { getSite } from "@/lib/data";
-import { DEFAULT_PILLARS } from "@/lib/pillars";
+import { DEFAULT_MARQUEE, DEFAULT_PILLARS } from "@/lib/pillars";
 import { isSettingKey, SETTINGS } from "@/lib/validation/admin";
 
 type Ctx = { params: Promise<{ key: string }> };
@@ -14,7 +14,7 @@ export async function GET(req: Request, { params }: Ctx) {
   const { key } = await params;
   if (!isSettingKey(key)) return fail(404, "Unknown setting");
   const row = await db.siteSetting.findUnique({ where: { key } });
-  return ok({ key, value: row ? row.value : key === "pillars" ? DEFAULT_PILLARS : ((await getSite()) as unknown as Record<string, unknown>)[key] });
+  return ok({ key, value: row ? row.value : key === "pillars" ? DEFAULT_PILLARS : key === "marquee" ? DEFAULT_MARQUEE : ((await getSite()) as unknown as Record<string, unknown>)[key] });
 }
 
 export async function PUT(req: Request, { params }: Ctx) {

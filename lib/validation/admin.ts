@@ -138,6 +138,7 @@ export const SETTINGS = {
   values: z.array(z.object({ icon, title: reqText("Title", 80), text: reqText("Text", 400) })).max(12),
   milestones: z.array(z.object({ year: reqText("Year", 10), title: reqText("Title", 100), text: reqText("Text", 400) })).max(20),
   services: z.array(z.object({ slug: slugSchema, icon, title: reqText("Title", 100), short: reqText("Summary", 400), points: lines(200, 12), image: reqText("Image", 500) })).max(20),
+  marquee: z.array(reqText("Text", 80)).min(1, "Keep at least one line").max(20),
   pillars: z
     .array(
       z.object({

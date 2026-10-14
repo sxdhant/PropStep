@@ -1,5 +1,16 @@
 import type { PillarContent } from "./types";
 
+/** The scrolling line of highlights under the home page stats, until it is edited in Site settings. */
+export const DEFAULT_MARQUEE = [
+  "Karnataka RERA-registered agent",
+  "40-point legal due diligence",
+  "Every listing visited in person",
+  "12+ partner lenders",
+  "Best Advisory in Bengaluru",
+  "New launches and resale, side by side",
+  "Chauffeured site visits",
+];
+
 /** The "What we do" cards on the home page, until they are edited in Site settings. */
 export const DEFAULT_PILLARS: PillarContent[] = [
   {

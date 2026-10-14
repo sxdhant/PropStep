@@ -10,7 +10,7 @@ const BLOCKS: [string, string, string][] = [
   ["hq", "Head office", "hq"],
   ["social", "Social links", "social"],
   ["pillars", "What we do (home page)", "pillars"],
-  ["stats", "Home page stats", "stats"],
+  ["stats", "Home page stats", "stats,marquee"],
   ["cities", "Cities", "cities"],
   ["offices", "Offices", "offices"],
   ["leadership", "Leadership", "leadership"],
@@ -30,7 +30,7 @@ type Kind = "text" | "textarea" | "number" | "icon" | "lines" | "image" | "selec
 /** path: where the server reports this field's errors, when that differs from its key (e.g. "links.0.label") */
 type FieldDef = { key: string; label: string; kind?: Kind; hint?: string; placeholder?: string; wide?: boolean; optional?: boolean; path?: string; options?: [string, string][] };
 /** to / from: convert between the stored item and the flat fields shown (used where an item holds a small nested list) */
-type Form = { type: "object" | "list"; fields: FieldDef[]; itemName?: string; intro?: string; max?: number; to?: (row: Row) => Row; from?: (draft: Row) => Row };
+type Form = { type: "object" | "list"; fields: FieldDef[]; itemName?: string; intro?: string; max?: number; title?: string; /** the items are plain text lines: this is the field they are edited in */ scalar?: string; to?: (row: Row) => Row; from?: (draft: Row) => Row };
 
 const FORMS: Record<string, Form> = {
   hq: {
@@ -90,8 +90,15 @@ const FORMS: Record<string, Form> = {
       return out;
     },
   },
+  marquee: {
+    type: "list", itemName: "Line", max: 20, scalar: "text",
+    title: "Scrolling highlights",
+    intro: "The line of short highlights that scrolls under the numbers. They repeat in a loop, in this order.",
+    fields: [{ key: "text", label: "Highlight", wide: true, placeholder: "e.g. Every listing visited in person" }],
+  },
   stats: {
     type: "list", itemName: "Stat", max: 8,
+    title: "Numbers",
     intro: "The big numbers on the home page, in this order.",
     fields: [
       { key: "value", label: "Number", kind: "number", hint: "e.g. 4.8 or 1200" },
@@ -240,18 +247,18 @@ function FormSetting({ k }: { k: string }) {
   useEffect(() => {
     if (!data) return;
     const list = form.type === "list" ? (Array.isArray(data.value) ? (data.value as Row[]) : []) : [(data.value as Row) ?? {}];
-    setRows(list.map((r) => toDraft(r, form.fields, form.to)));
+    setRows(list.map((r) => toDraft(form.scalar ? ({ [form.scalar]: r } as unknown as Row) : r, form.fields, form.to)));
   }, [data, form]);
 
   const edit = (i: number, key: string, v: string) => setRows((p) => p.map((r, j) => (j === i ? { ...r, [key]: v } : r)));
   const move = (i: number, d: number) => setRows((p) => { const a = [...p]; [a[i + d], a[i]] = [a[i], a[i + d]]; return a; });
   // the server reports list problems as "0.title" and group problems as "line1"
-  const err = (i: number, f: FieldDef) => errors[form.type === "list" ? `${i}.${f.path ?? f.key}` : f.path ?? f.key];
+  const err = (i: number, f: FieldDef) => errors[form.scalar ? String(i) : form.type === "list" ? `${i}.${f.path ?? f.key}` : f.path ?? f.key];
 
   async function save() {
     setMsg({});
     setBusy(true);
-    const body = form.type === "list" ? rows.map((r) => fromDraft(r, form.fields, form.from)) : fromDraft(rows[0], form.fields, form.from);
+    const body = form.scalar ? rows.map((r) => String(r[form.scalar!] ?? "").trim()).filter(Boolean) : form.type === "list" ? rows.map((r) => fromDraft(r, form.fields, form.from)) : fromDraft(rows[0], form.fields, form.from);
     const r = await api(`/api/admin/site/${k}`, { method: "PUT", body });
     setBusy(false);
     if (!r.ok) {
@@ -279,6 +286,7 @@ function FormSetting({ k }: { k: string }) {
 
   return (
     <div style={{ marginBottom: 16 }}>
+      {form.title ? <h3 style={{ margin: "8px 0 4px" }}>{form.title}</h3> : null}
       {form.intro ? <p className="admin-sub">{form.intro}</p> : null}
       {form.type === "object" ? (
         rows[0] ? fields(0) : null

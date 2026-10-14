@@ -149,6 +149,8 @@ export type Site = {
   offices: { city: string; label: string; address: string; phone: string }[];
   /** Home page "What we do" cards; the built-in defaults are used until this is saved */
   pillars?: PillarContent[];
+  /** Home page scrolling highlights; the built-in list is used until this is saved */
+  marquee?: string[];
   advisors: Record<string, Advisor>;
   /** linkedin: the person's LinkedIn profile URL */
   /** photo: optional headshot path under /public (the initials show without it) */

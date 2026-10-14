@@ -8,7 +8,7 @@ import { BrowseAllCard, ListingCard, LocalityFlipCard } from "@/components/cards
 import { CtaSection, Marquee, NoFooterCta, NriBand, Process, StatsBlock } from "@/components/blocks";
 import { SectionHead, Split } from "@/components/primitives";
 import { Pillars, Rail, Testimonials, type Pillar } from "@/components/widgets";
-import { DEFAULT_PILLARS } from "@/lib/pillars";
+import { DEFAULT_MARQUEE, DEFAULT_PILLARS } from "@/lib/pillars";
 import { areasIn, getListings, getLocalities, getSite, zoneResolver, ZONES } from "@/lib/data";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -103,17 +103,7 @@ export default async function Home() {
           <StatsBlock />
         </div>
         <div style={{ marginTop: "clamp(18px,2.5vw,32px)" }}>
-          <Marquee
-            items={[
-              "Karnataka RERA-registered agent",
-              "40-point legal due diligence",
-              "Every listing visited in person",
-              "12+ partner lenders",
-              "Best Advisory in Bengaluru",
-              "New launches and resale, side by side",
-              "Chauffeured site visits",
-            ]}
-          />
+          <Marquee items={site.marquee?.length ? site.marquee : DEFAULT_MARQUEE} />
         </div>
       </section>
 
