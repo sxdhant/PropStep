@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react";
 import IconSelect from "./IconSelect";
+import Select from "./Select";
 import { Alert, api, Field, uploadImage, useLoad } from "./ui";
 
 const BLOCKS: [string, string, string][] = [
   ["contact", "Contact & identity", "name,legal_name,description,since,phone,phone_href,whatsapp,email,hours,agent_rera"],
   ["hq", "Head office", "hq"],
   ["social", "Social links", "social"],
+  ["pillars", "What we do (home page)", "pillars"],
   ["stats", "Home page stats", "stats"],
   ["cities", "Cities", "cities"],
   ["offices", "Offices", "offices"],
@@ -24,9 +26,11 @@ const LABELS: Record<string, string> = {
 };
 
 /* ---------- forms for the blocks that hold lists or groups of fields ---------- */
-type Kind = "text" | "textarea" | "number" | "icon" | "lines" | "image";
-type FieldDef = { key: string; label: string; kind?: Kind; hint?: string; placeholder?: string; wide?: boolean; optional?: boolean };
-type Form = { type: "object" | "list"; fields: FieldDef[]; itemName?: string; intro?: string; max?: number };
+type Kind = "text" | "textarea" | "number" | "icon" | "lines" | "image" | "select";
+/** path: where the server reports this field's errors, when that differs from its key (e.g. "links.0.label") */
+type FieldDef = { key: string; label: string; kind?: Kind; hint?: string; placeholder?: string; wide?: boolean; optional?: boolean; path?: string; options?: [string, string][] };
+/** to / from: convert between the stored item and the flat fields shown (used where an item holds a small nested list) */
+type Form = { type: "object" | "list"; fields: FieldDef[]; itemName?: string; intro?: string; max?: number; to?: (row: Row) => Row; from?: (draft: Row) => Row };
 
 const FORMS: Record<string, Form> = {
   hq: {
@@ -49,6 +53,42 @@ const FORMS: Record<string, Form> = {
       { key: "linkedin", label: "LinkedIn link", wide: true },
       { key: "youtube", label: "YouTube link", wide: true },
     ],
+  },
+  pillars: {
+    type: "list", itemName: "Card", max: 6,
+    intro: "The “What we do” cards on the home page, in this order. Each card can have up to three buttons.",
+    fields: [
+      { key: "title", label: "Title", hint: "e.g. Discover" },
+      { key: "sub", label: "Small heading", hint: "e.g. Verified listings" },
+      { key: "text", label: "Description", kind: "textarea", wide: true },
+      { key: "tags", label: "Tags", kind: "lines", wide: true, hint: "One per line, e.g. Apartments" },
+      { key: "image", label: "Photo", kind: "image", hint: "Upload, or paste a link" },
+      { key: "alt", label: "Photo description", hint: "For accessibility, e.g. Modern villa with a pool" },
+      ...[1, 2, 3].flatMap((n) => [
+        { key: `link${n}_label`, label: `Button ${n}: text`, optional: true, path: `links.${n - 1}.label`, hint: n === 1 ? "Leave a button's text empty to hide it" : undefined },
+        { key: `link${n}_href`, label: `Button ${n}: link`, optional: true, path: `links.${n - 1}.href`, hint: n === 1 ? "A page like /properties/ or /services/#sell" : undefined },
+        { key: `link${n}_look`, label: `Button ${n}: colour`, kind: "select" as const, optional: true, path: `links.${n - 1}.look`, options: [["", "Automatic"], ["accent", "Orange"], ["light", "White"]] as [string, string][] },
+      ]),
+    ],
+    to: (row) => {
+      const links = (row.links as { label: string; href: string; look?: string }[]) ?? [];
+      const out: Row = { ...row };
+      [1, 2, 3].forEach((n) => {
+        const l = links[n - 1];
+        out[`link${n}_label`] = l?.label ?? "";
+        out[`link${n}_href`] = l?.href ?? "";
+        out[`link${n}_look`] = l?.look ?? "";
+      });
+      return out;
+    },
+    from: (d) => {
+      const links = [1, 2, 3]
+        .filter((n) => String(d[`link${n}_label`] ?? "").trim() || String(d[`link${n}_href`] ?? "").trim())
+        .map((n) => ({ label: String(d[`link${n}_label`] ?? "").trim(), href: String(d[`link${n}_href`] ?? "").trim(), ...(d[`link${n}_look`] ? { look: d[`link${n}_look`] } : {}) }));
+      const out: Row = { ...d, links };
+      [1, 2, 3].forEach((n) => ["label", "href", "look"].forEach((k) => delete out[`link${n}_${k}`]));
+      return out;
+    },
   },
   stats: {
     type: "list", itemName: "Stat", max: 8,
@@ -131,7 +171,8 @@ const FORMS: Record<string, Form> = {
 type Row = Record<string, unknown>;
 
 /** stored value -> what the form fields edit (everything as text) */
-function toDraft(row: Row, fields: FieldDef[]): Row {
+function toDraft(input: Row, fields: FieldDef[], conv?: (row: Row) => Row): Row {
+  const row = conv ? conv(input) : input;
   const out: Row = { ...row };
   for (const f of fields) {
     const v = row[f.key];
@@ -141,7 +182,8 @@ function toDraft(row: Row, fields: FieldDef[]): Row {
 }
 
 /** form text -> the shape the server validates; empty optional fields are dropped */
-function fromDraft(row: Row, fields: FieldDef[]): Row {
+function fromDraft(input: Row, fields: FieldDef[], conv?: (row: Row) => Row): Row {
+  const row = input;
   const out: Row = { ...row };
   for (const f of fields) {
     const v = String(row[f.key] ?? "");
@@ -154,11 +196,12 @@ function fromDraft(row: Row, fields: FieldDef[]): Row {
       else delete out[f.key];
     } else out[f.key] = v;
   }
-  return out;
+  return conv ? conv(out) : out;
 }
 
 function FieldInput({ f, id, value, onChange, invalid }: { f: FieldDef; id: string; value: string; onChange: (v: string) => void; invalid: boolean }) {
   const [up, setUp] = useState("");
+  if (f.kind === "select") return <Select label={f.label} value={value} onChange={onChange} options={f.options ?? []} />;
   if (f.kind === "icon") return <IconSelect label={f.label} value={value} onChange={onChange} invalid={invalid} />;
   if (f.kind === "textarea" || f.kind === "lines") return <textarea id={id} value={value} onChange={(e) => onChange(e.target.value)} style={{ minHeight: f.kind === "lines" ? 110 : 80 }} />;
   if (f.kind === "image")
@@ -197,18 +240,18 @@ function FormSetting({ k }: { k: string }) {
   useEffect(() => {
     if (!data) return;
     const list = form.type === "list" ? (Array.isArray(data.value) ? (data.value as Row[]) : []) : [(data.value as Row) ?? {}];
-    setRows(list.map((r) => toDraft(r, form.fields)));
+    setRows(list.map((r) => toDraft(r, form.fields, form.to)));
   }, [data, form]);
 
   const edit = (i: number, key: string, v: string) => setRows((p) => p.map((r, j) => (j === i ? { ...r, [key]: v } : r)));
   const move = (i: number, d: number) => setRows((p) => { const a = [...p]; [a[i + d], a[i]] = [a[i], a[i + d]]; return a; });
   // the server reports list problems as "0.title" and group problems as "line1"
-  const err = (i: number, key: string) => errors[form.type === "list" ? `${i}.${key}` : key];
+  const err = (i: number, f: FieldDef) => errors[form.type === "list" ? `${i}.${f.path ?? f.key}` : f.path ?? f.key];
 
   async function save() {
     setMsg({});
     setBusy(true);
-    const body = form.type === "list" ? rows.map((r) => fromDraft(r, form.fields)) : fromDraft(rows[0], form.fields);
+    const body = form.type === "list" ? rows.map((r) => fromDraft(r, form.fields, form.from)) : fromDraft(rows[0], form.fields, form.from);
     const r = await api(`/api/admin/site/${k}`, { method: "PUT", body });
     setBusy(false);
     if (!r.ok) {
@@ -227,8 +270,8 @@ function FormSetting({ k }: { k: string }) {
   const fields = (i: number) => (
     <div className="a-grid">
       {form.fields.map((f) => (
-        <Field key={f.key} label={f.label} name={`s-${k}-${i}-${f.key}`} error={err(i, f.key)} hint={f.hint} wide={f.wide}>
-          <FieldInput f={f} id={`s-${k}-${i}-${f.key}`} value={String(rows[i]?.[f.key] ?? "")} onChange={(v) => edit(i, f.key, v)} invalid={!!err(i, f.key)} />
+        <Field key={f.key} label={f.label} name={`s-${k}-${i}-${f.key}`} error={err(i, f)} hint={f.hint} wide={f.wide}>
+          <FieldInput f={f} id={`s-${k}-${i}-${f.key}`} value={String(rows[i]?.[f.key] ?? "")} onChange={(v) => edit(i, f.key, v)} invalid={!!err(i, f)} />
         </Field>
       ))}
     </div>
@@ -255,7 +298,7 @@ function FormSetting({ k }: { k: string }) {
             </div>
           ))}
           {!rows.length ? <p className="admin-sub">Nothing here yet.</p> : null}
-          <button type="button" className="a-btn" disabled={rows.length >= (form.max ?? 50)} onClick={() => setRows((p) => [...p, toDraft({}, form.fields)])}>+ Add {form.itemName?.toLowerCase()}</button>
+          <button type="button" className="a-btn" disabled={rows.length >= (form.max ?? 50)} onClick={() => setRows((p) => [...p, toDraft({}, form.fields, form.to)])}>+ Add {form.itemName?.toLowerCase()}</button>
         </div>
       )}
       {msg.error ? <p style={{ marginTop: 12 }}><span className="err" style={{ color: "var(--c-error)", fontWeight: 600 }}>{msg.error}</span></p> : null}

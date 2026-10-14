@@ -138,6 +138,20 @@ export const SETTINGS = {
   values: z.array(z.object({ icon, title: reqText("Title", 80), text: reqText("Text", 400) })).max(12),
   milestones: z.array(z.object({ year: reqText("Year", 10), title: reqText("Title", 100), text: reqText("Text", 400) })).max(20),
   services: z.array(z.object({ slug: slugSchema, icon, title: reqText("Title", 100), short: reqText("Summary", 400), points: lines(200, 12), image: reqText("Image", 500) })).max(20),
+  pillars: z
+    .array(
+      z.object({
+        title: reqText("Title", 60),
+        sub: reqText("Subtitle", 60),
+        text: reqText("Description", 500),
+        tags: lines(40, 10),
+        image: reqText("Photo", 500),
+        alt: reqText("Photo description", 200),
+        links: z.array(z.object({ label: reqText("Button label", 40), href: reqText("Button link", 200), look: z.enum(["accent", "light"]).optional() })).max(3),
+      }),
+    )
+    .min(1, "Keep at least one card")
+    .max(6),
   process: z.array(z.object({ title: reqText("Title", 80), text: reqText("Text", 400) })).max(10),
 } as const;
 export type SettingKey = keyof typeof SETTINGS;

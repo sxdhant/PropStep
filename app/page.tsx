@@ -8,6 +8,7 @@ import { BrowseAllCard, ListingCard, LocalityFlipCard } from "@/components/cards
 import { CtaSection, Marquee, NoFooterCta, NriBand, Process, StatsBlock } from "@/components/blocks";
 import { SectionHead, Split } from "@/components/primitives";
 import { Pillars, Rail, Testimonials, type Pillar } from "@/components/widgets";
+import { DEFAULT_PILLARS } from "@/lib/pillars";
 import { areasIn, getListings, getLocalities, getSite, zoneResolver, ZONES } from "@/lib/data";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -43,38 +44,13 @@ function HeroPhoto({ src, alt, priority }: { src: string; alt: string; priority:
   );
 }
 
-const PILLARS: Pillar[] = [
-  {
-    title: "Discover",
-    sub: "Verified listings",
-    tags: ["Apartments", "Villas", "Plots", "Farmlands", "Penthouses"],
-    text: "Homes, land and offices from across the market — new launches and resale — listed only after our legal team has checked the title and an advisor has visited in person.",
-    links: [["Browse properties", "/properties/"], ["Book a site visit", "/contact-us/#visit"]],
-    image: "1580587771525-78b9dba3b914",
-    alt: "Modern villa with a pool and a pale stone facade",
-  },
-  {
-    title: "Advise",
-    sub: "Buy & sell",
-    tags: ["New homes", "Resale", "Selling", "Home loans"],
-    text: "Independent advice on new and resale homes in six cities: shortlists to your brief, prices benchmarked against actual registrations — not asking prices — and negotiation on your side.",
-    links: [["Homes to buy", "/properties/", "accent"], ["Sell with us", "/services/#sell", "light"], ["Home loans", "/services/#loans", "light"]],
-    image: "1560448204-e02f11c3d0e2",
-    alt: "Bright living room with floor-to-ceiling windows",
-  },
-  {
-    title: "Invest",
-    sub: "Land, offices & NRI",
-    tags: ["Plots & farmland", "Pre-leased offices", "NRI Desk"],
-    text: "Title-clean plots and managed farmland, pre-leased offices, and an NRI Desk that handles everything from video walkthroughs to power of attorney.",
-    links: [["NRI Desk", "/services/#nri", "accent"]],
-    image: "1500382017468-9049fed747ef",
-    alt: "Open grassland at sunset",
-  },
-];
-
 export default async function Home() {
   const [site, listings, localities, areaNames, zonesFor] = await Promise.all([getSite(), getListings(), getLocalities(), areasIn("Bengaluru"), zoneResolver()]);
+  // "What we do": the cards saved in Site settings, or the built-in ones
+  const pillars: Pillar[] = (site.pillars?.length ? site.pillars : DEFAULT_PILLARS).map((p) => ({
+    ...p,
+    links: p.links.map((l) => [l.label, l.href, l.look] as [string, string, ("accent" | "light")?]),
+  }));
   // Handpicked: Bengaluru's listings, in a horizontal rail
   // Ticked in the admin; with none ticked, falls back to all of Bengaluru's listings
   const picked = listings.filter((l) => l.handpicked);
@@ -176,7 +152,7 @@ export default async function Home() {
               </>
             }
           />
-          <Pillars items={PILLARS} />
+          <Pillars items={pillars} />
         </div>
       </section>
 

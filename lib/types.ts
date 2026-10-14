@@ -123,6 +123,9 @@ export type Locality = {
 /** phone: the advisor's own line in international format (+91...); the site-wide number is used when it is empty */
 export type Advisor = { name: string; role: string; languages: string; years: number; phone?: string };
 
+/** One "What we do" card on the home page. look: "accent" (orange) or "light" (white) overrides a button's default style */
+export type PillarContent = { title: string; sub: string; tags: string[]; text: string; image: string; alt: string; links: { label: string; href: string; look?: "accent" | "light" }[] };
+
 export type Site = {
   name: string;
   legal_name: string;
@@ -144,6 +147,8 @@ export type Site = {
   /** image: a photo of the city's best-known landmark, named in `landmark` */
   cities: { slug: string; name: string; role: string; desks: string; image: string; landmark: string }[];
   offices: { city: string; label: string; address: string; phone: string }[];
+  /** Home page "What we do" cards; the built-in defaults are used until this is saved */
+  pillars?: PillarContent[];
   advisors: Record<string, Advisor>;
   /** linkedin: the person's LinkedIn profile URL */
   /** photo: optional headshot path under /public (the initials show without it) */
