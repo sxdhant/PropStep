@@ -313,3 +313,18 @@ html.admin-menu-open { overflow: hidden; }
 .photo-slot__bar button { width: 28px; height: 28px; border: 0; border-radius: 50%; background: rgba(255,255,255,.9); cursor: pointer; }
 .photo-slot__bar button:disabled { opacity: .35; cursor: default; }
 .photo-slot__err { position: absolute; left: 6px; right: 6px; bottom: 40px; padding: 2px 6px; border-radius: 4px; background: var(--c-error); color: #fff; font-size: 0.7rem; }
+
+/* Wide tables scroll sideways instead of clipping, and the action buttons (Edit, Delete…) stay pinned at the right edge */
+@media (min-width: 900px) {
+  .a-table-wrap { overflow-x: auto; }
+  .a-table { width: 100%; min-width: 900px; }
+  .a-table td:last-child, .a-table th:last-child { position: sticky; right: 0; background: var(--a-card); box-shadow: -8px 0 8px -8px rgba(0, 0, 0, 0.12); }
+  .a-table th:last-child { background: var(--paper-3); }
+  .a-table tbody tr:hover td:last-child { background: #f8faff; }
+  .a-table td:last-child { white-space: nowrap; }
+}
+
+/* Site settings: one card per repeated item */
+.list-items { display: grid; gap: 14px; }
+.list-item { padding: 14px; border: 1px solid var(--a-line); border-radius: var(--r-md); background: var(--surface); }
+.list-item__head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
