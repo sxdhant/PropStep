@@ -6,7 +6,7 @@ import type { Listing, Locality, Site } from "./types";
 
 /**
  * Async data layer. Reads Neon through Prisma, cached with tags so admin edits can revalidate instantly.
- * Without DATABASE_URL (local setup, first deploy) it serves the bundled content/ files instead.
+ * DATABASE_URL is required; the content/ files are only the seed for `import-content`. Only static config (SITE_URL, cities, zones) comes from them.
  */
 export const hasDb = () => !!process.env.DATABASE_URL;
 export const SITE_URL = fallback.SITE_URL;
@@ -27,6 +27,11 @@ export const toListing = (r: ListingRow): Listing => ({
   project: r.project ?? undefined,
   configs: (r.configs as number[] | null) ?? undefined,
   units: r.units ?? undefined,
+  total_area: r.totalArea ?? undefined,
+  towers: r.towers ?? undefined,
+  structure: r.structure ?? undefined,
+  hot_selling: r.hotSelling,
+  handpicked: r.handpicked,
   area_min: r.areaMin ?? undefined,
   area_max: r.areaMax ?? undefined,
   bhk: r.bhk,
@@ -34,7 +39,7 @@ export const toListing = (r: ListingRow): Listing => ({
   locality: r.locality,
   locality_slug: r.localityRef?.slug ?? "",
   price: Number(r.price),
-  price_label: r.priceLabel,
+  price_label: r.priceLabel || "Price on request",
   area: r.area,
   baths: r.baths,
   floor: r.floor ?? "",
@@ -108,7 +113,6 @@ const loadSite = cached(
     ]);
     const base = Object.fromEntries(settings.map((s) => [s.key, s.value]));
     return {
-      ...(fallback.site as Site),
       ...base,
       advisors: Object.fromEntries(advisors.map((a) => [a.key, { name: a.name, role: a.role, languages: a.languages, years: a.years }])),
       testimonials: testimonials.map((t) => ({ quote: t.quote, name: t.name, meta: t.meta })),
@@ -119,22 +123,17 @@ const loadSite = cached(
   TAGS.site,
 );
 
-/** Run a DB loader; if the database is missing or unreachable, serve the bundled content. */
-async function withFallback<T>(load: () => Promise<T>, local: () => T): Promise<T> {
-  if (!hasDb()) return local();
-  try {
-    return await load();
-  } catch (e) {
-    console.error("[data] database read failed, using bundled content:", e);
-    return local();
-  }
+/** The database is the only source: without DATABASE_URL, fail loudly instead of serving stale bundled content. */
+async function fromDb<T>(load: () => Promise<T>): Promise<T> {
+  if (!hasDb()) throw new Error("DATABASE_URL is not set. Set it and run `npm run db:import` to load the content.");
+  return load();
 }
 
 // React cache() dedupes repeat calls within one render
-export const getSite = cache(() => withFallback(loadSite, () => fallback.site));
-export const getListings = cache(() => withFallback(loadListings, () => fallback.listings));
-export const getLocalities = cache(() => withFallback(loadLocalities, () => fallback.localities));
-const getAreas = cache(() => withFallback(loadAreas, () => fallback.areasIn("Bengaluru").map((name) => ({ name, zone: fallback.zonesOf(name).join("-") }))));
+export const getSite = cache(() => fromDb(loadSite));
+export const getListings = cache(() => fromDb(loadListings));
+export const getLocalities = cache(() => fromDb(loadLocalities));
+const getAreas = cache(() => fromDb(loadAreas));
 
 export const getListing = async (slug: string) => (await getListings()).find((l) => l.slug === slug);
 export const getLocality = async (slug: string) => (await getLocalities()).find((l) => l.slug === slug);

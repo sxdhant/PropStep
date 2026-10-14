@@ -15,12 +15,10 @@ type Props = {
   fallback3d?: string;
   type: string;
   title: string;
-  /** How many floors one plan covers: a "G + 2" house is three floors, so the plan shows a third of the area */
-  floors: number;
 };
 
 /** Floor plans: a tab for each BHK, a tab for each size within it, then the plan with the unit's price and a contact button underneath. Works for any number of BHKs and sizes */
-export default function PlanExplorer({ units, fallback, fallback3d, type, title, floors }: Props) {
+export default function PlanExplorer({ units, fallback, fallback3d, type, title }: Props) {
   const bhks = [...new Set(units.map((u) => u.bhk))].sort((a, b) => a - b);
   const [bhk, setBhk] = useState(bhks[0]);
   const sizes = units.filter((u) => u.bhk === bhk);
@@ -39,7 +37,6 @@ export default function PlanExplorer({ units, fallback, fallback3d, type, title,
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [unit.bhk, unit.area]);
 
-  const per = Math.round(unit.area / floors);
   const src = unit.floorplan ?? fallback;
   // Only the price footer crossfades: the plan image stays mounted (a new <img> blinks on phones) and just its figures fade in
   const foot = (u: PlanUnit) => (
@@ -72,19 +69,17 @@ export default function PlanExplorer({ units, fallback, fallback3d, type, title,
           </button>
         ))}
       </div>
+      {src ? (
       <FloorPlan
         key={src}
         reveal={false}
         src={src}
         src3d={unit.floorplan3d ?? (src === fallback ? fallback3d : undefined)}
         alt={`${unit.bhk} BHK floor plan of ${title}, ${inrGroup(unit.area)} sq ft`}
-        rows={[
-          ["Saleable area", `${inrGroup(per)} sq ft`],
-          ["Carpet area", `${inrGroup(Math.round(per * 0.7))} sq ft`],
-          ["Balcony area", `${inrGroup(Math.round(per * 0.055))} sq ft`],
-          ["Bedrooms / bathrooms", `${unit.bhk} / ${unit.bhk + 1}`],
-        ]}
       />
+      ) : (
+        <p className="small muted" style={{ margin: "20px 0" }}>The floor plan for this size is coming soon. Contact us and we will share it.</p>
+      )}
       <div className="plans__stack">
         <div className="plans__swap" key={key(shown)}>{foot(shown)}</div>
         {leaving ? (

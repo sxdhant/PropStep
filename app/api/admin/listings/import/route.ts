@@ -36,9 +36,9 @@ export async function POST(req: Request) {
   const inputs = rows.map((l, i) => {
     const r = listingInput.safeParse({
       slug: l.slug, title: l.title, intent: l.intent, type: l.type, developer: l.developer, project: l.project, bhk: l.bhk, baths: l.baths, area: l.area,
-      city: l.city, locality: l.locality, localitySlug: l.locality_slug, price: l.price, priceLabel: l.price_label, floor: l.floor, age: l.age,
+      city: l.city, locality: l.locality, localitySlug: l.locality_slug, price: l.price, priceLabel: l.price_label,
       possession: l.possession, rera: l.rera, badge: l.badge, advisorKey: l.advisor, postedAt: l.posted, units: l.units, configs: l.configs,
-      areaMin: l.area_min, areaMax: l.area_max, unitTypes: l.unit_types, floorplan: l.floorplan, connectingRoad: l.connecting_road,
+      areaMin: l.area_min ?? l.area, areaMax: l.area_max, unitTypes: l.unit_types, floorplan: l.floorplan, connectingRoad: l.connecting_road,
       summary: l.summary, description: l.description, features: l.features, amenities: l.amenities, connectivity: l.connectivity,
       images: l.images, status: publish ? "PUBLISHED" : "DRAFT",
     });

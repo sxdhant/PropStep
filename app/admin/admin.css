@@ -267,3 +267,49 @@ html.admin-menu-open { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .admin-root *, .admin-root *::before, .admin-root *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+
+/* "Where this appears on the website" line under each form section heading */
+.sec-where { margin: -4px 0 14px; color: var(--ink-3); font-size: 0.8125rem; }
+
+/* Fields with a problem: red outline and tint on the control, red label */
+.a-field.has-error > label { color: var(--c-error); }
+.a-field.has-error input, .a-field.has-error textarea, .a-field.has-error .dd__btn, .a-field.has-error .a-btn {
+  border-color: var(--c-error); background-color: color-mix(in srgb, var(--c-error) 7%, transparent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-error) 18%, transparent);
+}
+
+/* Price list: one row per home size */
+.unit-rows__head, .unit-rows__row { display: grid; grid-template-columns: 1fr 1fr 1.4fr auto; gap: 12px; align-items: start; }
+.unit-rows__head { margin-bottom: 6px; color: var(--ink-3); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.unit-rows__row { margin-bottom: 10px; }
+.unit-rows__row .a-btn { align-self: start; margin-top: 4px; }
+.unit-rows__label { display: none; font-size: 0.78rem; font-weight: 650; color: var(--ink-2); }
+@media (max-width: 700px) {
+  .unit-rows__head { display: none; }
+  .unit-rows__row { grid-template-columns: 1fr 1fr; padding: 12px; border: 1px solid var(--a-line); border-radius: var(--r-sm); }
+  .unit-rows__label { display: block; }
+}
+.amen-rows .unit-rows__head, .amen-rows .unit-rows__row { grid-template-columns: minmax(150px, 1fr) 2fr auto; }
+.place-rows .unit-rows__head, .place-rows .unit-rows__row { grid-template-columns: minmax(150px, 1fr) 2fr 1fr auto; }
+
+/* Floor plans: one card per price-list row */
+.fp-rows { display: grid; gap: 12px; }
+.fp-row { display: grid; grid-template-columns: 140px 1fr; gap: 14px; padding: 10px; border: 1px solid var(--a-line); border-radius: var(--r-sm); background: var(--surface); }
+.fp-row__thumb { display: grid; place-items: center; aspect-ratio: 4 / 3; border-radius: var(--r-xs); background: var(--paper-3); color: var(--ink-3); font-size: 0.75rem; overflow: hidden; }
+.fp-row__thumb img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
+.fp-row__body { display: grid; gap: 8px; align-content: start; min-width: 0; }
+@media (max-width: 560px) { .fp-row { grid-template-columns: 1fr; } }
+
+/* Photo gallery: a grid of blocks; empty ones show a + */
+.photo-slots { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr)); }
+.photo-slot { position: relative; aspect-ratio: 3 / 4; border-radius: var(--r-md); overflow: hidden; background: var(--paper-3); border: 1px solid var(--a-line); }
+.photo-slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-slot--empty { display: grid; place-items: center; border: 2px dashed var(--a-line); background: transparent; cursor: pointer; transition: border-color var(--d-1), background var(--d-1); }
+.photo-slot--empty:hover { border-color: var(--c-accent, #f97316); background: color-mix(in srgb, var(--c-accent, #f97316) 6%, transparent); }
+.photo-slot__plus { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--c-accent, #f97316); color: #fff; font-size: 1.6rem; line-height: 1; }
+.photo-slot__cover { position: absolute; left: 8px; top: 8px; padding: 2px 8px; border-radius: 999px; background: rgba(0,0,0,.6); color: #fff; font-size: 0.7rem; font-weight: 700; }
+.photo-slot__x { position: absolute; right: 8px; top: 8px; width: 26px; height: 26px; border: 0; border-radius: 50%; background: rgba(0,0,0,.6); color: #fff; font-size: 1.1rem; line-height: 1; cursor: pointer; }
+.photo-slot__x:hover { background: var(--c-error); }
+.photo-slot__bar { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-between; padding: 6px; background: linear-gradient(transparent, rgba(0,0,0,.55)); }
+.photo-slot__bar button { width: 28px; height: 28px; border: 0; border-radius: 50%; background: rgba(255,255,255,.9); cursor: pointer; }
+.photo-slot__bar button:disabled { opacity: .35; cursor: default; }
+.photo-slot__err { position: absolute; left: 6px; right: 6px; bottom: 40px; padding: 2px 6px; border-radius: 4px; background: var(--c-error); color: #fff; font-size: 0.7rem; }

@@ -69,8 +69,15 @@ export type Listing = {
   price_label: string;
   area: number;
   baths: number;
-  floor: string;
-  age: string;
+  floor?: string;
+  age?: string;
+  /** Optional facts: each is shown only when filled in */
+  total_area?: string;
+  towers?: number;
+  structure?: string;
+  /** Chosen in the admin for the home page sections "Hot selling" and "Handpicked" */
+  hot_selling?: boolean;
+  handpicked?: boolean;
   possession: string;
   /** Path to the floor-plan image in /public; the Floor plan section is left out when empty */
   floorplan?: string;

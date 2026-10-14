@@ -76,9 +76,13 @@ const PILLARS: Pillar[] = [
 export default async function Home() {
   const [site, listings, localities, areaNames, zonesFor] = await Promise.all([getSite(), getListings(), getLocalities(), areasIn("Bengaluru"), zoneResolver()]);
   // Handpicked: Bengaluru's listings, in a horizontal rail
-  const buy = listings.filter((l) => l.city === "Bengaluru");
+  // Ticked in the admin; with none ticked, falls back to all of Bengaluru's listings
+  const picked = listings.filter((l) => l.handpicked);
+  const buy = picked.length ? picked : listings.filter((l) => l.city === "Bengaluru");
   // Hot selling: six listings in a horizontal rail
-  const hot = listings.slice(0, 6);
+  // Ticked in the admin (newest first, up to 12); with none ticked, the 6 newest
+  const flagged = listings.filter((l) => l.hot_selling);
+  const hot = flagged.length ? flagged.slice(0, 12) : listings.slice(0, 6);
   // Search: Bengaluru's localities and the zones each falls in
   const areas = areaNames.map((name) => ({ name, zones: zonesFor(name) }));
   // The map card's count: Bengaluru listings in each zone (the same ones the Properties search finds)

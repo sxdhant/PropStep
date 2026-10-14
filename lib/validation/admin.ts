@@ -16,22 +16,22 @@ export const listingInput = z
     type: reqText("Type", 40),
     developer: optText(100),
     project: optText(100),
-    bhk: z.number().int().min(0).max(20),
-    baths: z.number().int().min(0).max(20),
-    area: z.number().int().positive().max(1_000_000),
     city: reqText("City", 60),
     locality: reqText("Locality", 80),
     localitySlug: z.union([slugSchema, z.literal("")]).optional(),
     price: z.number().int().positive().max(10_000_000_000).optional(),
     priceLabel: optText(40),
-    floor: optText(60),
-    age: optText(60),
     possession: optText(80),
     rera: optText(300),
     badge: optText(40),
     advisorKey: reqText("Advisor", 40),
     postedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Use YYYY-MM-DD").optional(),
     units: optInt,
+    totalArea: optText(60),
+    towers: optInt,
+    structure: optText(80),
+    hotSelling: z.boolean().default(false),
+    handpicked: z.boolean().default(false),
     configs: z.array(z.number().int().min(0).max(20)).max(10).optional(),
     areaMin: optInt,
     areaMax: optInt,
@@ -53,17 +53,20 @@ export const listingInput = z
     features: lines(200, 30),
     amenities: z.array(z.object({ icon, label: reqText("Amenity", 80) })).max(40).optional(),
     connectivity: z.array(z.object({ icon, place: reqText("Place", 100), time: reqText("Time", 40) })).max(30).optional(),
-    images: z.array(photo).max(40),
+    images: z.array(photo).max(10, "You can add up to 10 photos"),
     status: z.enum(["DRAFT", "PUBLISHED"]).default("DRAFT"),
   })
   .superRefine((v, ctx) => {
-    if (!v.price && !v.unitTypes?.length) ctx.addIssue({ code: "custom", path: ["price"], message: "Enter a price, or add unit types with prices" });
     if (v.areaMin && v.areaMax && v.areaMin > v.areaMax) ctx.addIssue({ code: "custom", path: ["areaMin"], message: "Smallest size can't exceed the largest" });
     if (v.status === "PUBLISHED" && v.images.length === 0) ctx.addIssue({ code: "custom", path: ["images"], message: "Add at least one photo before publishing" });
   })
   .transform((v) => {
-    const price = v.price ?? Math.min(...v.unitTypes!.map((u) => u.price));
-    return { ...v, price, priceLabel: v.priceLabel || inrShort(price) };
+    // Price and size are optional: 0 means "not given" (the site then hides them)
+    const price = v.price ?? (v.unitTypes?.length ? Math.min(...v.unitTypes.map((u) => u.price)) : 0);
+    // bhk and area are derived (they stay as database columns for search): from the BHK options and the smallest size
+    const bhks = v.configs?.length ? v.configs : (v.unitTypes ?? []).map((u) => u.bhk);
+    const area = v.areaMin ?? (v.unitTypes?.length ? Math.min(...v.unitTypes.map((u) => u.area)) : 0);
+    return { ...v, price, priceLabel: v.priceLabel || (price ? inrShort(price) : ""), bhk: bhks.length ? Math.min(...bhks) : 0, baths: 0, area };
   });
 export type ListingInput = z.output<typeof listingInput>;
 

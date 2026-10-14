@@ -9,6 +9,7 @@ import { ListingCard } from "@/components/cards";
 import { EnquiryForm } from "@/components/forms";
 import { Crumbs, JsonLd, SectionHead } from "@/components/primitives";
 import { getListing, getListings, getLocalities, getPhoneProps, getSite, SITE_URL } from "@/lib/data";
+import { badgeList } from "@/lib/budgets";
 import { inrGroup, inrShort, waLink } from "@/lib/format";
 import { photoUrl } from "@/lib/img";
 import fs from "node:fs";
@@ -52,8 +53,6 @@ export default async function ListingPage({ params }: Params) {
   const hi = l.area_max ?? l.area;
   const prices = units.map((u) => u.price);
   const priceRange = prices.length > 1 ? `${inrShort(Math.min(...prices))} - ${inrShort(Math.max(...prices))}` : l.price_label;
-  // The plan shows one floor: a house of "G + 2" has three, a duplex penthouse ("11th & 12th") two
-  const floors = l.floor.includes("G + 2") ? 3 : l.floor.includes("&") ? 2 : 1;
   const loc = l.locality_slug ? localities.find((x) => x.slug === l.locality_slug) : undefined;
   const others = listings.filter((x) => x.slug !== l.slug);
   const sameDev = l.developer ? others.filter((x) => x.developer === l.developer) : [];
@@ -62,22 +61,25 @@ export default async function ListingPage({ params }: Params) {
   const otherDev = (sameLoc.length ? sameLoc : [...rest.filter((x) => x.city === l.city), ...rest.filter((x) => x.city !== l.city)]).slice(0, 8);
   const wa = waLink(site.whatsapp, `Hi Propstep, I'm interested in ${l.title} in ${l.locality} (${l.price_label}).`);
   const configText = configs.length > 1 ? `${configs.slice(0, -1).join(", ")} & ${configs[configs.length - 1]}` : String(configs[0] ?? "");
-  const config: [IconName, string, string][] = [
-    ["bed", "Bedrooms", configs.length ? `${configText} BHK` : "-"],
-    ["area", "Size", lo === hi ? `${inrGroup(lo)} sq ft` : `${inrGroup(lo)} - ${inrGroup(hi)} sq ft`],
-    ["building", "Number of units", l.units ? inrGroup(l.units) : "-"],
-    ["rupee", "Price range", priceRange],
-    ["clock", "Age", l.age],
-    ["key", "Possession", l.possession],
-  ];
-  const about: [string, string][] = [
+  // Anything the admin left empty is simply not shown
+  const config = ([
+    ["bed", "Bedrooms", configs.length ? `${configText} BHK` : ""],
+    ["area", "Size", lo ? (lo === hi ? `${inrGroup(lo)} sq ft` : `${inrGroup(lo)} - ${inrGroup(hi)} sq ft`) : ""],
+    ["building", "Number of units", l.units ? inrGroup(l.units) : ""],
+    ["layers", "Total area", l.total_area ?? ""],
+    ["building", "Number of towers", l.towers ? inrGroup(l.towers) : ""],
+    ["home", "Structure", l.structure ?? ""],
+    ["rupee", "Price range", l.price ? priceRange : ""],
+    ["key", "Possession", l.possession ?? ""],
+  ] as [IconName, string, string][]).filter((r) => r[2].trim());
+  const about = ([
     ["Project name", project],
-    ["Developer", l.developer ?? "-"],
+    ["Developer", l.developer ?? ""],
     ["Location", `${l.locality}, ${l.city}`],
-    ["Status", l.possession],
-    ["Connecting road", l.connecting_road ?? "-"],
-    ["RERA numbers", l.rera ?? "Available on request"],
-  ];
+    ["Status", l.possession ?? ""],
+    ["Connecting road", l.connecting_road ?? ""],
+    ["RERA numbers", l.rera ?? ""],
+  ] as [string, string][]).filter((r) => r[1].trim());
 
   return (
     <>
@@ -98,12 +100,12 @@ export default async function ListingPage({ params }: Params) {
           <div className="pd-intro">
             <div className="chip-group" data-reveal="">
               <span className="tag tag--gold">For sale</span>
-              {l.badge ? (
-                <span className={`tag ${l.badge === "Verified" ? "tag--blue" : ["Exclusive", "Price reduced", "New"].includes(l.badge) ? "tag--accent" : "tag--glass"}`}>
-                  {l.badge === "Verified" ? <Icon name="verified" className="icon--sm" /> : null}
-                  {l.badge}
+              {badgeList(l.badge).map((b) => (
+                <span key={b} className={`tag ${b === "Verified" ? "tag--blue" : ["Exclusive", "Price reduced", "New"].includes(b) ? "tag--accent" : "tag--glass"}`}>
+                  {b === "Verified" ? <Icon name="verified" className="icon--sm" /> : null}
+                  {b}
                 </span>
-              ) : null}
+              ))}
             </div>
             {l.developer ? <p className="pd-dev">{l.developer}</p> : null}
             <h1 className="pd-project">{project}</h1>
@@ -122,18 +124,20 @@ export default async function ListingPage({ params }: Params) {
       <section className="section" style={{ paddingTop: "clamp(40px,5vw,64px)" }}>
         <div className="container ld-layout">
           <div className="pd-main">
-            <div className="pd-sec">
-              <h2 className="h3" data-reveal="">Configuration</h2>
-              <dl className="spec-grid spec-grid--3" data-reveal="">
-                {config.map(([ic, k, v]) => (
-                  <div key={k}>
-                    <Icon name={ic} />
-                    <dt>{k}</dt>
-                    <dd>{v}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
+            {config.length ? (
+              <div className="pd-sec">
+                <h2 className="h3" data-reveal="">Configuration</h2>
+                <dl className="spec-grid spec-grid--3" data-reveal="">
+                  {config.map(([ic, k, v]) => (
+                    <div key={k}>
+                      <Icon name={ic} />
+                      <dt>{k}</dt>
+                      <dd>{v}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            ) : null}
 
             <div className="pd-sec">
               <h2 className="h3" data-reveal="">About the project</h2>
@@ -170,10 +174,10 @@ export default async function ListingPage({ params }: Params) {
               </div>
             ) : null}
 
-            {l.floorplan && units.length ? (
+            {units.length && (l.floorplan || units.some((u) => u.floorplan)) ? (
               <div className="pd-sec">
                 <h2 className="h3" data-reveal="">{project} floor plans</h2>
-                <PlanExplorer units={units} fallback={l.floorplan} fallback3d={floorplan3d(l.slug)} type={l.type} title={project} floors={floors} />
+                <PlanExplorer units={units} fallback={l.floorplan ?? ""} fallback3d={floorplan3d(l.slug)} type={l.type} title={project} />
               </div>
             ) : null}
 
@@ -228,10 +232,12 @@ export default async function ListingPage({ params }: Params) {
               </div>
             </div>
 
-            <div className="pd-sec">
-              <h2 className="h3" data-reveal="">EMI calculator</h2>
-              <EmiCalculator price={l.price} heading="What would the EMI be?" />
-            </div>
+            {l.price > 0 ? (
+              <div className="pd-sec">
+                <h2 className="h3" data-reveal="">EMI calculator</h2>
+                <EmiCalculator price={l.price} heading="What would the EMI be?" />
+              </div>
+            ) : null}
           </div>
           <aside className="ld-aside" id="enquire" aria-label="Enquire">
             <div className="form-card">

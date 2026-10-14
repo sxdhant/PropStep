@@ -3,6 +3,7 @@ import type { CSSProperties, ReactNode } from "react";
 import Icon from "./Icon";
 import { Photo } from "./primitives";
 import { PerspectiveFlipCard } from "./ui/card-14";
+import { badgeList } from "@/lib/budgets";
 import { inrGroup } from "@/lib/format";
 import type { Listing, Locality } from "@/lib/types";
 
@@ -14,7 +15,7 @@ export function ListingFacts({ l }: { l: Listing }) {
   const facts: { icon: "bed" | "building" | "area"; value: string; label: string }[] = [];
   if (configs.length) facts.push({ icon: "bed", value: `${configs.length > 1 ? `${configs.slice(0, -1).join(", ")} & ${configs[configs.length - 1]}` : configs[0]} BHK`, label: "Configurations" });
   if (l.units) facts.push({ icon: "building", value: inrGroup(l.units), label: "Units" });
-  facts.push({ icon: "area", value: lo === hi ? inrGroup(lo) : `${inrGroup(lo)} - ${inrGroup(hi)}`, label: "Size (sq ft)" });
+  if (lo) facts.push({ icon: "area", value: lo === hi ? inrGroup(lo) : `${inrGroup(lo)} - ${inrGroup(hi)}`, label: "Size (sq ft)" });
   return (
     <ul className="l-card__facts" role="list">
       {facts.map((f) => (
@@ -33,7 +34,6 @@ export function ListingFacts({ l }: { l: Listing }) {
 type ListingCardProps = { l: Listing; reveal?: boolean; hidden?: boolean; className?: string; eager?: boolean };
 
 export function ListingCard({ l, reveal = true, hidden, className, eager = false }: ListingCardProps) {
-  const badgeCls = l.badge && ["Exclusive", "Price reduced", "New"].includes(l.badge) ? "tag--accent" : l.badge === "Verified" ? "tag--blue" : "tag--glass";
   return (
     <Link
       className={`l-card${className ? ` ${className}` : ""}`}
@@ -46,12 +46,12 @@ export function ListingCard({ l, reveal = true, hidden, className, eager = false
         <Photo id={l.images[0].id} alt={l.images[0].alt} ratio={[3, 2]} sizes="(min-width: 1000px) 30vw, (min-width: 640px) 46vw, 92vw" eager={eager} />
         <div className="l-card__tags">
           <span className="tag tag--gold">For sale</span>
-          {l.badge ? (
-            <span className={`tag ${badgeCls}`}>
-              {l.badge === "Verified" ? <Icon name="verified" className="icon--sm" /> : null}
-              {l.badge}
+          {badgeList(l.badge).map((b) => (
+            <span key={b} className={`tag ${b === "Verified" ? "tag--blue" : ["Exclusive", "Price reduced", "New"].includes(b) ? "tag--accent" : "tag--glass"}`}>
+              {b === "Verified" ? <Icon name="verified" className="icon--sm" /> : null}
+              {b}
             </span>
-          ) : null}
+          ))}
         </div>
       </div>
       <div className="l-card__body">
@@ -65,9 +65,9 @@ export function ListingCard({ l, reveal = true, hidden, className, eager = false
             </p>
           </div>
           <div className="l-card__cost">
-            <span className="l-card__from">Starting from</span>
+            {l.price ? <span className="l-card__from">Starting from</span> : null}
             <p className="l-card__price">{l.price_label}<sup>*</sup></p>
-            <span className="l-card__psf">₹{inrGroup(Math.round(l.price / (l.area_min ?? l.area)))} per sq ft</span>
+            {l.price && (l.area_min ?? l.area) ? <span className="l-card__psf">₹{inrGroup(Math.round(l.price / (l.area_min ?? l.area)))} per sq ft</span> : null}
           </div>
         </div>
         <ListingFacts l={l} />

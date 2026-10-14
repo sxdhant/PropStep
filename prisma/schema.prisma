@@ -116,6 +116,11 @@ model Listing {
   advisor        Advisor       @relation(fields: [advisorId], references: [id])
   postedAt       DateTime      @default(now())
   units          Int?
+  totalArea      String?
+  towers         Int?
+  structure      String?
+  hotSelling     Boolean       @default(false)
+  handpicked     Boolean       @default(false)
   configs        Json?
   areaMin        Int?
   areaMax        Int?
