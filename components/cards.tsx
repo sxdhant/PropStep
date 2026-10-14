@@ -44,15 +44,16 @@ export function ListingCard({ l, reveal = true, hidden, className, eager = false
     >
       <div className="media">
         <Photo id={l.images[0].id} alt={l.images[0].alt} ratio={[3, 2]} sizes="(min-width: 1000px) 30vw, (min-width: 640px) 46vw, 92vw" eager={eager} />
-        <div className="l-card__tags">
-          <span className="tag tag--gold">For sale</span>
-          {badgeList(l.badge).map((b) => (
-            <span key={b} className={`tag ${b === "Verified" ? "tag--blue" : ["Exclusive", "Price reduced", "New"].includes(b) ? "tag--accent" : "tag--glass"}`}>
-              {b === "Verified" ? <Icon name="verified" className="icon--sm" /> : null}
-              {b}
-            </span>
-          ))}
-        </div>
+        {badgeList(l.badge).length ? (
+          <div className="l-card__tags">
+            {badgeList(l.badge).map((b) => (
+              <span key={b} className={`tag ${b === "Verified" ? "tag--blue" : ["Exclusive", "Price reduced", "New"].includes(b) ? "tag--accent" : "tag--glass"}`}>
+                {b === "Verified" ? <Icon name="verified" className="icon--sm" /> : null}
+                {b}
+              </span>
+            ))}
+          </div>
+        ) : null}
       </div>
       <div className="l-card__body">
         <div className="l-card__head">
@@ -204,5 +205,5 @@ export function LocalityFlipCard({ loc }: { loc: Locality }) {
     </div>
   );
 
-  return <PerspectiveFlipCard className="loc-flip" h="384px" front={front} back={back} />;
+  return <PerspectiveFlipCard className="loc-flip" h="440px" front={front} back={back} />;
 }

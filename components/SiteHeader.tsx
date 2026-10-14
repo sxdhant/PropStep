@@ -99,13 +99,9 @@ export default function SiteHeader({ name, phone, phoneHref }: Props) {
       }
     };
     document.addEventListener("keydown", onKey);
-    const mq = window.matchMedia("(min-width: 1100px)");
-    const onMq = (m: MediaQueryListEvent) => m.matches && setMenuOpen(false);
-    mq.addEventListener("change", onMq);
     return () => {
       clearTimeout(t);
       document.removeEventListener("keydown", onKey);
-      mq.removeEventListener("change", onMq);
     };
   }, [menuOpen]);
 

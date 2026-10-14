@@ -139,43 +139,30 @@ export type Pillar = { title: string; sub: string; tags: string[]; text: string;
 
 /** Every card takes the first card's (Discover's) navy theme, buttons included; "paper" and "blue" themes still exist in the CSS */
 const PILLAR_THEMES = ["navy", "navy", "navy"] as const;
-/** Cards stick and stack only where one fits on screen with room to spare; smaller screens get a plain list. */
-const STACK_MQ = "(min-width: 900px) and (min-height: 700px)";
+/** Card stacking is switched off (see the pillar rules in globals.css); the cards form a plain list at every size. */
 const clamp01 = (n: number) => Math.min(1, Math.max(0, n));
 
 export function Pillars({ items }: { items: Pillar[] }) {
   const list = useRef<HTMLOListElement>(null);
 
-  // Scroll-linked depth: --enter (0 to 1) zooms a card photo into place as the card arrives;
-  // --stack (0 to 1) shrinks and dims a stuck card as the next one slides over it.
+  // Scroll-linked depth: --enter (0 to 1) zooms a card photo into place as the card arrives.
   useEffect(() => {
     const el = list.current;
     if (!el || reduced()) return;
     const cards = Array.from(el.children) as HTMLElement[];
-    const mq = window.matchMedia(STACK_MQ);
-    let tops: number[] = [];
     let raf = 0;
-    const measure = () => {
-      tops = cards.map((c) => (mq.matches ? parseFloat(getComputedStyle(c).top) || 0 : 0));
-    };
     const update = () => {
       raf = 0;
       const vh = window.innerHeight;
       const rects = cards.map((c) => c.getBoundingClientRect());
       cards.forEach((card, i) => {
-        card.style.setProperty("--enter", clamp01((vh - rects[i].top) / (vh - tops[i])).toFixed(3));
-        const next = rects[i + 1];
-        const stack = mq.matches && next ? clamp01((vh - next.top) / (vh - tops[i + 1])) : 0;
-        card.style.setProperty("--stack", stack.toFixed(3));
+        card.style.setProperty("--enter", clamp01((vh - rects[i].top) / vh).toFixed(3));
       });
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
     };
-    const onResize = () => {
-      measure();
-      onScroll();
-    };
+    const onResize = () => onScroll();
     // Only listen while the section is near the viewport
     const io = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
@@ -183,17 +170,14 @@ export function Pillars({ items }: { items: Pillar[] }) {
         onScroll();
       } else window.removeEventListener("scroll", onScroll);
     }, { rootMargin: "20% 0px" });
-    measure();
     update();
     io.observe(el);
     window.addEventListener("resize", onResize);
-    mq.addEventListener("change", onResize);
     return () => {
       io.disconnect();
       cancelAnimationFrame(raf);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
-      mq.removeEventListener("change", onResize);
     };
   }, []);
 

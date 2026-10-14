@@ -535,10 +535,8 @@ em, h1 em, h2 em, .display em {
 @media (min-width: 900px) { .brand__logo { height: 29px; } }
 .brand__mark { display: block; width: auto; height: 34px; }
 .brand:focus-visible { outline-offset: 6px; }
+/* The links live in the menu button at every width (the old 1100px+ inline row is switched off) */
 .nav { display: none; }
-@media (min-width: 1100px) {
-  .nav { display: flex; align-items: center; gap: 2px; }
-}
 .nav__link {
   position: relative;
   display: inline-flex;
@@ -593,7 +591,6 @@ em, h1 em, h2 em, .display em {
   border: 1px solid var(--line-2);
   background: var(--surface);
 }
-@media (min-width: 1100px) { .menu-toggle { display: none; } }
 .menu-toggle__bars { position: relative; width: 18px; height: 12px; }
 .menu-toggle__bars span {
   position: absolute; left: 0;
@@ -1337,7 +1334,9 @@ html[data-theme="night"] .hero-search {
 /* Locality flip cards (home page rail) */
 /* Block padding leaves room for the card's perspective overhang mid-flip, which the scroller would otherwise clip */
 .rail-wrap--flip .rail { padding-block: 12px 14px; } /* column width and gap come from the shared .rail, so they match the Handpicked cards */
-.loc-flip .flip-card__face--front { padding: 8px; }
+/* Roomier padding so the text stays inside the card on wide screens such as a MacBook */
+.loc-flip .flip-card__face--front { padding: 12px; }
+.loc-flip .flip-card__face--back { padding: 22px 20px; }
 .loc-flip__front { display: flex; flex-direction: column; height: 100%; }
 .loc-flip__media { position: relative; flex: none; width: 100%; height: auto; aspect-ratio: 16 / 9; }
 .loc-flip__img { position: absolute; inset: 0; overflow: hidden; border-radius: var(--r-md); background: var(--blue-100); }
@@ -1352,8 +1351,8 @@ html[data-theme="night"] .hero-search {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 10px;
-  padding: 12px 8px 4px;
+  gap: 12px;
+  padding: 16px 12px 6px;
 }
 .loc-flip__eyebrow {
   display: flex;
@@ -1451,11 +1450,8 @@ html[data-theme="night"] .hero-search {
 @media (min-width: 900px) {
   .pillar__card { grid-template-columns: 1fr 1.05fr; min-height: min(440px, calc(100svh - var(--header-h) - 96px)); }
 }
-@media (min-width: 900px) and (min-height: 700px) {
-  /* The gap is the scroll distance over which each card slides up onto the one before */
-  .pillars { gap: 14vh; }
-  .pillar { position: sticky; top: calc(var(--header-h) + 24px + var(--n, 0) * 22px); }
-}
+/* Stacking is switched off: the cards sit one under the other at every screen size.
+   (It was: @media (min-width: 900px) and (min-height: 700px) { .pillars { gap: 14vh; } .pillar { position: sticky; top: calc(var(--header-h) + 24px + var(--n, 0) * 22px); } }) */
 .pillar__content { position: relative; display: flex; flex-direction: column; gap: 12px; padding: clamp(20px, 3vw, 36px); }
 .pillar__top {
   display: flex;

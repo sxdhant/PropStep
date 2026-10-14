@@ -98,15 +98,16 @@ export default async function ListingPage({ params }: Params) {
         <div className="container">
           <Crumbs items={[["Home", "/"], ["Properties", "/properties/"], [project, `/properties/${l.slug}/`]]} />
           <div className="pd-intro">
-            <div className="chip-group" data-reveal="">
-              <span className="tag tag--gold">For sale</span>
-              {badgeList(l.badge).map((b) => (
-                <span key={b} className={`tag ${b === "Verified" ? "tag--blue" : ["Exclusive", "Price reduced", "New"].includes(b) ? "tag--accent" : "tag--glass"}`}>
-                  {b === "Verified" ? <Icon name="verified" className="icon--sm" /> : null}
-                  {b}
-                </span>
-              ))}
-            </div>
+            {badgeList(l.badge).length ? (
+              <div className="chip-group" data-reveal="">
+                {badgeList(l.badge).map((b) => (
+                  <span key={b} className={`tag ${b === "Verified" ? "tag--blue" : ["Exclusive", "Price reduced", "New"].includes(b) ? "tag--accent" : "tag--glass"}`}>
+                    {b === "Verified" ? <Icon name="verified" className="icon--sm" /> : null}
+                    {b}
+                  </span>
+                ))}
+              </div>
+            ) : null}
             {l.developer ? <p className="pd-dev">{l.developer}</p> : null}
             <h1 className="pd-project">{project}</h1>
             <p className="pd-loc">
