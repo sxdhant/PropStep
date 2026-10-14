@@ -387,7 +387,7 @@ export function ConsentField({ id }: { id: string }) {
   return (
     <div className={`field${f.error ? " has-error" : ""}`} data-msg="Please agree so an advisor can contact you.">
       <label className="check">
-        <input type="checkbox" id={id} name="consent" value="yes" required aria-invalid={!!f.error} aria-describedby={`${id}-err`} onChange={f.onChange} />
+        <input type="checkbox" id={id} name="consent" value="yes" defaultChecked required aria-invalid={!!f.error} aria-describedby={`${id}-err`} onChange={f.onChange} />
         <span>
           I agree to be contacted by Propstep by phone, WhatsApp or email about this enquiry. Read our <Link href="/privacy/">privacy policy</Link>.
         </span>
