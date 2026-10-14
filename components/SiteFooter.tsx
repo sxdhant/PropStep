@@ -3,11 +3,18 @@ import Icon, { WhatsAppIcon } from "./Icon";
 import { Brand } from "./primitives";
 import { NewsletterForm } from "./forms";
 import { ActionBar } from "./widgets";
-import { getSite } from "@/lib/data";
+import { getListings, getSite } from "@/lib/data";
 import { waLink } from "@/lib/format";
 
 export default async function SiteFooter() {
-  const site = await getSite();
+  const [site, listings] = await Promise.all([getSite(), getListings()]);
+  // Listings whose advisor has their own number: the mobile call bar uses it on that listing's page
+  const byListing = Object.fromEntries(
+    listings.flatMap((l) => {
+      const p = site.advisors[l.advisor]?.phone;
+      return p ? [[l.slug, { phoneHref: p, wa: waLink(p.replace(/\D/g, ""), `Hi Propstep, I'm interested in ${l.title} in ${l.locality}.`) }]] : [];
+    }),
+  );
   const wa = waLink(site.whatsapp, "Hi Propstep, I'd like to know more.");
   const phone = { href: site.phone_href, label: site.phone };
   return (
@@ -83,7 +90,7 @@ export default async function SiteFooter() {
           </div>
         </div>
       </footer>
-      <ActionBar phoneHref={site.phone_href} wa={wa} />
+      <ActionBar phoneHref={site.phone_href} wa={wa} byListing={byListing} />
     </>
   );
 }

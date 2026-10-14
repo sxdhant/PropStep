@@ -114,7 +114,7 @@ const loadSite = cached(
     const base = Object.fromEntries(settings.map((s) => [s.key, s.value]));
     return {
       ...base,
-      advisors: Object.fromEntries(advisors.map((a) => [a.key, { name: a.name, role: a.role, languages: a.languages, years: a.years }])),
+      advisors: Object.fromEntries(advisors.map((a) => [a.key, { name: a.name, role: a.role, languages: a.languages, years: a.years, phone: a.phone ?? undefined }])),
       testimonials: testimonials.map((t) => ({ quote: t.quote, name: t.name, meta: t.meta })),
       faqs: faqs.map((f) => ({ q: f.question, a: f.answer })),
     } as Site;

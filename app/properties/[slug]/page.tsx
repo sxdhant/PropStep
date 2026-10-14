@@ -59,7 +59,9 @@ export default async function ListingPage({ params }: Params) {
   const rest = others.filter((x) => !sameDev.includes(x));
   const sameLoc = rest.filter((x) => x.locality === l.locality);
   const otherDev = (sameLoc.length ? sameLoc : [...rest.filter((x) => x.city === l.city), ...rest.filter((x) => x.city !== l.city)]).slice(0, 8);
-  const wa = waLink(site.whatsapp, `Hi Propstep, I'm interested in ${l.title} in ${l.locality} (${l.price_label}).`);
+  // The advisor's own number when they have one, otherwise the company line
+  const callHref = adv?.phone ?? site.phone_href;
+  const wa = waLink(adv?.phone ? adv.phone.replace(/\D/g, "") : site.whatsapp, `Hi Propstep, I'm interested in ${l.title} in ${l.locality} (${l.price_label}).`);
   const configText = configs.length > 1 ? `${configs.slice(0, -1).join(", ")} & ${configs[configs.length - 1]}` : String(configs[0] ?? "");
   // Anything the admin left empty is simply not shown
   const config = ([
@@ -244,7 +246,7 @@ export default async function ListingPage({ params }: Params) {
             <div className="form-card">
               <AdvisorCard adv={adv} />
               <div className="btn-row" style={{ margin: "20px 0 24px" }}>
-                <a className="btn btn--call btn--sm" href={`tel:${site.phone_href}`}>
+                <a className="btn btn--call btn--sm" href={`tel:${callHref}`}>
                   <Icon name="phone" className="icon--sm" /> Call
                 </a>
                 <a className="btn btn--wa btn--sm" href={wa} target="_blank" rel="noopener">

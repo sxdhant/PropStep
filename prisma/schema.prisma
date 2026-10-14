@@ -50,6 +50,7 @@ model Advisor {
   role      String
   languages String
   years     Int
+  phone     String?
   listings  Listing[]
 }
 

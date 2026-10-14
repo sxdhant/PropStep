@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
 import Icon, { WhatsAppIcon } from "./Icon";
 import { Photo, Split } from "./primitives";
@@ -450,8 +451,12 @@ export function SortableTable({ columns, rows, caption }: { columns: Column[]; r
 }
 
 /* ============================================================ Mobile quick-contact bar */
-export function ActionBar({ phoneHref, wa }: { phoneHref: string; wa: string }) {
+/** `byListing`: on a property page the bar calls that listing's advisor (slug -> their phone and WhatsApp link) */
+export function ActionBar({ phoneHref, wa, byListing }: { phoneHref: string; wa: string; byListing?: Record<string, { phoneHref: string; wa: string }> }) {
   const [hide, setHide] = useState(false);
+  const own = byListing?.[usePathname().replace(/^\/properties\/|\/$/g, "")];
+  phoneHref = own?.phoneHref ?? phoneHref;
+  wa = own?.wa ?? wa;
   useEffect(() => {
     const footer = document.querySelector(".site-footer");
     if (!footer || !("IntersectionObserver" in window)) return;

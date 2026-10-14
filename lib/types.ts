@@ -120,7 +120,8 @@ export type Locality = {
   work: string[];
 };
 
-export type Advisor = { name: string; role: string; languages: string; years: number };
+/** phone: the advisor's own line in international format (+91...); the site-wide number is used when it is empty */
+export type Advisor = { name: string; role: string; languages: string; years: number; phone?: string };
 
 export type Site = {
   name: string;

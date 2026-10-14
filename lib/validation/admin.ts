@@ -104,6 +104,13 @@ export const advisorInput = z.object({
   role: reqText("Role", 80),
   languages: reqText("Languages", 120),
   years: z.number().int().min(0).max(60),
+  // Optional direct line, used by the Call and WhatsApp buttons on this advisor's listings. Spaces and dashes are ignored.
+  phone: z
+    .string()
+    .optional()
+    .transform((v) => (v ?? "").replace(/[\s-]/g, ""))
+    .refine((v) => v === "" || /^\+[1-9]\d{7,14}$/.test(v), "Phone: use international format, e.g. +919187103101")
+    .transform((v) => v || null),
 });
 export const testimonialsInput = z.array(z.object({ quote: reqText("Quote", 600), name: reqText("Name", 80), meta: reqText("Detail", 120) })).max(30);
 export const faqsInput = z.array(z.object({ q: reqText("Question", 300), a: reqText("Answer", 2000) })).max(60);
