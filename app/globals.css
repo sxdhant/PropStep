@@ -1187,7 +1187,10 @@ html[data-theme="night"] .hero-search {
 .l-card .media { border-radius: 0; aspect-ratio: 3 / 2; }
 .l-card .media img { transition: transform 1200ms var(--ease-out); }
 .l-card:hover .media img { transform: scale(1.05); }
-.l-card__tags { position: absolute; z-index: 2; top: 14px; left: 14px; display: flex; gap: 6px; flex-wrap: wrap; }
+.l-card__tags { position: absolute; z-index: 2; top: 10px; left: 10px; display: flex; gap: 4px; flex-wrap: wrap; }
+/* Smaller badges on the property cards only (the property page keeps the regular size) */
+.l-card__tags .tag { gap: 4px; padding: 3px 8px; font-size: 0.6875rem; letter-spacing: 0.01em; }
+.l-card__tags .tag .icon--sm { width: 12px; height: 12px; }
 .l-card__body { display: flex; flex-direction: column; gap: 6px; padding: 20px 22px 22px; flex: 1; }
 .l-card__price { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.03em; color: var(--ink); }
 .l-card__title { font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.35; color: var(--ink-2); }
