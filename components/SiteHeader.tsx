@@ -130,10 +130,6 @@ export default function SiteHeader({ name, phone, phoneHref }: Props) {
             ))}
           </nav>
           <div className="header-actions">
-            <a className="header-phone" href={`tel:${phoneHref}`}>
-              <Icon name="phone" className="icon--sm" />
-              <span>{phone}</span>
-            </a>
             <Link className="btn btn--sm header-cta" href="/contact-us/#visit">
               Book a visit
             </Link>
