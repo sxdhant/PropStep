@@ -8,7 +8,7 @@ export const getListingRow = (id: string) => db.listing.findUnique({ where: { id
 /** Row -> the shape the admin form edits (and the API returns) */
 export function listingOut(r: Row) {
   return {
-    id: r.id, slug: r.slug, title: r.title, intent: r.intent, type: r.type, developer: r.developer ?? "", project: r.project ?? "",
+    id: r.id, slug: r.slug, title: r.title, intent: r.intent, type: r.type, developer: r.developer ?? "", developerLogo: r.developerLogo ?? "", project: r.project ?? "",
     bhk: r.bhk, area: r.area, city: r.city, locality: r.locality, localitySlug: r.localityRef?.slug ?? "",
     price: Number(r.price), priceLabel: r.priceLabel, possession: r.possession ?? "",
     rera: r.rera ?? "", badge: r.badge ?? "", advisorKey: r.advisor.key, postedAt: r.postedAt.toISOString().slice(0, 10),
@@ -37,7 +37,7 @@ export async function listingData(i: ListingInput): Promise<{ data: Parameters<t
   }
   return {
     data: {
-      slug: i.slug, title: i.title, intent: i.intent, type: i.type, developer: i.developer ?? null, project: i.project ?? null,
+      slug: i.slug, title: i.title, intent: i.intent, type: i.type, developer: i.developer ?? null, developerLogo: i.developerLogo ?? null, project: i.project ?? null,
       bhk: i.bhk, baths: i.baths, area: i.area, city: i.city, locality: i.locality, localityId,
       price: BigInt(i.price), priceLabel: i.priceLabel, possession: i.possession ?? null,
       rera: i.rera ?? null, badge: i.badge ?? null, advisorId: advisor.id, postedAt: i.postedAt ? new Date(i.postedAt) : new Date(),

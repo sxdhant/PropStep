@@ -35,6 +35,7 @@ export const toListing = (r: ListingRow, badgeDefs?: BadgeDef[]): Listing => ({
   intent: r.intent as "buy" | "rent",
   type: r.type,
   developer: r.developer ?? undefined,
+  developer_logo: r.developerLogo ?? undefined,
   project: r.project ?? undefined,
   configs: (r.configs as number[] | null) ?? undefined,
   units: r.units ?? undefined,

@@ -98,6 +98,7 @@ model Listing {
   intent         String        @default("buy")
   type           String
   developer      String?
+  developerLogo  String?
   project        String?
   bhk            Int
   baths          Int

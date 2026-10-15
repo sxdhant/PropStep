@@ -95,6 +95,8 @@ export type Listing = {
   /** RERA registration number(s); "Available on request" shows when empty */
   rera?: string;
   badge?: string;
+  /** The developer's logo (an uploaded image address); shown beside the project name and on cards */
+  developer_logo?: string;
   /** badge, with how each name is drawn (icon and colour) */
   badges?: { name: string; icon?: string; tone: "blue" | "accent" | "plain" }[];
   images: Photo[];

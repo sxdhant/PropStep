@@ -335,3 +335,6 @@ html.admin-menu-open { overflow: hidden; }
 
 .price-rows .unit-rows__head, .price-rows .unit-rows__row { grid-template-columns: 2fr 1fr 1.3fr auto; }
 @media (max-width: 700px) { .price-rows .unit-rows__row { grid-template-columns: 1fr 1fr; } }
+
+.logo-preview { flex: none; display: grid; place-items: center; width: 76px; height: 76px; padding: 6px; border: 1px solid var(--a-line); border-radius: 12px; background: #fff; overflow: hidden; color: var(--ink-3); }
+.logo-preview img { max-width: 100%; max-height: 100%; object-fit: contain; }

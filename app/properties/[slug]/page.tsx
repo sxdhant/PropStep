@@ -105,12 +105,22 @@ export default async function ListingPage({ params }: Params) {
                 <BadgeTags l={l} />
               </div>
             ) : null}
-            {l.developer ? <p className="pd-dev">{l.developer}</p> : null}
-            <h1 className="pd-project">{project}</h1>
-            <p className="pd-loc">
-              <Icon name="pin" className="icon--sm" />
-              {l.locality}, {l.city}
-            </p>
+            <div className="pd-titlebar">
+              {l.developer_logo ? (
+                <span className="pd-logo">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={l.developer_logo} alt={l.developer ? `${l.developer} logo` : "Developer logo"} />
+                </span>
+              ) : null}
+              <div>
+                {l.developer ? <p className="pd-dev">{l.developer}</p> : null}
+                <h1 className="pd-project">{project}</h1>
+                <p className="pd-loc">
+                  <Icon name="pin" className="icon--sm" />
+                  {l.locality}, {l.city}
+                </p>
+              </div>
+            </div>
             <ClampText className="pd-desc">
               {l.summary} {l.description}
             </ClampText>

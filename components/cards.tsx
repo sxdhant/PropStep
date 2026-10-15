@@ -67,7 +67,15 @@ export function ListingCard({ l, reveal = true, hidden, className, eager = false
       <div className="l-card__body">
         <div className="l-card__head">
           <div className="l-card__who">
-            {l.developer ? <p className="l-card__dev">{l.developer}</p> : null}
+            {l.developer ? (
+              <p className={`l-card__dev${l.developer_logo ? " l-card__dev--logo" : ""}`}>
+                {l.developer_logo ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img className="dev-logo" src={l.developer_logo} alt="" loading="lazy" />
+                ) : null}
+                {l.developer}
+              </p>
+            ) : null}
             <h3 className="l-card__title">{l.project ?? l.title}</h3>
             <p className="l-card__loc">
               <Icon name="pin" className="icon--sm" />

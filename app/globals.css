@@ -3046,3 +3046,12 @@ html.splash-on:not(.splash-out) .hero [data-reveal] { opacity: 0 !important; tra
 .pd-notes { display: grid; gap: 10px; margin: 14px 0 0; padding: 18px 20px; list-style: none; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--paper-3, #f4f5f7); }
 .pd-notes li { position: relative; padding-left: 18px; font-size: 0.9rem; line-height: 1.55; color: var(--ink-2); }
 .pd-notes li::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 6px; height: 6px; border-radius: 50%; background: var(--orange-500); }
+
+/* Developer logo: a rounded box beside the project heading, and a small mark on cards */
+.pd-titlebar { display: flex; align-items: center; gap: clamp(14px, 2vw, 22px); margin-top: 16px; }
+.pd-titlebar > div { min-width: 0; }
+.pd-titlebar .pd-dev { margin-top: 0; }
+.pd-logo { flex: none; display: grid; place-items: center; width: clamp(64px, 8vw, 92px); height: clamp(64px, 8vw, 92px); padding: 8px; border: 1px solid var(--line); border-radius: var(--r-lg); background: #fff; overflow: hidden; }
+.pd-logo img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+.l-card__dev--logo { display: flex; align-items: center; gap: 8px; }
+.dev-logo { flex: none; width: 30px; height: 30px; padding: 3px; border: 1px solid var(--line); border-radius: 8px; background: #fff; object-fit: contain; }

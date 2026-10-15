@@ -15,6 +15,7 @@ export const listingInput = z
     intent: z.enum(["buy", "rent"]).default("buy"),
     type: reqText("Type", 40),
     developer: optText(100),
+    developerLogo: optText(500),
     project: optText(100),
     city: reqText("City", 60),
     locality: reqText("Locality", 80),

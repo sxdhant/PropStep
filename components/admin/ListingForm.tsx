@@ -17,6 +17,7 @@ type UnitRow = { label: string; area: string; price: string; manual: boolean; fl
 const blankUnit: UnitRow = { label: "", area: "", price: "", manual: false, floorplan: "" };
 type State = {
   slug: string; title: string; type: string; developer: string; project: string; advisorKey: string;
+  developerLogo: string;
   city: string; locality: string; localitySlug: string; status: "DRAFT" | "PUBLISHED";
   hotSelling: boolean; handpicked: boolean;
   pricePerSqft: string; priceTouched: boolean; labelTouched: boolean; mapUrl: string;
@@ -27,7 +28,7 @@ type State = {
 };
 
 const blank: State = {
-  slug: "", title: "", type: "Apartment", developer: "", project: "", advisorKey: "", city: "Bengaluru", locality: "", localitySlug: "", status: "DRAFT",
+  slug: "", title: "", type: "Apartment", developer: "", developerLogo: "", project: "", advisorKey: "", city: "Bengaluru", locality: "", localitySlug: "", status: "DRAFT",
   hotSelling: false, handpicked: false,
   pricePerSqft: "", priceTouched: false, labelTouched: false, mapUrl: "",
   price: "", priceLabel: "", units: "", totalArea: "", towers: "", structure: "", areaMin: "", areaMax: "", configs: "",
@@ -78,7 +79,7 @@ export default function ListingForm({ id }: { id?: string }) {
     if (!l) return;
     const s = (k: string) => String(l[k] ?? "");
     setF({
-      slug: s("slug"), title: s("title"), type: s("type"), developer: s("developer"), project: s("project"), advisorKey: s("advisorKey"),
+      slug: s("slug"), title: s("title"), type: s("type"), developer: s("developer"), developerLogo: s("developerLogo"), project: s("project"), advisorKey: s("advisorKey"),
       city: s("city"), locality: s("locality"), localitySlug: s("localitySlug"), status: l.status as State["status"],
       hotSelling: l.hotSelling === true, handpicked: l.handpicked === true,
       pricePerSqft: s("pricePerSqft"), mapUrl: s("mapUrl"),
@@ -118,6 +119,18 @@ export default function ListingForm({ id }: { id?: string }) {
       .filter(([k]) => k.startsWith(`${prefix}.`) || k === prefix)
       .map(([k, v]) => `${k.replace(/\.(\d+)/g, (_, n) => ` #${Number(n) + 1}`)}: ${v}`)
       .join(" · ");
+
+  async function uploadLogo(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setPhotoErrors([]);
+    setUploading("Uploading logo…");
+    const r = await uploadImage(file, { logo: true }).catch(() => ({ url: undefined, error: "network error" }));
+    setUploading("");
+    if (r.error) setTop({ error: `${file.name}: ${r.error}` });
+    else set("developerLogo", r.url!);
+  }
 
   async function upload(e: ChangeEvent<HTMLInputElement>, to: "gallery" | "floorplan") {
     const files = Array.from(e.target.files ?? []);
@@ -189,7 +202,7 @@ export default function ListingForm({ id }: { id?: string }) {
     if (Object.keys(bad).length) return setErrors(bad);
 
     const body = {
-      slug: f.slug, title: f.title, type: f.type, intent: "buy", developer: f.developer, project: f.project, advisorKey: f.advisorKey,
+      slug: f.slug, title: f.title, type: f.type, intent: "buy", developer: f.developer, developerLogo: f.developerLogo || undefined, project: f.project, advisorKey: f.advisorKey,
       city: f.city, locality: f.locality, localitySlug: f.localitySlug, status: status ?? f.status,
       hotSelling: f.hotSelling, handpicked: f.handpicked,
       pricePerSqft: num(f.pricePerSqft) ? Math.round(Number(f.pricePerSqft)) : undefined, mapUrl: f.mapUrl.trim() || undefined,
@@ -248,6 +261,25 @@ export default function ListingForm({ id }: { id?: string }) {
             <MultiSelect label="Badges" value={f.badges} onChange={(v) => set("badges", v)} options={badgeDefs.map((b) => b.name)} icons={Object.fromEntries(badgeDefs.flatMap((b) => (b.icon ? [[b.name, b.icon]] : [])))} placeholder="None" />
           </Field>
           <Field label="Developer (small text above the heading)" name="developer" error={err("developer")}><input {...bind("developer")} /></Field>
+          <Field label="Developer logo (shown beside the heading)" name="developerLogo" error={err("developerLogo")} hint="A square or wide logo on a plain or transparent background. PNG keeps transparency.">
+            <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+              <span className="logo-preview">
+                {f.developerLogo ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={f.developerLogo} alt="" />
+                ) : (
+                  <small>No logo</small>
+                )}
+              </span>
+              <span style={{ display: "grid", gap: 8, justifyItems: "start" }}>
+                <label className="a-btn sm" style={{ cursor: "pointer" }}>
+                  {f.developerLogo ? "Replace logo" : "Upload logo"}
+                  <input type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={uploadLogo} />
+                </label>
+                {f.developerLogo ? <button type="button" className="a-btn sm danger" onClick={() => set("developerLogo", "")}>Remove logo</button> : null}
+              </span>
+            </div>
+          </Field>
           <Field label="Project name (large heading)" name="project" error={err("project")} hint="Falls back to the title if empty"><input {...bind("project")} /></Field>
           <Field label="Property type *" name="type" error={err("type")}>
             <Select label="Type" value={f.type} onChange={(v) => set("type", v)} options={[...PROPERTY_TYPES, ...(f.type && !PROPERTY_TYPES.includes(f.type) ? [f.type] : [])].map((t) => [t, t] as [string, string])} />

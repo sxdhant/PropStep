@@ -100,13 +100,26 @@ const MAX_UPLOAD = 4 * 1024 * 1024; // the host rejects larger request bodies
  * Shrink a photo in the browser before it is uploaded: at most 2000 px wide, JPEG quality 85 (lower only if it is still
  * over 4 MB). Small photos are left alone, and any failure falls back to the original file.
  */
-async function prepareImage(file: File): Promise<File> {
+async function prepareImage(file: File, logo = false): Promise<File> {
   try {
     if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return file;
     const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
-    if (bitmap.width <= MAX_WIDTH && file.size <= KEEP_AS_IS) {
+    if (bitmap.width <= (logo ? 800 : MAX_WIDTH) && file.size <= (logo ? 600 * 1024 : KEEP_AS_IS)) {
       bitmap.close();
       return file;
+    }
+    // A logo keeps its transparency (PNG) and is scaled to at most 800 px wide
+    if (logo) {
+      const w = Math.min(bitmap.width, 800);
+      const h = Math.round((bitmap.height * w) / bitmap.width);
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext("2d")?.drawImage(bitmap, 0, 0, w, h);
+      const png = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
+      bitmap.close();
+      if (!png || (png.size >= file.size && file.size <= MAX_UPLOAD)) return file;
+      return new File([png], file.name.replace(/\.[^.]+$/, "") + ".png", { type: "image/png" });
     }
     const encode = async (width: number, quality: number) => {
       const w = Math.min(bitmap.width, width);
@@ -133,8 +146,8 @@ async function prepareImage(file: File): Promise<File> {
 }
 
 /** Upload an image to the bucket (after shrinking it, see above); returns its URL */
-export async function uploadImage(original: File): Promise<{ url?: string; error?: string }> {
-  const file = await prepareImage(original);
+export async function uploadImage(original: File, opts?: { logo?: boolean }): Promise<{ url?: string; error?: string }> {
+  const file = await prepareImage(original, opts?.logo);
   const fd = new FormData();
   fd.append("file", file);
   const res = await fetch("/api/admin/uploads", { method: "POST", body: fd });
