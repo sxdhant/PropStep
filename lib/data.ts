@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { resolveBadges, type BadgeDef } from "./budgets";
+import { canonicalType, resolveBadges, type BadgeDef } from "./budgets";
 import { cache } from "react";
 import { db } from "./db";
 import * as fallback from "./content";
@@ -33,7 +33,7 @@ export const toListing = (r: ListingRow, badgeDefs?: BadgeDef[]): Listing => ({
   slug: r.slug,
   title: r.title,
   intent: r.intent as "buy" | "rent",
-  type: r.type,
+  type: canonicalType(r.type),
   developer: r.developer ?? undefined,
   developer_logo: r.developerLogo ?? undefined,
   project: r.project ?? undefined,

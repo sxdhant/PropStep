@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
-import { badgeList, DEFAULT_BADGES, type BadgeDef, PROPERTY_TYPES } from "@/lib/budgets";
+import { badgeList, canonicalType, DEFAULT_BADGES, type BadgeDef, PROPERTY_TYPES } from "@/lib/budgets";
 import IconSelect from "./IconSelect";
 import MultiSelect from "./MultiSelect";
 import Select from "./Select";
@@ -79,7 +79,7 @@ export default function ListingForm({ id }: { id?: string }) {
     if (!l) return;
     const s = (k: string) => String(l[k] ?? "");
     setF({
-      slug: s("slug"), title: s("title"), type: s("type"), developer: s("developer"), developerLogo: s("developerLogo"), project: s("project"), advisorKey: s("advisorKey"),
+      slug: s("slug"), title: s("title"), type: canonicalType(s("type")), developer: s("developer"), developerLogo: s("developerLogo"), project: s("project"), advisorKey: s("advisorKey"),
       city: s("city"), locality: s("locality"), localitySlug: s("localitySlug"), status: l.status as State["status"],
       hotSelling: l.hotSelling === true, handpicked: l.handpicked === true,
       pricePerSqft: s("pricePerSqft"), mapUrl: s("mapUrl"),

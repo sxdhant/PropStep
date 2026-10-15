@@ -9,7 +9,10 @@ export const BUDGETS = [
 ] as const;
 
 /** Listing types the property search filters by (the hero search and /properties/) */
-export const PROPERTY_TYPES = ["Apartment", "Independent house", "Villa", "Row House", "Villament", "Duplex", "Penthouse", "Studio apartment", "Plot", "Farmland", "Office"];
+export const PROPERTY_TYPES = ["Apartment", "Independent House", "Villa", "Row House", "Villament", "Duplex", "Penthouse", "Studio Apartment", "Plot", "Farmland", "Office"];
+
+/** A type as the list spells it, so listings saved with an older spelling ("Independent house") still match the filters */
+export const canonicalType = (t: string) => PROPERTY_TYPES.find((p) => p.toLowerCase() === t.trim().toLowerCase()) ?? t;
 
 /** Badges a listing can carry (several at once); stored comma-separated in `badge` */
 /** The colours a badge can have: "accent" is orange, "plain" a neutral glass tag */
