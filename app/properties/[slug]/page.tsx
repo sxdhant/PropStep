@@ -65,6 +65,7 @@ export default async function ListingPage({ params }: Params) {
   const configText = configs.length > 1 ? `${configs.slice(0, -1).join(", ")} & ${configs[configs.length - 1]}` : String(configs[0] ?? "");
   // Anything the admin left empty is simply not shown
   const config = ([
+    ["home", "Property type", l.type ?? ""],
     ["bed", "Bedrooms", configs.length ? `${configText} BHK` : ""],
     ["area", "Size", lo ? (lo === hi ? `${inrGroup(lo)} sq ft` : `${inrGroup(lo)} - ${inrGroup(hi)} sq ft`) : ""],
     ["building", "Number of units", l.units ? inrGroup(l.units) : ""],
@@ -77,6 +78,7 @@ export default async function ListingPage({ params }: Params) {
   const about = ([
     ["Project name", project],
     ["Developer", l.developer ?? ""],
+    ["Property type", l.type ?? ""],
     ["Location", `${l.locality}, ${l.city}`],
     ["Status", l.possession ?? ""],
     ["Connecting road", l.connecting_road ?? ""],
