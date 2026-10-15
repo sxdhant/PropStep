@@ -8,7 +8,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ key: strin
   try {
     const o = await getObject(key);
     return new Response(o.body, {
-      headers: { "Content-Type": o.contentType, "Cache-Control": "public, max-age=31536000, immutable", "X-Content-Type-Options": "nosniff", ...(o.length ? { "Content-Length": String(o.length) } : {}) },
+      headers: { "Content-Type": o.contentType, "Cache-Control": "public, max-age=31536000, s-maxage=31536000, immutable", "X-Content-Type-Options": "nosniff", ...(o.length ? { "Content-Length": String(o.length) } : {}) },
     });
   } catch {
     return new Response("Not found", { status: 404 });

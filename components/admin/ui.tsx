@@ -92,8 +92,49 @@ export function Pager({ page, pages, onPage }: { page: number; pages: number; on
   );
 }
 
-/** Upload an image to the bucket; returns its URL */
-export async function uploadImage(file: File): Promise<{ url?: string; error?: string }> {
+const MAX_WIDTH = 2000;
+const KEEP_AS_IS = 1.5 * 1024 * 1024; // already small and not too wide: upload untouched
+const MAX_UPLOAD = 4 * 1024 * 1024; // the host rejects larger request bodies
+
+/**
+ * Shrink a photo in the browser before it is uploaded: at most 2000 px wide, JPEG quality 85 (lower only if it is still
+ * over 4 MB). Small photos are left alone, and any failure falls back to the original file.
+ */
+async function prepareImage(file: File): Promise<File> {
+  try {
+    if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return file;
+    const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+    if (bitmap.width <= MAX_WIDTH && file.size <= KEEP_AS_IS) {
+      bitmap.close();
+      return file;
+    }
+    const encode = async (width: number, quality: number) => {
+      const w = Math.min(bitmap.width, width);
+      const h = Math.round((bitmap.height * w) / bitmap.width);
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return null;
+      ctx.fillStyle = "#fff"; // JPEG has no transparency
+      ctx.fillRect(0, 0, w, h);
+      ctx.drawImage(bitmap, 0, 0, w, h);
+      return new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", quality));
+    };
+    let blob = await encode(MAX_WIDTH, 0.85);
+    if (blob && blob.size > MAX_UPLOAD) blob = await encode(1600, 0.75);
+    bitmap.close();
+    // Never make a photo bigger than it was
+    if (!blob || (blob.size >= file.size && file.size <= MAX_UPLOAD)) return file;
+    return new File([blob], file.name.replace(/\.[^.]+$/, "") + ".jpg", { type: "image/jpeg" });
+  } catch {
+    return file;
+  }
+}
+
+/** Upload an image to the bucket (after shrinking it, see above); returns its URL */
+export async function uploadImage(original: File): Promise<{ url?: string; error?: string }> {
+  const file = await prepareImage(original);
   const fd = new FormData();
   fd.append("file", file);
   const res = await fetch("/api/admin/uploads", { method: "POST", body: fd });
