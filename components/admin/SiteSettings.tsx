@@ -97,7 +97,7 @@ const FORMS: Record<string, Form> = {
     fields: [
       { key: "name", label: "Badge text", hint: "Short, e.g. Verified or Launching soon" },
       { key: "icon", label: "Icon", kind: "icon", optional: true },
-      { key: "tone", label: "Colour", kind: "select", options: [["accent", "Orange (highlight)"], ["blue", "Blue (trust)"], ["plain", "Neutral (glass)"]] },
+      { key: "tone", label: "Colour", kind: "select", options: [["blue", "Blue"], ["green", "Green"], ["accent", "Orange"], ["purple", "Purple"], ["red", "Red"], ["gold", "Gold"], ["teal", "Teal"], ["plain", "Neutral (white)"]] },
     ],
   },
   marquee: {

@@ -98,7 +98,7 @@ export type Listing = {
   /** The developer's logo (an uploaded image address); shown beside the project name and on cards */
   developer_logo?: string;
   /** badge, with how each name is drawn (icon and colour) */
-  badges?: { name: string; icon?: string; tone: "blue" | "accent" | "plain" }[];
+  badges?: { name: string; icon?: string; tone: import("./budgets").BadgeTone }[];
   images: Photo[];
   summary: string;
   description: string;
@@ -162,7 +162,7 @@ export type Site = {
   /** Home page "What we do" cards; the built-in defaults are used until this is saved */
   pillars?: PillarContent[];
   /** Badges the admin can pick from; the built-in list is used until this is saved */
-  badges?: { name: string; icon?: string; tone: "blue" | "accent" | "plain" }[];
+  badges?: { name: string; icon?: string; tone: import("./budgets").BadgeTone }[];
   /** Home page scrolling highlights; the built-in list is used until this is saved */
   marquee?: string[];
   advisors: Record<string, Advisor>;

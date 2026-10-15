@@ -12,14 +12,20 @@ export const BUDGETS = [
 export const PROPERTY_TYPES = ["Apartment", "Independent house", "Villa", "Penthouse", "Studio apartment", "Plot", "Farmland", "Office"];
 
 /** Badges a listing can carry (several at once); stored comma-separated in `badge` */
-/** A badge the admin can put on a listing. tone: blue (trust), accent (orange highlight) or plain (neutral). Editable in Site settings. */
-export type BadgeDef = { name: string; icon?: string; tone: "blue" | "accent" | "plain" };
+/** The colours a badge can have: "accent" is orange, "plain" a neutral glass tag */
+export const BADGE_TONES = ["blue", "green", "accent", "purple", "red", "gold", "teal", "plain"] as const;
+export type BadgeTone = (typeof BADGE_TONES)[number];
+export const BADGE_TONE_CLASS: Record<BadgeTone, string> = {
+  blue: "tag--blue", green: "tag--green", accent: "tag--accent", purple: "tag--purple", red: "tag--red", gold: "tag--gold", teal: "tag--teal", plain: "tag--glass",
+};
+/** A badge the admin can put on a listing, with its icon and colour. Editable in Site settings. */
+export type BadgeDef = { name: string; icon?: string; tone: BadgeTone };
 export const DEFAULT_BADGES: BadgeDef[] = [
   { name: "Verified", icon: "verified", tone: "blue" },
-  { name: "Exclusive", icon: "trophy", tone: "accent" },
-  { name: "New", icon: "sparkles", tone: "accent" },
+  { name: "Exclusive", icon: "trophy", tone: "purple" },
+  { name: "New", icon: "sparkles", tone: "green" },
   { name: "Launching soon", icon: "clock", tone: "accent" },
-  { name: "Price reduced", icon: "percent", tone: "accent" },
+  { name: "Price reduced", icon: "percent", tone: "red" },
 ];
 /** A listing's badge names -> how each is drawn, using the saved badge list (a name not in it shows as plain text) */
 export const resolveBadges = (badge: string | null | undefined, defs: BadgeDef[] = DEFAULT_BADGES): BadgeDef[] =>

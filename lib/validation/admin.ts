@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ICON_NAMES } from "@/components/Icon";
+import { BADGE_TONES } from "@/lib/budgets";
 import { inrShort } from "@/lib/format";
 import { optText, photo, reqText, slugSchema } from "./common";
 
@@ -157,7 +158,7 @@ export const SETTINGS = {
   milestones: z.array(z.object({ year: reqText("Year", 10), title: reqText("Title", 100), text: reqText("Text", 400) })).max(20),
   services: z.array(z.object({ slug: slugSchema, icon, title: reqText("Title", 100), short: reqText("Summary", 400), points: lines(200, 12), image: reqText("Image", 500) })).max(20),
   badges: z
-    .array(z.object({ name: reqText("Name", 30), icon: z.union([icon, z.literal("")]).optional(), tone: z.enum(["blue", "accent", "plain"]) }))
+    .array(z.object({ name: reqText("Name", 30), icon: z.union([icon, z.literal("")]).optional(), tone: z.enum(BADGE_TONES) }))
     .min(1, "Keep at least one badge")
     .max(20),
   marquee: z.array(reqText("Text", 80)).min(1, "Keep at least one line").max(20),

@@ -3,7 +3,7 @@ import type { CSSProperties, ReactNode } from "react";
 import Icon, { type IconName } from "./Icon";
 import { Photo } from "./primitives";
 import { PerspectiveFlipCard } from "./ui/card-14";
-import { resolveBadges } from "@/lib/budgets";
+import { BADGE_TONE_CLASS, resolveBadges } from "@/lib/budgets";
 import { inrGroup } from "@/lib/format";
 import type { Listing, Locality } from "@/lib/types";
 
@@ -36,7 +36,7 @@ export function BadgeTags({ l }: { l: Pick<Listing, "badge" | "badges"> }) {
   return (
     <>
       {(l.badges ?? resolveBadges(l.badge)).map((b) => (
-        <span key={b.name} className={`tag ${b.tone === "blue" ? "tag--blue" : b.tone === "accent" ? "tag--accent" : "tag--glass"}`}>
+        <span key={b.name} className={`tag ${BADGE_TONE_CLASS[b.tone] ?? "tag--glass"}`}>
           {b.icon ? <Icon name={b.icon as IconName} className="icon--sm" /> : null}
           {b.name}
         </span>
