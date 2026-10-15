@@ -86,7 +86,7 @@ export default async function Home() {
             <div className="hero__copy">
               <h1 className="hero__title" id="hero-title" data-split="">
                 <Split>
-                  <span className="hero__title-accent">Step</span> into a better <span className="hero__title-accent">address.</span>
+                  <span className="hero__title-accent">Step</span> into a better <span className="hero__title-accent">Address.</span>
                 </Split>
               </h1>
               <p className="hero__lead" data-reveal="" style={{ "--delay": "420ms" } as CSSProperties}>
