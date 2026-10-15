@@ -5,7 +5,7 @@
  * in localStorage and restored before first paint by the head script in layout.tsx, so this component only reads
  * and flips it. The switch's look follows the attribute in CSS, so it is right before hydration too.
  */
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { THEME_COLOR, THEME_KEY, type Theme } from "@/lib/theme";
 
 const read = (): Theme => (document.documentElement.dataset.theme === "night" ? "night" : "day");
@@ -39,8 +39,37 @@ function apply(theme: Theme) {
   });
 }
 
+/** Make the page match the saved choice (a page restored by Back, or another tab, may be showing a stale theme) */
+function syncFromStorage() {
+  let saved: Theme = "day";
+  try {
+    saved = localStorage.getItem(THEME_KEY) === "night" ? "night" : "day";
+  } catch {
+    return;
+  }
+  if (saved === read()) return;
+  const root = document.documentElement;
+  if (saved === "night") root.dataset.theme = "night";
+  else delete root.dataset.theme;
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", THEME_COLOR[saved]);
+}
+
 export default function ThemeToggle() {
   const night = useSyncExternalStore(subscribe, read, () => "day" as Theme) === "night";
+  // The browser's Back button can bring back a frozen copy of an earlier page (bfcache) that still shows the theme it
+  // had when you left it, so re-check the saved theme whenever the page is shown again, and when another tab changes it.
+  useEffect(() => {
+    const onShow = () => syncFromStorage();
+    const onStorage = (e: StorageEvent) => e.key === THEME_KEY && syncFromStorage();
+    window.addEventListener("pageshow", onShow);
+    window.addEventListener("storage", onStorage);
+    document.addEventListener("visibilitychange", onShow);
+    return () => {
+      window.removeEventListener("pageshow", onShow);
+      window.removeEventListener("storage", onStorage);
+      document.removeEventListener("visibilitychange", onShow);
+    };
+  }, []);
   return (
     <button
       type="button"
