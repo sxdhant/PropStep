@@ -843,7 +843,7 @@ html[data-theme="night"] .hero__night { opacity: 1; }
   font-weight: 600;
 }
 /* "Step" and "address." in the logo orange, the words between in white */
-.hero__title-accent { color: var(--orange-500); }
+.hero__title-accent { color: var(--orange-500); text-transform: uppercase; }
 .hero__lead { margin-top: 18px; max-width: 44ch; color: rgba(255, 255, 255, 0.86); font-size: clamp(0.9375rem, 0.9rem + 0.25vw, 1.0625rem); line-height: 1.55; text-shadow: 0 1px 3px rgba(8, 15, 30, 0.45), 0 2px 16px rgba(8, 15, 30, 0.5); }
 .hero__find { grid-row: 4; grid-column: 1 / -1; justify-self: center; width: min(100%, 1120px); }
 @media (min-width: 900px) { .hero__find { grid-row: 3; } }
