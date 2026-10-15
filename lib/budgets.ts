@@ -9,7 +9,7 @@ export const BUDGETS = [
 ] as const;
 
 /** Listing types the property search filters by (the hero search and /properties/) */
-export const PROPERTY_TYPES = ["Apartment", "Independent house", "Villa", "Row house", "Villament", "Duplex", "Penthouse", "Studio apartment", "Plot", "Farmland", "Office"];
+export const PROPERTY_TYPES = ["Apartment", "Independent house", "Villa", "Row House", "Villament", "Duplex", "Penthouse", "Studio apartment", "Plot", "Farmland", "Office"];
 
 /** Badges a listing can carry (several at once); stored comma-separated in `badge` */
 /** The colours a badge can have: "accent" is orange, "plain" a neutral glass tag */
