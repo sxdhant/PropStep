@@ -57,6 +57,11 @@ export default function Gallery({ images, variant, vt }: Props) {
         <span className="g-item__more">
           <Icon name="image" className="icon--sm" /> View all {n}
         </span>
+      ) : variant === "listing" && i === 2 && n > 3 ? (
+        // On a wide screen only three photos show; the third carries the count of the rest and opens the gallery
+        <span className="g-item__more g-item__more--plus">
+          <b aria-hidden="true">+</b> {n - 3} more photo{n - 3 === 1 ? "" : "s"}
+        </span>
       ) : null;
     const ratio: [number, number] = variant === "project" && i > 0 ? [4, 3] : [3, 2];
     const sizes = i === 0 ? (variant === "project" ? "(min-width: 900px) 50vw, 100vw" : "(min-width: 900px) 60vw, 100vw") : variant === "project" ? "(min-width: 900px) 25vw, 50vw" : "30vw";
@@ -66,7 +71,7 @@ export default function Gallery({ images, variant, vt }: Props) {
         className="g-item"
         type="button"
         aria-label={`Open image ${i + 1} of ${n}: ${im.alt}`}
-        onClick={(e) => open(i, e.currentTarget)}
+        onClick={(e) => open(more && variant === "listing" ? 3 : i, e.currentTarget)}
         style={vt && i === 0 ? ({ viewTransitionName: vt } as CSSProperties) : undefined}
       >
         <Photo id={im.id} alt={im.alt} ratio={ratio} sizes={sizes} eager={i === 0} />

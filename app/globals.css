@@ -3060,3 +3060,9 @@ html.splash-on:not(.splash-out) .hero [data-reveal] { opacity: 0 !important; tra
 .pd-logo img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
 .l-card__dev--logo { display: flex; align-items: center; gap: 8px; }
 .dev-logo { flex: none; width: 30px; height: 30px; padding: 3px; border: 1px solid var(--line); border-radius: 8px; background: #fff; object-fit: contain; }
+
+/* Property page photos on a wide screen: three tiles, the third showing "+ N more photos" */
+@media (min-width: 900px) { .ld-gallery > .g-item:nth-child(n + 4):not(.g-item--end) { display: none; } }
+@media (max-width: 899px) { .g-item__more--plus { display: none; } }
+.g-item__more--plus { gap: 6px; padding: 8px 16px 8px 8px; }
+.g-item__more--plus b { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--orange-500); color: #fff; font-size: 1rem; line-height: 1; }
