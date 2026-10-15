@@ -11,6 +11,7 @@ const BLOCKS: [string, string, string][] = [
   ["social", "Social links", "social"],
   ["pillars", "What we do (home page)", "pillars"],
   ["stats", "Home page stats", "stats,marquee"],
+  ["badges", "Badges", "badges"],
   ["cities", "Cities", "cities"],
   ["offices", "Offices", "offices"],
   ["leadership", "Leadership", "leadership"],
@@ -89,6 +90,15 @@ const FORMS: Record<string, Form> = {
       [1, 2, 3].forEach((n) => ["label", "href", "look"].forEach((k) => delete out[`link${n}_${k}`]));
       return out;
     },
+  },
+  badges: {
+    type: "list", itemName: "Badge", max: 20,
+    intro: "The tags you can put on a property (shown over its photo and above its heading). Add your own, rename or remove them here. If you rename or remove a badge, properties that still use the old name show it as plain text until you pick the new one.",
+    fields: [
+      { key: "name", label: "Badge text", hint: "Short, e.g. Verified or Launching soon" },
+      { key: "icon", label: "Icon", kind: "icon", optional: true },
+      { key: "tone", label: "Colour", kind: "select", options: [["accent", "Orange (highlight)"], ["blue", "Blue (trust)"], ["plain", "Neutral (glass)"]] },
+    ],
   },
   marquee: {
     type: "list", itemName: "Line", max: 20, scalar: "text",

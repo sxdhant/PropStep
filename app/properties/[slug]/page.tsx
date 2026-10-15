@@ -5,11 +5,11 @@ import EmiCalculator from "@/components/EmiCalculator";
 import Gallery from "@/components/Gallery";
 import Icon, { WhatsAppIcon, type IconName } from "@/components/Icon";
 import { AdvisorCard } from "@/components/blocks";
-import { ListingCard } from "@/components/cards";
+import { BadgeTags, ListingCard } from "@/components/cards";
 import { EnquiryForm } from "@/components/forms";
 import { Crumbs, JsonLd, SectionHead } from "@/components/primitives";
 import { getListing, getListings, getLocalities, getPhoneProps, getSite, SITE_URL } from "@/lib/data";
-import { badgeList } from "@/lib/budgets";
+import { resolveBadges } from "@/lib/budgets";
 import { inrGroup, inrShort, waLink } from "@/lib/format";
 import { photoUrl } from "@/lib/img";
 import fs from "node:fs";
@@ -100,14 +100,9 @@ export default async function ListingPage({ params }: Params) {
         <div className="container">
           <Crumbs items={[["Home", "/"], ["Properties", "/properties/"], [project, `/properties/${l.slug}/`]]} />
           <div className="pd-intro">
-            {badgeList(l.badge).length ? (
+            {(l.badges ?? resolveBadges(l.badge)).length ? (
               <div className="chip-group" data-reveal="">
-                {badgeList(l.badge).map((b) => (
-                  <span key={b} className={`tag ${b === "Verified" ? "tag--blue" : ["Exclusive", "Price reduced", "New", "Upcoming launch"].includes(b) ? "tag--accent" : "tag--glass"}`}>
-                    {b === "Verified" ? <Icon name="verified" className="icon--sm" /> : null}
-                    {b}
-                  </span>
-                ))}
+                <BadgeTags l={l} />
               </div>
             ) : null}
             {l.developer ? <p className="pd-dev">{l.developer}</p> : null}
@@ -144,7 +139,7 @@ export default async function ListingPage({ params }: Params) {
 
             {l.notes?.length ? (
               <div className="pd-sec">
-                <h2 className="h3" data-reveal="">Notes &amp; conditions</h2>
+                <h2 className="h3" data-reveal="">Worth knowing</h2>
                 <ul className="pd-notes" role="list" data-reveal="">
                   {l.notes.map((t, i) => (
                     <li key={i}>{t}</li>

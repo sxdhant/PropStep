@@ -66,7 +66,7 @@ export const listingInput = z
     summary: reqText("Summary", 400),
     description: reqText("Description", 6000),
     features: lines(200, 30),
-    // "Notes & conditions" shown under Configuration
+    // "Worth knowing" shown under Configuration
     notes: lines(600, 20).optional(),
     amenities: z.array(z.object({ icon, label: reqText("Amenity", 80) })).max(40).optional(),
     connectivity: z.array(z.object({ icon, place: reqText("Place", 100), time: reqText("Time", 40) })).max(30).optional(),
@@ -155,6 +155,10 @@ export const SETTINGS = {
   values: z.array(z.object({ icon, title: reqText("Title", 80), text: reqText("Text", 400) })).max(12),
   milestones: z.array(z.object({ year: reqText("Year", 10), title: reqText("Title", 100), text: reqText("Text", 400) })).max(20),
   services: z.array(z.object({ slug: slugSchema, icon, title: reqText("Title", 100), short: reqText("Summary", 400), points: lines(200, 12), image: reqText("Image", 500) })).max(20),
+  badges: z
+    .array(z.object({ name: reqText("Name", 30), icon: z.union([icon, z.literal("")]).optional(), tone: z.enum(["blue", "accent", "plain"]) }))
+    .min(1, "Keep at least one badge")
+    .max(20),
   marquee: z.array(reqText("Text", 80)).min(1, "Keep at least one line").max(20),
   pillars: z
     .array(

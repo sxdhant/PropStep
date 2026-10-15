@@ -3042,7 +3042,7 @@ html.splash-on:not(.splash-out) .hero [data-reveal] { opacity: 0 !important; tra
 .g-item__end-body b { font-size: 1.05rem; font-weight: 700; }
 @media (max-width: 899px) { .ld-gallery > .g-item--end { display: block; } }
 
-/* Notes & conditions under Configuration */
+/* Worth knowing under Configuration */
 .pd-notes { display: grid; gap: 10px; margin: 14px 0 0; padding: 18px 20px; list-style: none; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--paper-3, #f4f5f7); }
 .pd-notes li { position: relative; padding-left: 18px; font-size: 0.9rem; line-height: 1.55; color: var(--ink-2); }
 .pd-notes li::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 6px; height: 6px; border-radius: 50%; background: var(--orange-500); }

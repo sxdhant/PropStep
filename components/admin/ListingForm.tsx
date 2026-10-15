@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
-import { BADGES, badgeList, PROPERTY_TYPES } from "@/lib/budgets";
+import { badgeList, DEFAULT_BADGES, type BadgeDef, PROPERTY_TYPES } from "@/lib/budgets";
 import IconSelect from "./IconSelect";
 import MultiSelect from "./MultiSelect";
 import Select from "./Select";
@@ -70,6 +70,8 @@ export default function ListingForm({ id }: { id?: string }) {
   const existing = useLoad<{ listing: Record<string, unknown> }>(id ? `/api/admin/listings/${id}` : null);
   const advisors = useLoad<{ items: { key: string; name: string }[] }>("/api/admin/advisors");
   const localities = useLoad<{ items: { slug: string; name: string }[] }>("/api/admin/localities");
+  const badgeSetting = useLoad<{ value: BadgeDef[] }>("/api/admin/site/badges");
+  const badgeDefs = Array.isArray(badgeSetting.data?.value) ? badgeSetting.data.value : DEFAULT_BADGES;
 
   useEffect(() => {
     const l = existing.data?.listing;
@@ -243,7 +245,7 @@ export default function ListingForm({ id }: { id?: string }) {
             <input {...bind("slug")} onChange={(e) => { setSlugTouched(true); set("slug", e.target.value); }} />
           </Field>
           <Field label="Badges (tags above the heading)" name="badge" error={err("badge")} hint="Choose any that apply">
-            <MultiSelect label="Badges" value={f.badges} onChange={(v) => set("badges", v)} options={BADGES} placeholder="None" />
+            <MultiSelect label="Badges" value={f.badges} onChange={(v) => set("badges", v)} options={badgeDefs.map((b) => b.name)} icons={Object.fromEntries(badgeDefs.flatMap((b) => (b.icon ? [[b.name, b.icon]] : [])))} placeholder="None" />
           </Field>
           <Field label="Developer (small text above the heading)" name="developer" error={err("developer")}><input {...bind("developer")} /></Field>
           <Field label="Project name (large heading)" name="project" error={err("project")} hint="Falls back to the title if empty"><input {...bind("project")} /></Field>
@@ -324,8 +326,8 @@ export default function ListingForm({ id }: { id?: string }) {
       </section>
 
       <section className="a-card">
-        <h2>4. Notes &amp; conditions</h2>
-        <p className="sec-where">Shown under the Configuration tiles on the property page, headed "Notes &amp; conditions". Use it for disclaimers, terms or a call to action. Leave it empty to hide the section.</p>
+        <h2>4. Worth knowing</h2>
+        <p className="sec-where">Shown under the Configuration tiles on the property page, headed "Worth knowing". Use it for disclaimers, terms or a call to action. Leave it empty to hide the section.</p>
         <div className="unit-rows">
           {f.notes.map((t, i) => (
             <div className="unit-rows__row" key={i} style={{ gridTemplateColumns: "1fr auto" }}>

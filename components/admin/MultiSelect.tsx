@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Icon, { type IconName } from "@/components/Icon";
 
-type Props = { label: string; value: string[]; onChange: (value: string[]) => void; options: readonly string[]; placeholder?: string };
+type Props = { label: string; value: string[]; onChange: (value: string[]) => void; options: readonly string[]; placeholder?: string; /** option -> icon name, drawn beside the option */ icons?: Record<string, string> };
 
 /** A dropdown with a checkbox per option, for choosing several values */
-export default function MultiSelect({ label, value, onChange, options, placeholder = "Choose…" }: Props) {
+export default function MultiSelect({ label, value, onChange, options, placeholder = "Choose…", icons }: Props) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -36,6 +37,7 @@ export default function MultiSelect({ label, value, onChange, options, placehold
           {all.map((o) => (
             <label key={o} role="option" aria-selected={value.includes(o)} style={{ display: "flex", gap: 8, alignItems: "center", padding: "6px 8px", cursor: "pointer" }}>
               <input type="checkbox" checked={value.includes(o)} onChange={() => toggle(o)} />
+              {icons?.[o] ? <Icon name={icons[o] as IconName} className="icon--sm" /> : null}
               {o}
             </label>
           ))}

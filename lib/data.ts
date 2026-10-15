@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import { resolveBadges, type BadgeDef } from "./budgets";
 import { cache } from "react";
 import { db } from "./db";
 import * as fallback from "./content";
@@ -28,7 +29,7 @@ function perSqft(r: ListingRow): number | undefined {
   return Number(r.price) && area ? Math.round(Number(r.price) / area) : undefined;
 }
 
-export const toListing = (r: ListingRow): Listing => ({
+export const toListing = (r: ListingRow, badgeDefs?: BadgeDef[]): Listing => ({
   slug: r.slug,
   title: r.title,
   intent: r.intent as "buy" | "rent",
@@ -65,6 +66,7 @@ export const toListing = (r: ListingRow): Listing => ({
   connecting_road: r.connectingRoad ?? undefined,
   rera: r.rera ?? undefined,
   badge: r.badge ?? undefined,
+  badges: resolveBadges(r.badge, badgeDefs),
   images: r.images as Listing["images"],
   summary: r.summary,
   description: r.description,
@@ -106,7 +108,15 @@ const toLocality = (r: LocalityRow): Locality => ({
 });
 
 /* ---------- loaders ---------- */
-const loadListings = cached(async () => (await queryListings()).map(toListing), "listings", TAGS.listings);
+const loadListings = cached(
+  async () => {
+    const [rows, setting] = await Promise.all([queryListings(), db.siteSetting.findUnique({ where: { key: "badges" } })]);
+    const defs = Array.isArray(setting?.value) ? (setting.value as BadgeDef[]) : undefined;
+    return rows.map((r) => toListing(r, defs));
+  },
+  "listings",
+  TAGS.listings,
+);
 const loadLocalities = cached(
   async () => (await db.locality.findMany({ where: { status: "PUBLISHED" }, orderBy: { name: "asc" } })).map(toLocality),
   "localities",

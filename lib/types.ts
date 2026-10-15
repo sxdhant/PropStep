@@ -95,11 +95,13 @@ export type Listing = {
   /** RERA registration number(s); "Available on request" shows when empty */
   rera?: string;
   badge?: string;
+  /** badge, with how each name is drawn (icon and colour) */
+  badges?: { name: string; icon?: string; tone: "blue" | "accent" | "plain" }[];
   images: Photo[];
   summary: string;
   description: string;
   features: string[];
-  /** "Notes & conditions" shown under the Configuration tiles */
+  /** "Worth knowing" shown under the Configuration tiles */
   notes?: string[];
   advisor: string;
   posted: string;
@@ -157,6 +159,8 @@ export type Site = {
   offices: { city: string; label: string; address: string; phone: string }[];
   /** Home page "What we do" cards; the built-in defaults are used until this is saved */
   pillars?: PillarContent[];
+  /** Badges the admin can pick from; the built-in list is used until this is saved */
+  badges?: { name: string; icon?: string; tone: "blue" | "accent" | "plain" }[];
   /** Home page scrolling highlights; the built-in list is used until this is saved */
   marquee?: string[];
   advisors: Record<string, Advisor>;

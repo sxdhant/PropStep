@@ -1,9 +1,9 @@
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
-import Icon from "./Icon";
+import Icon, { type IconName } from "./Icon";
 import { Photo } from "./primitives";
 import { PerspectiveFlipCard } from "./ui/card-14";
-import { badgeList } from "@/lib/budgets";
+import { resolveBadges } from "@/lib/budgets";
 import { inrGroup } from "@/lib/format";
 import type { Listing, Locality } from "@/lib/types";
 
@@ -31,6 +31,20 @@ export function ListingFacts({ l }: { l: Listing }) {
   );
 }
 
+/** The listing's badges as tags, each with its own icon */
+export function BadgeTags({ l }: { l: Pick<Listing, "badge" | "badges"> }) {
+  return (
+    <>
+      {(l.badges ?? resolveBadges(l.badge)).map((b) => (
+        <span key={b.name} className={`tag ${b.tone === "blue" ? "tag--blue" : b.tone === "accent" ? "tag--accent" : "tag--glass"}`}>
+          {b.icon ? <Icon name={b.icon as IconName} className="icon--sm" /> : null}
+          {b.name}
+        </span>
+      ))}
+    </>
+  );
+}
+
 type ListingCardProps = { l: Listing; reveal?: boolean; hidden?: boolean; className?: string; eager?: boolean };
 
 export function ListingCard({ l, reveal = true, hidden, className, eager = false }: ListingCardProps) {
@@ -44,14 +58,9 @@ export function ListingCard({ l, reveal = true, hidden, className, eager = false
     >
       <div className="media">
         <Photo id={l.images[0].id} alt={l.images[0].alt} ratio={[3, 2]} sizes="(min-width: 1000px) 30vw, (min-width: 640px) 46vw, 92vw" eager={eager} />
-        {badgeList(l.badge).length ? (
+        {(l.badges ?? resolveBadges(l.badge)).length ? (
           <div className="l-card__tags">
-            {badgeList(l.badge).map((b) => (
-              <span key={b} className={`tag ${b === "Verified" ? "tag--blue" : ["Exclusive", "Price reduced", "New", "Upcoming launch"].includes(b) ? "tag--accent" : "tag--glass"}`}>
-                {b === "Verified" ? <Icon name="verified" className="icon--sm" /> : null}
-                {b}
-              </span>
-            ))}
+            <BadgeTags l={l} />
           </div>
         ) : null}
       </div>
