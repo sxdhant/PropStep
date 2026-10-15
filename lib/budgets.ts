@@ -32,7 +32,7 @@ export const DEFAULT_BADGES: BadgeDef[] = [
   { name: "Under Construction", icon: "building", tone: "gold" },
   { name: "Coming Soon", icon: "calendar", tone: "teal" },
   { name: "Early Access", icon: "key", tone: "blue" },
-  { name: "Pre-launch", icon: "bell", tone: "plain" },
+  { name: "Pre-launch", icon: "bell", tone: "gold" },
 ];
 /** A listing's badge names -> how each is drawn, using the saved badge list (a name not in it shows as plain text) */
 export const resolveBadges = (badge: string | null | undefined, defs: BadgeDef[] = DEFAULT_BADGES): BadgeDef[] =>
