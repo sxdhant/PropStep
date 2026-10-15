@@ -6,25 +6,25 @@ import FloorPlan from "./FloorPlan";
 import Icon from "./Icon";
 import { inrGroup, inrShort } from "@/lib/format";
 
-export type PlanUnit = { bhk: number; area: number; price: number; floorplan?: string; floorplan3d?: string };
+export type PlanUnit = { label: string; area: number; price: number; psf?: number; floorplan?: string; floorplan3d?: string };
 
 type Props = {
   units: PlanUnit[];
   /** The property's own plan, used by any size without one of its own */
   fallback: string;
   fallback3d?: string;
-  type: string;
   title: string;
 };
 
 /** Floor plans: a tab for each BHK, a tab for each size within it, then the plan with the unit's price and a contact button underneath. Works for any number of BHKs and sizes */
-export default function PlanExplorer({ units, fallback, fallback3d, type, title }: Props) {
-  const bhks = [...new Set(units.map((u) => u.bhk))].sort((a, b) => a - b);
-  const [bhk, setBhk] = useState(bhks[0]);
-  const sizes = units.filter((u) => u.bhk === bhk);
+export default function PlanExplorer({ units, fallback, fallback3d, title }: Props) {
+  // A tab for each unit type, in the order they were entered
+  const labels = [...new Set(units.map((u) => u.label))];
+  const [label, setLabel] = useState(labels[0]);
+  const sizes = units.filter((u) => u.label === label);
   const [pick, setPick] = useState(0);
   const unit = sizes[Math.min(pick, sizes.length - 1)];
-  const key = (u: PlanUnit) => `${u.bhk}-${u.area}`;
+  const key = (u: PlanUnit) => `${u.label}-${u.area}`;
   // A crossfade: the plan being left stays on top of the new one while it fades out
   const [shown, setShown] = useState(unit);
   const [leaving, setLeaving] = useState<PlanUnit | null>(null);
@@ -35,16 +35,16 @@ export default function PlanExplorer({ units, fallback, fallback3d, type, title 
     const t = setTimeout(() => setLeaving(null), 450);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [unit.bhk, unit.area]);
+  }, [unit.label, unit.area]);
 
   const src = unit.floorplan ?? fallback;
   // Only the price footer crossfades: the plan image stays mounted (a new <img> blinks on phones) and just its figures fade in
   const foot = (u: PlanUnit) => (
     <div className="plans__foot">
       <div>
-        <h3 className="plans__name">{u.bhk} BHK {inrGroup(u.area)} sq ft {type}</h3>
+        <h3 className="plans__name">{u.label} · {inrGroup(u.area)} sq ft</h3>
         <p className="plans__price">{inrShort(u.price)}</p>
-        <p className="small muted">₹{inrGroup(Math.round(u.price / u.area))} per sq ft · {u.bhk} bedrooms</p>
+        <p className="small muted">₹{inrGroup(u.psf ?? Math.round(u.price / u.area))} per sq ft</p>
       </div>
       <Link className="btn btn--accent btn--sm plans__cta" href="#enquire">
         Contact us
@@ -55,9 +55,9 @@ export default function PlanExplorer({ units, fallback, fallback3d, type, title 
   return (
     <div className="plans">
       <div className="plans__bhk" role="tablist" aria-label="Configuration">
-        {bhks.map((b) => (
-          <button key={b} type="button" role="tab" aria-selected={b === bhk} className="plans__tab" onClick={() => { setBhk(b); setPick(0); }}>
-            {b} BHK
+        {labels.map((b) => (
+          <button key={b} type="button" role="tab" aria-selected={b === label} className="plans__tab" onClick={() => { setLabel(b); setPick(0); }}>
+            {b}
           </button>
         ))}
       </div>
@@ -75,7 +75,7 @@ export default function PlanExplorer({ units, fallback, fallback3d, type, title 
         reveal={false}
         src={src}
         src3d={unit.floorplan3d ?? (src === fallback ? fallback3d : undefined)}
-        alt={`${unit.bhk} BHK floor plan of ${title}, ${inrGroup(unit.area)} sq ft`}
+        alt={`${unit.label} floor plan of ${title}, ${inrGroup(unit.area)} sq ft`}
       />
       ) : (
         <p className="small muted" style={{ margin: "20px 0" }}>The floor plan for this size is coming soon. Contact us and we will share it.</p>

@@ -12,5 +12,5 @@ export const BUDGETS = [
 export const PROPERTY_TYPES = ["Apartment", "Independent house", "Villa", "Penthouse", "Studio apartment", "Plot", "Farmland", "Office"];
 
 /** Badges a listing can carry (several at once); stored comma-separated in `badge` */
-export const BADGES = ["Verified", "Exclusive", "New", "Price reduced"];
+export const BADGES = ["Verified", "Exclusive", "New", "Upcoming launch", "Price reduced"];
 export const badgeList = (b?: string | null) => (b ? b.split(",").map((s) => s.trim()).filter(Boolean) : []);

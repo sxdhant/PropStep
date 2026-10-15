@@ -27,6 +27,8 @@ export const listingInput = z
     advisorKey: reqText("Advisor", 40),
     postedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Use YYYY-MM-DD").optional(),
     units: optInt,
+    pricePerSqft: optInt,
+    mapUrl: optText(2000),
     totalArea: optText(60),
     towers: optInt,
     structure: optText(80),
@@ -37,12 +39,25 @@ export const listingInput = z
     areaMax: optInt,
     unitTypes: z
       .array(
-        z.object({
-          bhk: z.number().int().min(0).max(20),
-          area: z.number().int().positive(),
-          price: z.number().int().positive(),
-          floorplan: optText(500),
-        }),
+        z
+          .object({
+            // Free text, e.g. "3 BHK Apartment" or "4 BHK Villa + study". Old rows without it fall back to "<bhk> BHK".
+            label: optText(80),
+            bhk: z.number().int().min(0).max(20).optional(),
+            area: z.number().int().positive(),
+            price: z.number().int().positive().optional(),
+            // Price per sq ft: with it, the price is worked out as size x rate
+            psf: z.number().positive().max(10_000_000).optional(),
+            floorplan: optText(500),
+          })
+          .superRefine((u, ctx) => {
+            if (!u.label && u.bhk == null) ctx.addIssue({ code: "custom", path: ["label"], message: "Describe the unit type, e.g. 3 BHK Apartment" });
+            if (!u.price && !u.psf) ctx.addIssue({ code: "custom", path: ["price"], message: "Enter the price or the price per sq ft" });
+          })
+          .transform((u) => {
+            const label = u.label || `${u.bhk} BHK`;
+            return { ...u, label, bhk: u.bhk ?? (parseInt(label.match(/\d+/)?.[0] ?? "0", 10) || 0), price: u.price ?? Math.round(u.psf! * u.area) };
+          }),
       )
       .max(20)
       .optional(),
@@ -51,6 +66,8 @@ export const listingInput = z
     summary: reqText("Summary", 400),
     description: reqText("Description", 6000),
     features: lines(200, 30),
+    // "Notes & conditions" shown under Configuration
+    notes: lines(600, 20).optional(),
     amenities: z.array(z.object({ icon, label: reqText("Amenity", 80) })).max(40).optional(),
     connectivity: z.array(z.object({ icon, place: reqText("Place", 100), time: reqText("Time", 40) })).max(30).optional(),
     images: z.array(photo).max(10, "You can add up to 10 photos"),

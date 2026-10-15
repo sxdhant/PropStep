@@ -82,7 +82,13 @@ export type Listing = {
   /** Path to the floor-plan image in /public; the Floor plan section is left out when empty */
   floorplan?: string;
   /** The sizes on offer, each with its starting price: they fill the Price list and the Floor plans tabs */
-  unit_types?: { bhk: number; area: number; price: number; floorplan?: string }[];
+  /** label: what the admin typed (e.g. "3 BHK Apartment"); psf: price per sq ft when entered */
+  unit_types?: { label: string; bhk: number; area: number; price: number; psf?: number; floorplan?: string }[];
+  /** Price per sq ft shown on the card: the cheapest home's rate */
+  price_psf?: number;
+  /** The project's Google Maps link, and the address its map is embedded from */
+  map_url?: string;
+  map_embed?: string;
   amenities?: { icon: IconName; label: string }[];
   connectivity?: { icon: IconName; place: string; time: string }[];
   connecting_road?: string;
@@ -93,6 +99,8 @@ export type Listing = {
   summary: string;
   description: string;
   features: string[];
+  /** "Notes & conditions" shown under the Configuration tiles */
+  notes?: string[];
   advisor: string;
   posted: string;
 };

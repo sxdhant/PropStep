@@ -18,6 +18,16 @@ const cached = <T>(fn: () => Promise<T>, key: string, tag: string) => unstable_c
 
 /* ---------- row -> domain mappers ---------- */
 type ListingRow = Awaited<ReturnType<typeof queryListings>>[number];
+/** Price per sq ft for the card: the cheapest home's own rate when the price list has one, else price / smallest size */
+function perSqft(r: ListingRow): number | undefined {
+  if (r.pricePerSqft) return r.pricePerSqft; // the rate set in the admin wins
+  const units = (r.unitTypes as { area: number; price: number; psf?: number }[] | null) ?? [];
+  const cheapest = units.length ? units.reduce((a, b) => (b.price < a.price ? b : a)) : undefined;
+  if (cheapest) return cheapest.psf ?? (cheapest.area ? Math.round(cheapest.price / cheapest.area) : undefined);
+  const area = r.areaMin ?? r.area;
+  return Number(r.price) && area ? Math.round(Number(r.price) / area) : undefined;
+}
+
 export const toListing = (r: ListingRow): Listing => ({
   slug: r.slug,
   title: r.title,
@@ -46,7 +56,10 @@ export const toListing = (r: ListingRow): Listing => ({
   age: r.age ?? "",
   possession: r.possession ?? "",
   floorplan: r.floorplan ?? undefined,
-  unit_types: (r.unitTypes as Listing["unit_types"]) ?? undefined,
+  unit_types: ((r.unitTypes as { label?: string; bhk: number; area: number; price: number; psf?: number; floorplan?: string }[] | null) ?? undefined)?.map((u) => ({ ...u, label: u.label || `${u.bhk} BHK ${r.type}` })),
+  price_psf: perSqft(r),
+  map_url: r.mapUrl ?? undefined,
+  map_embed: r.mapEmbed ?? undefined,
   amenities: (r.amenities as Listing["amenities"]) ?? undefined,
   connectivity: (r.connectivity as Listing["connectivity"]) ?? undefined,
   connecting_road: r.connectingRoad ?? undefined,
@@ -56,6 +69,7 @@ export const toListing = (r: ListingRow): Listing => ({
   summary: r.summary,
   description: r.description,
   features: r.features as string[],
+  notes: (r.notes as string[] | null) ?? undefined,
   advisor: r.advisor.key,
   posted: r.postedAt.toISOString().slice(0, 10),
 });

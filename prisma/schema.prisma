@@ -120,6 +120,10 @@ model Listing {
   totalArea      String?
   towers         Int?
   structure      String?
+  pricePerSqft   Int?
+  mapUrl         String?
+  mapEmbed       String?
+  notes          Json?
   hotSelling     Boolean       @default(false)
   handpicked     Boolean       @default(false)
   configs        Json?

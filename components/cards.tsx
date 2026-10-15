@@ -47,7 +47,7 @@ export function ListingCard({ l, reveal = true, hidden, className, eager = false
         {badgeList(l.badge).length ? (
           <div className="l-card__tags">
             {badgeList(l.badge).map((b) => (
-              <span key={b} className={`tag ${b === "Verified" ? "tag--blue" : ["Exclusive", "Price reduced", "New"].includes(b) ? "tag--accent" : "tag--glass"}`}>
+              <span key={b} className={`tag ${b === "Verified" ? "tag--blue" : ["Exclusive", "Price reduced", "New", "Upcoming launch"].includes(b) ? "tag--accent" : "tag--glass"}`}>
                 {b === "Verified" ? <Icon name="verified" className="icon--sm" /> : null}
                 {b}
               </span>
@@ -68,7 +68,7 @@ export function ListingCard({ l, reveal = true, hidden, className, eager = false
           <div className="l-card__cost">
             {l.price ? <span className="l-card__from">Starting from</span> : null}
             <p className="l-card__price">{l.price_label}<sup>*</sup></p>
-            {l.price && (l.area_min ?? l.area) ? <span className="l-card__psf">₹{inrGroup(Math.round(l.price / (l.area_min ?? l.area)))} per sq ft</span> : null}
+            {l.price && l.price_psf ? <span className="l-card__psf">₹{inrGroup(l.price_psf)} per sq ft</span> : null}
           </div>
         </div>
         <ListingFacts l={l} />

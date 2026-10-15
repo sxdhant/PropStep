@@ -103,7 +103,7 @@ export default async function ListingPage({ params }: Params) {
             {badgeList(l.badge).length ? (
               <div className="chip-group" data-reveal="">
                 {badgeList(l.badge).map((b) => (
-                  <span key={b} className={`tag ${b === "Verified" ? "tag--blue" : ["Exclusive", "Price reduced", "New"].includes(b) ? "tag--accent" : "tag--glass"}`}>
+                  <span key={b} className={`tag ${b === "Verified" ? "tag--blue" : ["Exclusive", "Price reduced", "New", "Upcoming launch"].includes(b) ? "tag--accent" : "tag--glass"}`}>
                     {b === "Verified" ? <Icon name="verified" className="icon--sm" /> : null}
                     {b}
                   </span>
@@ -142,6 +142,17 @@ export default async function ListingPage({ params }: Params) {
               </div>
             ) : null}
 
+            {l.notes?.length ? (
+              <div className="pd-sec">
+                <h2 className="h3" data-reveal="">Notes &amp; conditions</h2>
+                <ul className="pd-notes" role="list" data-reveal="">
+                  {l.notes.map((t, i) => (
+                    <li key={i}>{t}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
             <div className="pd-sec">
               <h2 className="h3" data-reveal="">About the project</h2>
               <table className="pd-table" data-reveal="">
@@ -162,12 +173,13 @@ export default async function ListingPage({ params }: Params) {
                 <p className="small muted" style={{ marginTop: 6 }}>View the latest price list for {project}.</p>
                 <table className="pd-table pd-table--price" data-reveal="">
                   <thead>
-                    <tr><th scope="col">Unit type (saleable)</th><th scope="col">Price*</th></tr>
+                    <tr><th scope="col">Unit type</th><th scope="col">Size</th><th scope="col">Price*</th></tr>
                   </thead>
                   <tbody>
                     {units.map((u) => (
-                      <tr key={`${u.bhk}-${u.area}`}>
-                        <th scope="row">{u.bhk} BHK {l.type} {inrGroup(u.area)} sq ft</th>
+                      <tr key={`${u.label}-${u.area}`}>
+                        <th scope="row">{u.label}</th>
+                        <td>{inrGroup(u.area)} sq ft</td>
                         <td><b>{inrShort(u.price)}</b></td>
                       </tr>
                     ))}
@@ -180,7 +192,7 @@ export default async function ListingPage({ params }: Params) {
             {units.length && (l.floorplan || units.some((u) => u.floorplan)) ? (
               <div className="pd-sec">
                 <h2 className="h3" data-reveal="">{project} floor plans</h2>
-                <PlanExplorer units={units} fallback={l.floorplan ?? ""} fallback3d={floorplan3d(l.slug)} type={l.type} title={project} />
+                <PlanExplorer units={units} fallback={l.floorplan ?? ""} fallback3d={floorplan3d(l.slug)} title={project} />
               </div>
             ) : null}
 
@@ -206,7 +218,7 @@ export default async function ListingPage({ params }: Params) {
               <div className="map-embed map-embed--wide" data-reveal="">
                 <iframe
                   title={`Map of ${project}, ${l.locality}`}
-                  src={`https://www.google.com/maps?q=${encodeURIComponent(`${project}, ${l.locality}, ${l.city}`)}&z=15&output=embed`}
+                  src={l.map_embed ?? `https://www.google.com/maps?q=${encodeURIComponent(`${project}, ${l.locality}, ${l.city}`)}&z=15&output=embed`}
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                   allowFullScreen
@@ -225,6 +237,13 @@ export default async function ListingPage({ params }: Params) {
                     </li>
                   ))}
                 </ul>
+              ) : null}
+              {l.map_url ? (
+                <p style={{ marginTop: 12 }}>
+                  <a className="btn btn--outline btn--sm" href={l.map_url} target="_blank" rel="noopener">
+                    Open in Google Maps <Icon name="arrow-up-right" className="icon--sm" />
+                  </a>
+                </p>
               ) : null}
               <div className="conn-guide">
                 {loc ? (
