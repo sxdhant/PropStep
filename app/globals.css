@@ -3179,3 +3179,7 @@ html.splash-on:not(.splash-out) .hero [data-reveal] { opacity: 0 !important; tra
 .book__close { position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%); padding: 3px 12px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--surface); color: var(--c-text-2); font: inherit; font-size: 0.7rem; line-height: 1.4; cursor: pointer; white-space: nowrap; transition: background var(--d-1), color var(--d-1); }
 .book__close:hover { background: var(--c-primary); color: #fff; border-color: var(--c-primary); }
 .book--closed-front .book__close { display: none; }
+
+/* react-pageflip sizes its wrapper taller than the pages on some screens, which pushed the page below the book box (over the Close book button and the footer gap) */
+.book .stf__parent { height: 430px !important; }
+.book .stf__block { top: 0 !important; }
