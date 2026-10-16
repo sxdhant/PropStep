@@ -1,39 +1,53 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { ArticleCard } from "@/components/cards";
-import { Crumbs, Split } from "@/components/primitives";
-import { ARTICLES } from "@/lib/articles";
+import Masthead from "@/components/Masthead";
+import { ARTICLES, articleDate } from "@/lib/articles";
 
 export const metadata: Metadata = {
-  title: "News & blogs — property guides and market updates",
+  title: "The Propstep Times — news & blogs",
   description: "Guides and updates from Propstep advisors: resale paperwork, choosing a locality, NRI purchases and home loans.",
   alternates: { canonical: "/news/" },
 };
 
 export default function NewsPage() {
+  const [lead, ...rest] = ARTICLES;
+  const latest = rest.slice(0, 3);
+  const more = rest.slice(3);
   return (
-    <>
-      <section className="page-hero">
-        <div className="container">
-          <Crumbs items={[["Home", "/"], ["News & blogs", "/news/"]]} />
-          <p className="eyebrow" style={{ marginTop: 28 }} data-reveal="">
-            News &amp; blogs
-          </p>
-          <h1 className="h1" data-split="">
-            <Split>
-              Read before you <em>buy</em>.
-            </Split>
-          </h1>
-        </div>
-      </section>
-      <section className="section" style={{ paddingTop: 0 }}>
-        <div className="container">
-          <div className="card-grid card-grid--3" style={{ gridTemplateColumns: "repeat(auto-fill,minmax(min(100%,300px),1fr))" }}>
-            {ARTICLES.map((a) => (
+    <div className="np">
+      <div className="container">
+        <Masthead />
+
+        <section className="np-front" aria-label="Top stories">
+          <div className="np-front__lead">
+            <ArticleCard a={lead} lead />
+          </div>
+          <aside className="np-front__side" aria-label="Latest">
+            <h2 className="np-section-title">Latest</h2>
+            {latest.map((a) => (
+              <article className="np-brief" key={a.slug}>
+                <p className="np-story__kicker">{a.category}</p>
+                <h3 className="np-brief__title">
+                  <Link href={`/news/${a.slug}/`}>{a.title}</Link>
+                </h3>
+                <p className="np-story__by">
+                  {articleDate(a.date)} · {a.read}
+                </p>
+              </article>
+            ))}
+          </aside>
+        </section>
+
+        <section aria-label="More stories">
+          <h2 className="np-section-title np-section-title--wide">More stories</h2>
+          <div className="np-columns">
+            {more.map((a) => (
               <ArticleCard key={a.slug} a={a} />
             ))}
           </div>
-        </div>
-      </section>
-    </>
+        </section>
+      </div>
+    </div>
   );
 }

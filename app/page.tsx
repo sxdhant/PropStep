@@ -16,7 +16,7 @@ import { areasIn, getListings, getLocalities, getSite, zoneResolver, ZONES } fro
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSite();
   return {
-    title: { absolute: `${site.name} — Property advisory & verified listings in Bengaluru | Across India` },
+    title: { absolute: `${site.name} â€” Property advisory & verified listings in Bengaluru | Across India` },
     description: site.description,
     alternates: { canonical: "/" },
   };
@@ -171,7 +171,7 @@ export default async function Home() {
             eyebrow={`${listings.length}+ verified homes`}
             title={
               <>
-                See every home <em>we’ve checked</em>
+                See every home <em>weâ€™ve checked</em>
               </>
             }
             text="Filter by area, budget and bedrooms, then book a visit with an advisor in a few taps."
@@ -189,7 +189,7 @@ export default async function Home() {
                 Know Bengaluru, <em>neighbourhood</em> by neighbourhood.
               </>
             }
-            lead="Prices, yields, metro access and honest trade-offs for the city’s most asked-about areas,"
+            lead="Prices, yields, metro access and honest trade-offs for the cityâ€™s most asked-about areas,"
             leadMore=" refreshed every quarter by our research team."
           />
         </div>
@@ -222,7 +222,7 @@ export default async function Home() {
                 Four steps. <em>No</em> surprises.
               </>
             }
-            lead="Whether you are buying your first apartment or leasing a headquarters, the process — and the paperwork — is the same careful sequence."
+            lead="Whether you are buying your first apartment or leasing a headquarters, the process â€” and the paperwork â€” is the same careful sequence."
           />
           <Process />
         </div>
@@ -242,7 +242,7 @@ export default async function Home() {
 
       <CtaSection />
 
-      <section className="section section--paper" aria-labelledby="news-title" style={{ overflow: "hidden", paddingBlock: "clamp(28px,3.5vw,44px) clamp(16px,2.5vw,28px)" }}>
+      <section className="section section--wood" aria-labelledby="news-title" style={{ overflow: "hidden" }}>
         <div className="container">
           <SectionHead id="news-title" eyebrow="Guides & updates" title="News & Blogs" />
         </div>

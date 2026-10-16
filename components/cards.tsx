@@ -226,25 +226,42 @@ export function LocalityFlipCard({ loc }: { loc: Locality }) {
   return <PerspectiveFlipCard className="loc-flip" h="440px" front={front} back={back} />;
 }
 
-/** News & blog card: photo, heading, short description and a Continue reading link to the full article */
-export function ArticleCard({ a }: { a: Article }) {
+
+/** A story in the newspaper layout: kicker, headline, byline, photo, standfirst and a Continue reading button */
+export function ArticleCard({ a, lead = false }: { a: Article; lead?: boolean }) {
+  const href = `/news/${a.slug}/`;
   return (
-    <article className="news-card">
-      <Link className="news-card__img" href={`/news/${a.slug}/`} tabIndex={-1} aria-hidden="true">
-        <Photo id={a.image.id} ratio={[3, 2]} sizes="(min-width: 1000px) 30vw, 84vw" />
+    <article className={`np-story${lead ? " np-story--lead" : ""}`}>
+      <p className="np-story__kicker">{a.category}</p>
+      <h3 className="np-story__title">
+        <Link href={href}>{a.title}</Link>
+      </h3>
+      <p className="np-story__by">
+        By <strong>Propstep Desk</strong> · {articleDate(a.date)} · {a.read}
+      </p>
+      <Link className="np-story__img" href={href} tabIndex={-1} aria-hidden="true">
+        <Photo id={a.image.id} ratio={lead ? [16, 10] : [3, 2]} sizes={lead ? "(min-width: 1000px) 60vw, 92vw" : "(min-width: 1000px) 28vw, 84vw"} fade={false} />
       </Link>
-      <div className="news-card__body">
-        <p className="news-card__meta">
-          <span className="tag">{a.category}</span> {articleDate(a.date)} · {a.read}
-        </p>
-        <h3 className="news-card__title">
-          <Link href={`/news/${a.slug}/`}>{a.title}</Link>
-        </h3>
-        <p className="news-card__text">{a.excerpt}</p>
-        <Link className="news-card__more" href={`/news/${a.slug}/`}>
-          Continue reading<span className="visually-hidden">: {a.title}</span> <Icon name="arrow-right" className="icon--sm" />
-        </Link>
-      </div>
+      <p className="np-story__text">{a.excerpt}</p>
+      <Link className="np-story__more" href={href}>
+        Continue reading<span className="visually-hidden">: {a.title}</span> <Icon name="arrow-right" className="icon--sm" />
+      </Link>
     </article>
+  );
+}
+
+/** Closing card of a "More to read" row: leads to the full edition */
+export function ArticleAllCard({ count }: { count: number }) {
+  return (
+    <Link className="np-story np-story--all" href="/news/" aria-label="Read all blogs and news">
+      <span className="np-story__kicker">The full edition</span>
+      <span className="np-story__title">
+        Read all blogs <em>&amp; news</em>
+      </span>
+      <span className="np-story__text">{count} stories on paperwork, localities, loans and NRI purchases, from the Propstep desk.</span>
+      <span className="np-story__more">
+        Open the paper <Icon name="arrow-right" className="icon--sm" />
+      </span>
+    </Link>
   );
 }

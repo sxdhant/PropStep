@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArticleCard } from "@/components/cards";
-import { Crumbs, JsonLd, Photo, Split } from "@/components/primitives";
+import { ArticleAllCard, ArticleCard } from "@/components/cards";
+import Masthead from "@/components/Masthead";
+import { JsonLd, Photo } from "@/components/primitives";
+import { Rail } from "@/components/widgets";
 import { ARTICLES, articleDate, getArticle } from "@/lib/articles";
 import { SITE_URL } from "@/lib/data";
 import { photoUrl } from "@/lib/img";
@@ -25,66 +27,66 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 export default async function ArticlePage({ params }: Params) {
   const a = getArticle((await params).slug);
   if (!a) notFound();
-  const more = ARTICLES.filter((o) => o.slug !== a.slug).slice(0, 3);
+  const more = ARTICLES.filter((o) => o.slug !== a.slug).slice(0, 5);
   return (
-    <>
+    <div className="np">
       <JsonLd
         data={{
           "@context": "https://schema.org",
           "@type": "Article",
           headline: a.title,
           datePublished: a.date,
+          author: { "@type": "Organization", name: "Propstep" },
           image: photoUrl(a.image.id, 1200, [1200, 630], 75),
           mainEntityOfPage: `${SITE_URL}/news/${a.slug}/`,
         }}
       />
-      <section className="page-hero">
-        <div className="container">
-          <Crumbs items={[["Home", "/"], ["News & blogs", "/news/"], [a.title, `/news/${a.slug}/`]]} />
-          <p className="eyebrow" style={{ marginTop: 28 }} data-reveal="">
-            {a.category} · {articleDate(a.date)} · {a.read}
+      <div className="container">
+        <Masthead compact />
+        <article className="np-article">
+          <p className="np-story__kicker">{a.category}</p>
+          <h1 className="np-article__title">{a.title}</h1>
+          <p className="np-article__standfirst">{a.excerpt}</p>
+          <p className="np-story__by np-article__by">
+            By <strong>Propstep Desk</strong> · {articleDate(a.date)} · {a.read}
           </p>
-          <h1 className="h1" style={{ maxWidth: "22ch" }} data-split="">
-            <Split>{a.title}</Split>
-          </h1>
-        </div>
-      </section>
-      <section className="section" style={{ paddingTop: 0 }}>
-        <div className="container">
-          <div className="article-cover">
-            <Photo id={a.image.id} alt={a.image.alt} ratio={[16, 7]} sizes="(min-width: 1200px) 1200px, 100vw" eager />
-          </div>
-          <div className="article-body" style={{ marginTop: "clamp(24px,3vw,40px)" }}>
+          <figure className="np-article__figure">
+            <div className="np-article__cover">
+              <Photo id={a.image.id} alt={a.image.alt} ratio={[16, 8]} sizes="(min-width: 1200px) 1200px, 100vw" eager fade={false} />
+            </div>
+            <figcaption>{a.image.alt}</figcaption>
+          </figure>
+          <div className="np-article__body">
             {a.body.map((s, i) => (
-              <div key={i}>
+              <section key={i}>
                 {s.h && <h2>{s.h}</h2>}
-                <div className="prose">
-                  {s.p.map((t) => (
-                    <p key={t.slice(0, 24)}>{t}</p>
-                  ))}
-                </div>
-              </div>
+                {s.p.map((t) => (
+                  <p key={t.slice(0, 24)}>{t}</p>
+                ))}
+              </section>
             ))}
-            <p style={{ marginTop: 40 }}>
-              <Link className="btn" href="/contact-us/#visit">
-                Talk to an advisor
-              </Link>
-            </p>
           </div>
-        </div>
-      </section>
-      <section className="section section--paper">
+          <p className="np-article__end">
+            <Link className="np-story__more" href="/contact-us/#visit">
+              Talk to an advisor
+            </Link>
+          </p>
+        </article>
+      </div>
+
+      <section className="np-more" aria-labelledby="more-title">
         <div className="container">
-          <h2 className="h2" style={{ marginBottom: 24 }}>
+          <h2 className="np-section-title np-section-title--wide" id="more-title">
             More to read
           </h2>
-          <div className="card-grid card-grid--3">
-            {more.map((o) => (
-              <ArticleCard key={o.slug} a={o} />
-            ))}
-          </div>
         </div>
+        <Rail label="More articles" className="rail-wrap--np">
+          {more.map((o) => (
+            <ArticleCard key={o.slug} a={o} />
+          ))}
+          <ArticleAllCard count={ARTICLES.length} />
+        </Rail>
       </section>
-    </>
+    </div>
   );
 }

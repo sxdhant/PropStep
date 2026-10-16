@@ -21,7 +21,7 @@ function Book({ articles }: { articles: Article[] }) {
   // the left, so the book slides sideways to stay centred (CSS, wide screens only).
   const shell = useRef<HTMLDivElement>(null);
   const last = articles.length + 1;
-  const flip = useRef<{ pageFlip: () => { flip: (page: number) => void } } | null>(null);
+  const flip = useRef<{ pageFlip: () => { flip: (page: number) => void; flipNext: () => void } } | null>(null);
   const place = (i: number) => {
     // Set the class on the element directly: re-rendering the flipbook mid-turn makes the animation stutter
     shell.current?.classList.toggle("book--closed-front", i === 0);
@@ -68,7 +68,6 @@ function Book({ articles }: { articles: Article[] }) {
               <small>by</small> Propstep
             </p>
           </div>
-          <p className="book__hint">Swipe to open →</p>
         </Page>
         {articles.map((a) => (
           <Page key={a.slug}>
@@ -103,6 +102,9 @@ function Book({ articles }: { articles: Article[] }) {
           </button>
         </Page>
       </HTMLFlipBook>
+      <button className="book__close book__open" type="button" onClick={() => flip.current?.pageFlip().flipNext()}>
+        Swipe to open →
+      </button>
       <button className="book__close" type="button" onClick={() => flip.current?.pageFlip().flip(0)}>
         Close book
       </button>
