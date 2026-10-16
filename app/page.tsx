@@ -4,10 +4,12 @@ import type { CSSProperties } from "react";
 import HeroSearch from "@/components/HeroSearch";
 import SplashIntro from "@/components/SplashIntro";
 import Icon from "@/components/Icon";
-import { BrowseAllCard, ListingCard, LocalityFlipCard } from "@/components/cards";
+import { ArticleCard, BrowseAllCard, ListingCard, LocalityFlipCard } from "@/components/cards";
 import { CtaSection, Marquee, NoFooterCta, NriBand, Process, StatsBlock } from "@/components/blocks";
 import { SectionHead, Split } from "@/components/primitives";
 import { Pillars, Rail, Testimonials, type Pillar } from "@/components/widgets";
+import BookSlider from "@/components/ui/book-slider";
+import { ARTICLES } from "@/lib/articles";
 import { DEFAULT_MARQUEE, DEFAULT_PILLARS } from "@/lib/pillars";
 import { areasIn, getListings, getLocalities, getSite, zoneResolver, ZONES } from "@/lib/data";
 
@@ -239,6 +241,22 @@ export default async function Home() {
       </section>
 
       <CtaSection />
+
+      <section className="section section--paper" aria-labelledby="news-title" style={{ overflow: "hidden", paddingBlock: "clamp(28px,3.5vw,44px) clamp(16px,2.5vw,28px)" }}>
+        <div className="container">
+          <SectionHead id="news-title" eyebrow="Guides & updates" title="News & Blogs" />
+        </div>
+        <BookSlider
+          articles={ARTICLES}
+          fallback={
+            <Rail label="News and blogs" className="rail-wrap--news">
+              {ARTICLES.map((a) => (
+                <ArticleCard key={a.slug} a={a} />
+              ))}
+            </Rail>
+          }
+        />
+      </section>
     </>
   );
 }

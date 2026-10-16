@@ -5,6 +5,7 @@ import { Photo } from "./primitives";
 import { PerspectiveFlipCard } from "./ui/card-14";
 import { BADGE_TONE_CLASS, resolveBadges } from "@/lib/budgets";
 import { inrGroup } from "@/lib/format";
+import { articleDate, type Article } from "@/lib/articles";
 import type { Listing, Locality } from "@/lib/types";
 
 /** Three tiles: BHK sizes on offer, how many homes, and the size range */
@@ -223,4 +224,27 @@ export function LocalityFlipCard({ loc }: { loc: Locality }) {
   );
 
   return <PerspectiveFlipCard className="loc-flip" h="440px" front={front} back={back} />;
+}
+
+/** News & blog card: photo, heading, short description and a Continue reading link to the full article */
+export function ArticleCard({ a }: { a: Article }) {
+  return (
+    <article className="news-card">
+      <Link className="news-card__img" href={`/news/${a.slug}/`} tabIndex={-1} aria-hidden="true">
+        <Photo id={a.image.id} ratio={[3, 2]} sizes="(min-width: 1000px) 30vw, 84vw" />
+      </Link>
+      <div className="news-card__body">
+        <p className="news-card__meta">
+          <span className="tag">{a.category}</span> {articleDate(a.date)} · {a.read}
+        </p>
+        <h3 className="news-card__title">
+          <Link href={`/news/${a.slug}/`}>{a.title}</Link>
+        </h3>
+        <p className="news-card__text">{a.excerpt}</p>
+        <Link className="news-card__more" href={`/news/${a.slug}/`}>
+          Continue reading<span className="visually-hidden">: {a.title}</span> <Icon name="arrow-right" className="icon--sm" />
+        </Link>
+      </div>
+    </article>
+  );
 }

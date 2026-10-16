@@ -3070,3 +3070,112 @@ html.splash-on:not(.splash-out) .hero [data-reveal] { opacity: 0 !important; tra
 @media (max-width: 899px) { .g-item__more--plus { display: none; } }
 .g-item__more--plus { gap: 6px; padding: 8px 16px 8px 8px; }
 .g-item__more--plus b { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--orange-500); color: #fff; font-size: 1rem; line-height: 1; }
+
+/* News & blog cards (home rail and /news/) */
+.news-card { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; }
+.news-card__img { position: relative; display: block; aspect-ratio: 3 / 2; overflow: hidden; background: var(--blue-900); }
+.news-card__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 1200ms var(--ease-out); }
+.news-card:hover .news-card__img img { transform: scale(1.05); }
+.news-card__body { display: flex; flex-direction: column; flex: 1; padding: 20px 22px 24px; }
+.news-card__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--c-muted); }
+.news-card__title { margin-top: 12px; font-size: 1.25rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.25; }
+.news-card__title a { color: inherit; text-decoration: none; }
+.news-card__text { margin-top: 10px; color: var(--c-text-2); font-size: var(--fs-sm); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.news-card__more { margin-top: auto; padding-top: 16px; display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: var(--c-primary); text-decoration: none; }
+.news-card__more:hover { text-decoration: underline; }
+.rail-wrap--news .rail { padding-block: 4px 8px; }
+.article-cover { position: relative; aspect-ratio: 16 / 7; border-radius: var(--r-lg); overflow: hidden; background: var(--blue-900); }
+.article-cover img { width: 100%; height: 100%; object-fit: cover; }
+.article-body { max-width: 70ch; margin-inline: auto; }
+.article-body h2 { margin: 1.8em 0 0.5em; font-size: 1.5rem; letter-spacing: -0.02em; }
+.article-body .prose { max-width: none; font-size: 1.05rem; }
+/* News & blogs as a page-turning book */
+.book { width: 620px; height: 430px; transition: transform 700ms var(--ease-out); max-width: 100%; margin: 4px auto 32px; position: relative; }
+.book__flip { margin-inline: auto; }
+.book__page .news-card__title { margin-top: 8px; font-size: 1.05rem; }
+.book__page .news-card__text { margin-top: 6px; font-size: 0.85rem; -webkit-line-clamp: 3; }
+.book__page .news-card__more { padding-top: 10px; font-size: 0.9rem; }
+.book__page { background: var(--surface); color: var(--c-text); border: 1px solid var(--line); overflow: hidden; display: flex; flex-direction: column; }
+.book__page--cover { justify-content: center; align-items: flex-start; gap: 16px; padding: 28px; background: var(--blue-900); color: #fff; border-color: var(--blue-900); }
+.book__cover-title { font-size: 1.6rem; font-weight: 600; letter-spacing: -0.03em; line-height: 1.1; color: #fff; }
+.book__cover-title em { color: var(--orange-400); font-style: normal; }
+.book__hint { margin-top: 8px; font-size: 0.85rem; color: rgba(255, 255, 255, 0.75); }
+.book__photo { position: relative; flex: none; height: 40%; margin: 14px 14px 0; border-radius: 6px; overflow: hidden; background: var(--blue-900); }
+.book__photo img { width: 100%; height: 100%; object-fit: cover; }
+.book__text { display: flex; flex-direction: column; flex: 1; padding: 12px 14px 14px; overflow: hidden; }
+/* Hardcover look: cloth cover with a spine, gold-foil title and the author, paper pages with a soft edge */
+.book__page { background: linear-gradient(90deg, #ece6d8 0, #fbf8f1 7%, #fffdf8 100%); border-color: #d9d1bf; box-shadow: inset -3px 0 6px rgba(60, 45, 20, 0.08); }
+.book__page--front { position: relative; align-items: stretch; justify-content: center; padding: 22px 22px 22px 34px; border-radius: 3px 10px 10px 3px; background: linear-gradient(135deg, #1d3257 0%, var(--blue-900) 55%, #0f1a2e 100%); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06), 0 14px 28px rgba(14, 23, 38, 0.35); }
+.book__page--back { background: linear-gradient(135deg, #1d3257 0%, var(--blue-900) 100%); }
+.book__spine { position: absolute; inset: 0 auto 0 0; width: 16px; background: linear-gradient(90deg, rgba(0, 0, 0, 0.45), rgba(255, 255, 255, 0.12) 55%, rgba(0, 0, 0, 0.18)); border-right: 1px solid rgba(0, 0, 0, 0.35); }
+.book__frame { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; flex: 1; text-align: center; padding: 22px 14px; border: 1.5px solid #d8b35e; outline: 1px solid rgba(216, 179, 94, 0.45); outline-offset: 4px; }
+.book__kicker { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: #d8b35e; }
+.book__page--front .book__cover-title { font-family: Georgia, "Times New Roman", serif; font-size: 2rem; font-weight: 700; letter-spacing: 0; line-height: 1.15; color: #f1d58b; text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5); }
+.book__page--front .book__cover-title em { display: block; color: #f1d58b; font-style: italic; }
+.book__rule { width: 48px; height: 1.5px; background: #d8b35e; }
+.book__author { font-family: Georgia, "Times New Roman", serif; font-size: 1.15rem; letter-spacing: 0.08em; color: #f1d58b; }
+.book__author small { display: block; font-size: 0.72rem; font-style: italic; letter-spacing: 0.1em; color: rgba(241, 213, 139, 0.7); }
+.book__page--front .book__hint { position: absolute; bottom: 8px; left: 0; right: 0; text-align: center; margin: 0; font-size: 0.7rem; }@media (min-width: 700px) {
+  .book--closed-front { transform: translateX(-25%); }
+  .book--closed-back { transform: translateX(25%); }
+}
+.book__page--back { align-items: center; justify-content: center; text-align: center; gap: 20px; }
+.book__reset { background: none; border: 0; padding: 4px 8px; font: inherit; font-size: 0.8rem; color: rgba(255, 255, 255, 0.75); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.book__reset:hover { color: #fff; }
+.book__page--back { position: relative; align-items: stretch; padding: 22px 22px 22px 22px; border-radius: 10px 3px 3px 10px; }
+.book__page--back .book__cover-title { font-family: Georgia, "Times New Roman", serif; font-size: 1.8rem; font-weight: 700; line-height: 1.15; color: #f1d58b; text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5); }
+.book__page--back .book__cover-title em { display: block; color: #f1d58b; font-style: italic; }
+.book__cta { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border: 1.5px solid #d8b35e; border-radius: 999px; background: linear-gradient(180deg, #f1d58b, #d8b35e); color: #16243e; font-weight: 700; font-size: 0.9rem; text-decoration: none; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); transition: transform var(--d-2), box-shadow var(--d-2); }
+.book__cta:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4); }
+.book__page--back .book__reset { position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); white-space: nowrap; color: rgba(241, 213, 139, 0.85); }
+
+/* More book detail: cloth-grain covers, raised board edge, foil corner ornaments, stacked paper edges, gutter shading */
+.book__page--front, .book__page--back {
+  background-image:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.05) 0 1px, transparent 1px 3px),
+    linear-gradient(135deg, #1d3257 0%, var(--blue-900) 55%, #0f1a2e 100%);
+  box-shadow:
+    inset 0 0 0 2px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 3px rgba(255, 255, 255, 0.1),
+    inset 0 0 18px rgba(0, 0, 0, 0.45),
+    0 14px 28px rgba(14, 23, 38, 0.35);
+}
+/* a debossed hinge groove beside the spine, and one on the back cover */
+.book__page--front::after { content: ""; position: absolute; inset: 0 auto 0 16px; width: 3px; background: linear-gradient(90deg, rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0.1)); }
+.book__page--back::after { content: ""; position: absolute; inset: 0 16px 0 auto; width: 3px; background: linear-gradient(270deg, rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0.1)); }
+.book__page--back::before { content: ""; position: absolute; inset: 0 0 0 auto; width: 16px; background: linear-gradient(270deg, rgba(0, 0, 0, 0.45), rgba(255, 255, 255, 0.12) 55%, rgba(0, 0, 0, 0.18)); }
+/* gold corner ornaments: little L-brackets just inside each corner of the foil frame */
+.book__frame {
+  position: relative;
+  background:
+    linear-gradient(#d8b35e, #d8b35e) 6px 6px / 14px 1.5px no-repeat, linear-gradient(#d8b35e, #d8b35e) 6px 6px / 1.5px 14px no-repeat,
+    linear-gradient(#d8b35e, #d8b35e) calc(100% - 6px) 6px / 14px 1.5px no-repeat, linear-gradient(#d8b35e, #d8b35e) calc(100% - 6px) 6px / 1.5px 14px no-repeat,
+    linear-gradient(#d8b35e, #d8b35e) 6px calc(100% - 6px) / 14px 1.5px no-repeat, linear-gradient(#d8b35e, #d8b35e) 6px calc(100% - 6px) / 1.5px 14px no-repeat,
+    linear-gradient(#d8b35e, #d8b35e) calc(100% - 6px) calc(100% - 6px) / 14px 1.5px no-repeat, linear-gradient(#d8b35e, #d8b35e) calc(100% - 6px) calc(100% - 6px) / 1.5px 14px no-repeat;
+}
+.book__rule { position: relative; }
+.book__rule::before { content: "◆"; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 0 6px; font-size: 0.55rem; line-height: 1; color: #d8b35e; background: var(--blue-900); }
+/* inner pages: stacked paper edge on the outer side, soft shading toward the gutter */
+.book__page:not(.book__page--cover) {
+  background-image:
+    linear-gradient(90deg, rgba(60, 45, 20, 0.16), rgba(60, 45, 20, 0) 14%),
+    linear-gradient(270deg, rgba(60, 45, 20, 0.1), rgba(60, 45, 20, 0) 6%);
+  border-radius: 1px 3px 3px 1px;
+  box-shadow:
+    inset -1px 0 0 #cfc6b0, inset -2px 0 0 #fffdf8, inset -3px 0 0 #d9d1bf, inset -4px 0 0 #fffdf8, inset -5px 0 0 #d9d1bf,
+    inset 0 -1px 0 #d9d1bf, inset 0 -2px 0 #fffdf8, inset 0 -3px 0 #d9d1bf;
+}
+.book__photo { box-shadow: 0 0 0 1px rgba(60, 45, 20, 0.25), 0 0 0 5px #fffdf8, 0 0 0 6px rgba(60, 45, 20, 0.18); }
+.book__text { position: relative; }
+.book__text::before { content: ""; display: block; height: 1px; margin: 0 0 10px; background: linear-gradient(90deg, rgba(60, 45, 20, 0.28), rgba(60, 45, 20, 0)); }
+
+/* Flip fixes: the later background-image rules had dropped the page colour, so pages were see-through mid-turn */
+.book__page:not(.book__page--cover) { background-color: #fffdf8; }
+.book__page--front, .book__page--back { background-color: var(--blue-900); }
+.book__page { backface-visibility: hidden; -webkit-backface-visibility: hidden; transform: translateZ(0); will-change: transform; }
+
+/* Small "Close book" button under an open book (hidden while it is shut on the front cover) */
+.book__close { position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%); padding: 3px 12px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--surface); color: var(--c-text-2); font: inherit; font-size: 0.7rem; line-height: 1.4; cursor: pointer; white-space: nowrap; transition: background var(--d-1), color var(--d-1); }
+.book__close:hover { background: var(--c-primary); color: #fff; border-color: var(--c-primary); }
+.book--closed-front .book__close { display: none; }

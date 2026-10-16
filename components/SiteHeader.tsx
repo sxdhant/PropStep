@@ -13,6 +13,7 @@ const NAV = [
   { key: "properties", label: "Properties", href: "/properties/" },
   { key: "localities", label: "Localities", href: "/localities/" },
   { key: "services", label: "Services", href: "/services/" },
+  { key: "news", label: "News & Blogs", href: "/news/" },
   { key: "about", label: "About Us", href: "/about-us/" },
 ];
 
@@ -20,6 +21,7 @@ function activeKey(pathname: string) {
   if (pathname.startsWith("/properties")) return "properties";
   if (pathname.startsWith("/localities")) return "localities";
   if (pathname.startsWith("/services")) return "services";
+  if (pathname.startsWith("/news")) return "news";
   if (pathname.startsWith("/about")) return "about";
   return null;
 }
@@ -109,6 +111,7 @@ export default function SiteHeader({ name, phone, phoneHref }: Props) {
     { label: "Properties", href: "/properties/", note: "Verified homes" },
     { label: "Localities", href: "/localities/", note: "Bengaluru guides" },
     { label: "Services", href: "/services/", note: "Advisory & NRI" },
+    { label: "News & Blogs", href: "/news/", note: "Guides & updates" },
     { label: "About Us", href: "/about-us/", note: "Since 2026" },
     { label: "Contact Us", href: "/contact-us/", note: "Bengaluru" },
   ];
