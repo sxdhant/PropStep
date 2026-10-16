@@ -240,7 +240,7 @@ export function ArticleCard({ a, lead = false }: { a: Article; lead?: boolean })
         By <strong>Propstep Desk</strong> · {articleDate(a.date)} · {a.read}
       </p>
       <Link className="np-story__img" href={href} tabIndex={-1} aria-hidden="true">
-        <Photo id={a.image.id} ratio={lead ? [16, 10] : [3, 2]} sizes={lead ? "(min-width: 1000px) 60vw, 92vw" : "(min-width: 1000px) 28vw, 84vw"} fade={false} />
+        <Photo id={a.image.id} ratio={lead ? [16, 10] : [3, 2]} sizes={lead ? "(min-width: 1000px) 60vw, 92vw" : "(min-width: 1000px) 28vw, 84vw"} fade={false} eager={lead} />
       </Link>
       <p className="np-story__text">{a.excerpt}</p>
       <Link className="np-story__more" href={href}>
