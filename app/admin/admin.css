@@ -312,6 +312,8 @@ html.admin-menu-open { overflow: hidden; }
 .photo-slot__bar { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-between; padding: 6px; background: linear-gradient(transparent, rgba(0,0,0,.55)); }
 .photo-slot__bar button { width: 28px; height: 28px; border: 0; border-radius: 50%; background: rgba(255,255,255,.9); cursor: pointer; }
 .photo-slot__bar button:disabled { opacity: .35; cursor: default; }
+.photo-slots.has-error { padding: 8px; border-radius: var(--r-md); outline: 2px solid var(--c-error); background: color-mix(in srgb, var(--c-error) 7%, transparent); }
+.photo-slot--bad { border: 2px solid var(--c-error); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-error) 18%, transparent); }
 .photo-slot__err { position: absolute; left: 6px; right: 6px; bottom: 40px; padding: 2px 6px; border-radius: 4px; background: var(--c-error); color: #fff; font-size: 0.7rem; }
 
 /* Wide tables scroll sideways instead of clipping, and the action buttons (Edit, Delete…) stay pinned at the right edge */

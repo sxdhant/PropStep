@@ -1,8 +1,8 @@
 import { db } from "@/lib/db";
-import { fail, ok, parseBody, requireAdmin } from "@/lib/http";
+import { randomBytes } from "node:crypto";
+import { fail, ok, requireAdmin } from "@/lib/http";
 import { audit, bust, dbError, plain } from "@/lib/admin/ops";
-import { listingData, listingOut, getListingRow } from "@/lib/admin/listings";
-import { listingInput } from "@/lib/validation/admin";
+import { listingData, listingOut, getListingRow, readListing } from "@/lib/admin/listings";
 
 /** GET /api/admin/listings?q&status&page: a table-friendly list (drafts included) */
 export async function GET(req: Request) {
@@ -26,15 +26,25 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const g = await requireAdmin(req);
   if ("res" in g) return g.res;
-  const parsed = await parseBody(req, listingInput);
+  const parsed = await readListing(req, null);
   if ("res" in parsed) return parsed.res;
-  const mapped = await listingData(parsed.data);
+  const draft = parsed.data.status === "DRAFT";
+  const mapped = await listingData(parsed.data, { draft });
   if ("error" in mapped) return fail(422, mapped.error, { errors: { [mapped.field]: mapped.error } });
+  const warnings = { ...parsed.warnings, ...mapped.warnings };
   try {
-    const row = await db.listing.create({ data: mapped.data });
+    let row;
+    try {
+      row = await db.listing.create({ data: mapped.data });
+    } catch (e) {
+      if (!draft || (e as { code?: string })?.code !== "P2002") throw e;
+      // A draft is still saved when its page address is taken: it gets a temporary address until this one is changed
+      warnings.slug = "Another listing already uses this page address. Change it before publishing.";
+      row = await db.listing.create({ data: { ...mapped.data, slug: `draft-${randomBytes(4).toString("hex")}` } });
+    }
     await audit(g.session, "create", "listing", row.id, { slug: row.slug });
     bust("listings");
-    return ok({ listing: plain(listingOut((await getListingRow(row.id))!)) }, { status: 201 });
+    return ok({ listing: plain(listingOut((await getListingRow(row.id))!)), fieldWarnings: warnings }, { status: 201 });
   } catch (e) {
     return dbError(e, "A listing with that slug");
   }

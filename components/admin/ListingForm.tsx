@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { badgeList, canonicalType, DEFAULT_BADGES, type BadgeDef, PROPERTY_TYPES } from "@/lib/budgets";
 import IconSelect from "./IconSelect";
@@ -59,18 +58,27 @@ const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").repla
 
 /**
  * The form state as the API wants it, plus the problems found in the price list, amenities and places.
- * `lenient` (auto-save) leaves out unfinished rows instead of reporting them.
+ * `lenient` (drafts) saves what is complete and leaves unfinished rows out; they are still reported in `bad` so they can be marked.
  */
 function buildBody(f: State, status: State["status"], lenient = false) {
   const bad: Record<string, string> = {};
+  /** keeps the rows worth saving; each row's problems are reported under its own position in the form */
+  const check = <T,>(rows: T[], used: (r: T) => boolean, test: (r: T, i: number) => number) => {
+    const keep: T[] = [];
+    rows.forEach((r, i) => {
+      if (!used(r)) return;
+      if (test(r, i) === 0 || !lenient) keep.push(r);
+    });
+    return keep;
+  };
   // Price list rows: skip empty ones, ask for every column in the rest
-  let rows = f.unitRows.filter((r) => r.label.trim() || r.area.trim() || r.price.trim());
-  if (lenient) rows = rows.filter((r) => r.label.trim() && Number(r.area) >= 1 && Number(r.price) >= 1);
-  rows.forEach((r, i) => {
+  const rows = check(f.unitRows, (r) => !!(r.label.trim() || r.area.trim() || r.price.trim()), (r, i) => {
+    const before = Object.keys(bad).length;
     if (!r.label.trim()) bad[`unitTypes.${i}.label`] = "Describe the unit type, e.g. 3 BHK Apartment";
     if (!(Number(r.area) >= 1)) bad[`unitTypes.${i}.area`] = r.area.trim() ? "Enter a number" : "Fill this in, or remove the row";
     if (!r.price.trim()) bad[`unitTypes.${i}.price`] = "Enter the price, or set the price per sq ft in Configuration";
     else if (!(Number(r.price) >= 1)) bad[`unitTypes.${i}.price`] = "Enter a number";
+    return Object.keys(bad).length - before;
   });
   const unitTypes = rows.length
     ? rows.map((r) => ({
@@ -80,19 +88,19 @@ function buildBody(f: State, status: State["status"], lenient = false) {
         ...(r.floorplan ? { floorplan: r.floorplan } : {}),
       }))
     : undefined;
-  let amenityList = f.amenityRows.filter((r) => r.icon || r.label.trim());
-  if (lenient) amenityList = amenityList.filter((r) => r.icon && r.label.trim());
-  amenityList.forEach((r, i) => {
+  const amenityList = check(f.amenityRows, (r) => !!(r.icon || r.label.trim()), (r, i) => {
+    const before = Object.keys(bad).length;
     if (!r.icon) bad[`amenities.${i}.icon`] = "Choose an icon";
     if (!r.label.trim()) bad[`amenities.${i}.label`] = "Write the amenity name";
+    return Object.keys(bad).length - before;
   });
   const amenities = amenityList.length ? amenityList.map((r) => ({ icon: r.icon, label: r.label.trim() })) : undefined;
-  let placeList = f.placeRows.filter((r) => r.icon || r.place.trim() || r.time.trim());
-  if (lenient) placeList = placeList.filter((r) => r.icon && r.place.trim() && r.time.trim());
-  placeList.forEach((r, i) => {
+  const placeList = check(f.placeRows, (r) => !!(r.icon || r.place.trim() || r.time.trim()), (r, i) => {
+    const before = Object.keys(bad).length;
     if (!r.icon) bad[`connectivity.${i}.icon`] = "Choose an icon";
     if (!r.place.trim()) bad[`connectivity.${i}.place`] = "Write the place name";
     if (!r.time.trim()) bad[`connectivity.${i}.time`] = "Add the travel time";
+    return Object.keys(bad).length - before;
   });
   const connectivity = placeList.length ? placeList.map((r) => ({ icon: r.icon, place: r.place.trim(), time: r.time.trim() })) : undefined;
 
@@ -111,9 +119,9 @@ function buildBody(f: State, status: State["status"], lenient = false) {
   return { body, bad };
 }
 
-type Auto = { kind: "idle" } | { kind: "saving" } | { kind: "saved"; at: Date } | { kind: "local"; msg: string } | { kind: "error"; msg: string };
+type Auto = { kind: "idle" } | { kind: "saving" } | { kind: "saved"; at: Date; problems: number } | { kind: "local"; msg: string } | { kind: "error"; msg: string };
 const LOCAL_KEY = (id?: string) => `propstep:listing-draft:${id ?? "new"}`;
-const readLocal = (id?: string): { f: State; slugTouched: boolean; at: number } | null => {
+const readLocal = (id?: string): { f: State; slugTouched: boolean; at: number; unsaved?: boolean } | null => {
   try {
     const v = JSON.parse(localStorage.getItem(LOCAL_KEY(id)) ?? "null");
     return v && v.f && typeof v.at === "number" ? v : null;
@@ -129,8 +137,7 @@ const clearLocal = (id?: string) => {
 
 
 export default function ListingForm({ id }: { id?: string }) {
-  const router = useRouter();
-  const [f, setF] = useState<State>(blank);
+    const [f, setF] = useState<State>(blank);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [top, setTop] = useState<{ error?: string; ok?: string }>({});
   const [busy, setBusy] = useState(false);
@@ -149,6 +156,9 @@ export default function ListingForm({ id }: { id?: string }) {
   const baseline = useRef<string | null>(id ? null : JSON.stringify(blank));
   const saving = useRef(false);
   const queued = useRef(false);
+  /** the saved copy lacks something typed (a field with a problem): keep the browser copy to bring it back */
+  const unsaved = useRef(false);
+  const scrollToError = useRef(false);
 
   const existing = useLoad<{ listing: Record<string, unknown> }>(id ? `/api/admin/listings/${id}` : null);
   const advisors = useLoad<{ items: { key: string; name: string }[] }>("/api/admin/advisors");
@@ -182,7 +192,7 @@ export default function ListingForm({ id }: { id?: string }) {
     baseline.current = JSON.stringify(loaded);
     // Changes kept on this device that never reached the server (e.g. the connection dropped) win over the saved copy
     const kept = readLocal(id);
-    if (kept && kept.at > Date.parse(String(l.updatedAt)) && JSON.stringify(kept.f) !== baseline.current) {
+    if (kept && (kept.unsaved || kept.at > Date.parse(String(l.updatedAt))) && JSON.stringify(kept.f) !== baseline.current) {
       setF(kept.f);
       setRestored(new Date(kept.at));
     } else setF(loaded);
@@ -198,7 +208,7 @@ export default function ListingForm({ id }: { id?: string }) {
     setRestored(new Date(kept.at));
   }, [id]);
 
-  /** Keep the draft: on this device always, and in the Drafts list once it has a title and an advisor */
+  /** Keep the draft: on this device, and in the Drafts list. Whatever is filled in is saved; fields with a problem are marked in red. */
   async function autosave() {
     if (saving.current) {
       queued.current = true;
@@ -208,24 +218,26 @@ export default function ListingForm({ id }: { id?: string }) {
     const json = JSON.stringify(cur);
     // a live listing only changes when it is saved on purpose
     if (cur.status === "PUBLISHED") return setAuto({ kind: "local", msg: "Changes kept on this device. Press “Save & keep live” to update the live listing." });
-    if (!cur.title.trim() || !cur.advisorKey || !cur.slug.trim()) {
-      return setAuto({ kind: "local", msg: "Kept on this device. Add a title and choose an advisor to save it to Drafts." });
-    }
     saving.current = true;
     setAuto({ kind: "saving" });
-    const { body } = buildBody(cur, "DRAFT", true);
-    const r = await api<{ listing: { id: string } }>(idRef.current ? `/api/admin/listings/${idRef.current}` : "/api/admin/listings", { method: idRef.current ? "PATCH" : "POST", body }).catch(() => null);
+    const { body, bad } = buildBody(cur, "DRAFT", true);
+    const r = await api<{ listing: { id: string }; fieldWarnings?: Record<string, string> }>(idRef.current ? `/api/admin/listings/${idRef.current}` : "/api/admin/listings", { method: idRef.current ? "PATCH" : "POST", body }).catch(() => null);
     saving.current = false;
     if (r?.ok) {
       baseline.current = json;
-      clearLocal(idRef.current);
+      const problems = { ...bad, ...r.data.fieldWarnings };
+      unsaved.current = Object.keys(problems).length > 0;
+      if (unsaved.current) writeLocal();
+      else clearLocal(idRef.current);
+      setErrors(problems);
       if (!idRef.current) {
         idRef.current = r.data.listing.id;
         // Point the address bar at the saved draft without reloading the page, so typing isn't interrupted
         window.history.replaceState(null, "", `/admin/listings/${idRef.current}/`);
       }
-      setAuto({ kind: "saved", at: new Date() });
+      setAuto({ kind: "saved", at: new Date(), problems: Object.keys(problems).length });
     } else {
+      if (r?.data.errors) setErrors(r.data.errors);
       const e = r?.data.errors ? Object.values(r.data.errors)[0] : r?.data.error;
       setAuto({ kind: "error", msg: `Kept on this device, but not saved to Drafts yet${e ? `: ${e}` : " (no connection)"}` });
     }
@@ -238,7 +250,7 @@ export default function ListingForm({ id }: { id?: string }) {
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const writeLocal = () => {
     try {
-      localStorage.setItem(LOCAL_KEY(idRef.current), JSON.stringify({ f: fRef.current, slugTouched: slugTouchedRef.current, at: Date.now() }));
+      localStorage.setItem(LOCAL_KEY(idRef.current), JSON.stringify({ f: fRef.current, slugTouched: slugTouchedRef.current, at: Date.now(), unsaved: unsaved.current }));
     } catch {}
   };
   // Auto-save a moment after the last change
@@ -266,7 +278,10 @@ export default function ListingForm({ id }: { id?: string }) {
 
   // Bring the first field with a problem into view
   useEffect(() => {
-    if (Object.keys(errors).length) document.querySelector(".a-field.has-error")?.scrollIntoView({ block: "center", behavior: "smooth" });
+    if (scrollToError.current && Object.keys(errors).length) {
+      scrollToError.current = false;
+      document.querySelector(".has-error")?.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
   }, [errors]);
 
   const set = <K extends keyof State>(k: K, v: State[K]) => setF((p) => ({ ...p, [k]: v }));
@@ -335,27 +350,39 @@ export default function ListingForm({ id }: { id?: string }) {
     e.preventDefault();
     setTop({});
     clearTimeout(timer.current);
-    const { body, bad } = buildBody(f, status ?? f.status);
-    if (Object.keys(bad).length) return setErrors(bad);
+    const target = status ?? f.status;
+    const { body, bad } = buildBody(f, target, target === "DRAFT");
+    // A listing going live must be complete; a draft is saved as it is and the problems are only marked
+    if (target === "PUBLISHED" && Object.keys(bad).length) {
+      scrollToError.current = true;
+      return setErrors(bad);
+    }
 
     setBusy(true);
     // Let an auto-save that is already on its way finish first, so the listing isn't created twice
     while (saving.current) await new Promise((res) => setTimeout(res, 100));
     const listingId = idRef.current;
-    const r = await api<{ listing: { id: string } }>(listingId ? `/api/admin/listings/${listingId}` : "/api/admin/listings", { method: listingId ? "PATCH" : "POST", body });
+    const r = await api<{ listing: { id: string }; fieldWarnings?: Record<string, string> }>(listingId ? `/api/admin/listings/${listingId}` : "/api/admin/listings", { method: listingId ? "PATCH" : "POST", body });
     setBusy(false);
+    scrollToError.current = true;
     if (!r.ok) {
-      setErrors(r.data.errors ?? {});
+      setErrors({ ...bad, ...r.data.errors });
       return setTop({ error: Object.keys(r.data.errors ?? {}).length ? "Some fields need attention. They are marked in red below." : r.data.error ?? "Could not save" });
     }
-    setErrors({});
-    clearLocal(listingId);
+    const problems = { ...bad, ...r.data.fieldWarnings };
+    setErrors(problems);
+    unsaved.current = Object.keys(problems).length > 0;
+    if (unsaved.current) writeLocal();
+    else clearLocal(listingId);
     idRef.current = r.data.listing.id;
-    if (!id) return router.replace(`/admin/listings/${r.data.listing.id}/`);
+    // A new listing now has an address of its own; point the address bar at it without reloading, so the page keeps its state
+    if (!listingId) window.history.replaceState(null, "", `/admin/listings/${r.data.listing.id}/`);
     baseline.current = JSON.stringify({ ...f, status: body.status });
     setAuto({ kind: "idle" });
     set("status", body.status);
-    setTop({ ok: body.status === "PUBLISHED" ? "Saved. This listing is live on the website." : "Saved as draft." });
+    const attention = unsaved.current ? " Some fields need attention. They are marked in red below." : "";
+    if (body.status === "PUBLISHED") setTop({ ok: "Saved. This listing is live on the website." });
+    else setTop(unsaved.current ? { error: `Saved as draft.${attention}` } : { ok: "Saved as draft." });
   }
 
   if (id && existing.loading) return <p className="admin-sub">Loading…</p>;
@@ -369,7 +396,7 @@ export default function ListingForm({ id }: { id?: string }) {
           <a className="a-btn" href="/admin/listings/">
             ← All listings
           </a>
-          {id && f.status === "PUBLISHED" ? (
+          {idRef.current && f.status === "PUBLISHED" ? (
             <a className="a-btn" href={`/properties/${f.slug}/`} target="_blank" rel="noopener">
               View on website ↗
             </a>
@@ -431,8 +458,8 @@ export default function ListingForm({ id }: { id?: string }) {
       <section className="a-card">
         <h2>2. Photo gallery</h2>
         <p className="sec-where">Shown at the top of the property page, under the title. The first photo is also the cover on property cards.</p>
-        {err("images") ? <p className="a-field"><span className="err">{err("images")}</span></p> : null}
-        <div className="photo-slots">
+        {err("images") ? <p className="a-field has-error"><span className="err">{err("images")}</span></p> : null}
+        <div className={`photo-slots${err("images") ? " has-error" : ""}`}>
           {Array.from({ length: MAX_PHOTOS }, (_, i) => {
             const im = f.images[i];
             if (!im) {
@@ -445,7 +472,7 @@ export default function ListingForm({ id }: { id?: string }) {
             }
             const move = (d: number) => setF((p) => { const a = [...p.images]; [a[i + d], a[i]] = [a[i], a[i + d]]; return { ...p, images: a }; });
             return (
-              <div className="photo-slot" key={im.id + i}>
+              <div className={`photo-slot${err(`images.${i}`) ? " photo-slot--bad" : ""}`} key={im.id + i}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={/^(\/|https?:)/.test(im.id) ? im.id : `https://images.unsplash.com/photo-${im.id}?auto=format&fit=crop&w=300&h=300&q=60`} alt={im.alt} />
                 {i === 0 ? <span className="photo-slot__cover">Cover</span> : null}
@@ -455,7 +482,7 @@ export default function ListingForm({ id }: { id?: string }) {
                   <button type="button" aria-label="Edit description" title={im.alt} onClick={() => { const v = prompt("Describe this photo (for accessibility and search engines)", im.alt); if (v?.trim()) setF((p) => ({ ...p, images: p.images.map((x, j) => (j === i ? { ...x, alt: v.trim() } : x)) })); }}>✎</button>
                   <button type="button" aria-label="Move later" disabled={i === f.images.length - 1} onClick={() => move(1)}>→</button>
                 </div>
-                {err(`images.${i}.alt`) ? <span className="photo-slot__err">{err(`images.${i}.alt`)}</span> : null}
+                {err(`images.${i}`) ? <span className="photo-slot__err">{err(`images.${i}`)}</span> : null}
               </div>
             );
           })}
@@ -712,7 +739,7 @@ export default function ListingForm({ id }: { id?: string }) {
         </span>
         <span className="admin-sub" style={{ margin: 0 }} role="status" aria-live="polite">
           {auto.kind === "saving" ? "Saving draft…" : null}
-          {auto.kind === "saved" ? `Draft saved automatically at ${auto.at.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : null}
+          {auto.kind === "saved" ? `Draft saved automatically at ${auto.at.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}${auto.problems ? `. ${auto.problems} field${auto.problems === 1 ? "" : "s"} need attention (marked in red).` : ""}` : null}
           {auto.kind === "local" || auto.kind === "error" ? auto.msg : null}
         </span>
       </div>
