@@ -2,13 +2,21 @@ import { z } from "zod";
 import { ICON_NAMES } from "@/components/Icon";
 import { BADGE_TONES } from "@/lib/budgets";
 import { inrShort } from "@/lib/format";
-import { optText, photo, reqText, slugSchema } from "./common";
+import { clean, optText, photo, reqText, slugSchema } from "./common";
 
 const icon = z.enum(ICON_NAMES as [string, ...string[]], { message: "Unknown icon name" });
 const optInt = z.number().int().positive().nullish().transform((v) => v ?? undefined);
 const lines = (max: number, n: number) => z.array(reqText("Item", max)).max(n);
 
 /* ---------- listings ---------- */
+/** Text that can be empty (drafts) but not too long */
+const draftText = (max: number) =>
+  z
+    .string()
+    .nullish()
+    .transform((v) => (v ? clean(v) : ""))
+    .pipe(z.string().max(max, "Too long"));
+
 export const listingInput = z
   .object({
     slug: slugSchema,
@@ -19,7 +27,8 @@ export const listingInput = z
     developerLogo: optText(500),
     project: optText(100),
     city: reqText("City", 60),
-    locality: reqText("Locality", 80),
+    // Locality, summary and description may be empty while the listing is a draft (checked again below when publishing)
+    locality: draftText(80),
     localitySlug: z.union([slugSchema, z.literal("")]).optional(),
     price: z.number().int().positive().max(10_000_000_000).optional(),
     priceLabel: optText(40),
@@ -65,8 +74,8 @@ export const listingInput = z
       .optional(),
     floorplan: optText(500),
     connectingRoad: optText(160),
-    summary: reqText("Summary", 400),
-    description: reqText("Description", 6000),
+    summary: draftText(400),
+    description: draftText(6000),
     features: lines(200, 30),
     // "Worth knowing" shown under Configuration
     notes: lines(600, 20).optional(),
@@ -77,6 +86,11 @@ export const listingInput = z
   })
   .superRefine((v, ctx) => {
     if (v.areaMin && v.areaMax && v.areaMin > v.areaMax) ctx.addIssue({ code: "custom", path: ["areaMin"], message: "Smallest size can't exceed the largest" });
+    if (v.status === "PUBLISHED") {
+      if (!v.locality) ctx.addIssue({ code: "custom", path: ["locality"], message: "Locality is required" });
+      if (!v.summary) ctx.addIssue({ code: "custom", path: ["summary"], message: "Summary is required" });
+      if (!v.description) ctx.addIssue({ code: "custom", path: ["description"], message: "Description is required" });
+    }
     if (v.status === "PUBLISHED" && v.images.length === 0) ctx.addIssue({ code: "custom", path: ["images"], message: "Add at least one photo before publishing" });
   })
   .transform((v) => {

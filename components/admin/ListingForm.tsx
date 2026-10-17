@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { badgeList, canonicalType, DEFAULT_BADGES, type BadgeDef, PROPERTY_TYPES } from "@/lib/budgets";
 import IconSelect from "./IconSelect";
 import MultiSelect from "./MultiSelect";
@@ -57,6 +57,76 @@ function recalc(p: State): State {
 }
 const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 100);
 
+/**
+ * The form state as the API wants it, plus the problems found in the price list, amenities and places.
+ * `lenient` (auto-save) leaves out unfinished rows instead of reporting them.
+ */
+function buildBody(f: State, status: State["status"], lenient = false) {
+  const bad: Record<string, string> = {};
+  // Price list rows: skip empty ones, ask for every column in the rest
+  let rows = f.unitRows.filter((r) => r.label.trim() || r.area.trim() || r.price.trim());
+  if (lenient) rows = rows.filter((r) => r.label.trim() && Number(r.area) >= 1 && Number(r.price) >= 1);
+  rows.forEach((r, i) => {
+    if (!r.label.trim()) bad[`unitTypes.${i}.label`] = "Describe the unit type, e.g. 3 BHK Apartment";
+    if (!(Number(r.area) >= 1)) bad[`unitTypes.${i}.area`] = r.area.trim() ? "Enter a number" : "Fill this in, or remove the row";
+    if (!r.price.trim()) bad[`unitTypes.${i}.price`] = "Enter the price, or set the price per sq ft in Configuration";
+    else if (!(Number(r.price) >= 1)) bad[`unitTypes.${i}.price`] = "Enter a number";
+  });
+  const unitTypes = rows.length
+    ? rows.map((r) => ({
+        label: r.label.trim(),
+        area: Number(r.area),
+        price: Number(r.price),
+        ...(r.floorplan ? { floorplan: r.floorplan } : {}),
+      }))
+    : undefined;
+  let amenityList = f.amenityRows.filter((r) => r.icon || r.label.trim());
+  if (lenient) amenityList = amenityList.filter((r) => r.icon && r.label.trim());
+  amenityList.forEach((r, i) => {
+    if (!r.icon) bad[`amenities.${i}.icon`] = "Choose an icon";
+    if (!r.label.trim()) bad[`amenities.${i}.label`] = "Write the amenity name";
+  });
+  const amenities = amenityList.length ? amenityList.map((r) => ({ icon: r.icon, label: r.label.trim() })) : undefined;
+  let placeList = f.placeRows.filter((r) => r.icon || r.place.trim() || r.time.trim());
+  if (lenient) placeList = placeList.filter((r) => r.icon && r.place.trim() && r.time.trim());
+  placeList.forEach((r, i) => {
+    if (!r.icon) bad[`connectivity.${i}.icon`] = "Choose an icon";
+    if (!r.place.trim()) bad[`connectivity.${i}.place`] = "Write the place name";
+    if (!r.time.trim()) bad[`connectivity.${i}.time`] = "Add the travel time";
+  });
+  const connectivity = placeList.length ? placeList.map((r) => ({ icon: r.icon, place: r.place.trim(), time: r.time.trim() })) : undefined;
+
+  const body = {
+    slug: f.slug, title: f.title, type: f.type, intent: "buy", developer: f.developer, developerLogo: f.developerLogo || undefined, project: f.project, advisorKey: f.advisorKey,
+    city: f.city, locality: f.locality, localitySlug: f.localitySlug, status,
+    hotSelling: f.hotSelling, handpicked: f.handpicked,
+    pricePerSqft: num(f.pricePerSqft) ? Math.round(Number(f.pricePerSqft)) : undefined, mapUrl: f.mapUrl.trim() || undefined,
+    price: num(f.price), priceLabel: f.priceLabel, units: num(f.units), totalArea: f.totalArea, towers: num(f.towers), structure: f.structure,
+    areaMin: num(f.areaMin), areaMax: num(f.areaMax),
+    configs: f.configs.trim() ? (f.configs.match(/\d+/g) ?? []).map(Number) : undefined,
+    possession: f.possession, rera: f.rera, badge: f.badges.join(", "), connectingRoad: f.connectingRoad, floorplan: f.floorplan,
+    postedAt: f.postedAt || undefined, summary: f.summary, description: f.description,
+    features: f.features, notes: f.notes.map((s) => s.trim()).filter(Boolean), images: f.images, unitTypes, amenities, connectivity,
+  };
+  return { body, bad };
+}
+
+type Auto = { kind: "idle" } | { kind: "saving" } | { kind: "saved"; at: Date } | { kind: "local"; msg: string } | { kind: "error"; msg: string };
+const LOCAL_KEY = (id?: string) => `propstep:listing-draft:${id ?? "new"}`;
+const readLocal = (id?: string): { f: State; slugTouched: boolean; at: number } | null => {
+  try {
+    const v = JSON.parse(localStorage.getItem(LOCAL_KEY(id)) ?? "null");
+    return v && v.f && typeof v.at === "number" ? v : null;
+  } catch {
+    return null;
+  }
+};
+const clearLocal = (id?: string) => {
+  try {
+    localStorage.removeItem(LOCAL_KEY(id));
+  } catch {}
+};
+
 
 export default function ListingForm({ id }: { id?: string }) {
   const router = useRouter();
@@ -67,6 +137,18 @@ export default function ListingForm({ id }: { id?: string }) {
   const [uploading, setUploading] = useState("");
   const [photoErrors, setPhotoErrors] = useState<string[]>([]);
   const [slugTouched, setSlugTouched] = useState(!!id);
+  const [auto, setAuto] = useState<Auto>({ kind: "idle" });
+  const [restored, setRestored] = useState<Date | null>(null);
+  /** the saved listing's id: the one being edited, or the one auto-save created for a new listing */
+  const idRef = useRef(id);
+  const fRef = useRef(f);
+  fRef.current = f;
+  const slugTouchedRef = useRef(slugTouched);
+  slugTouchedRef.current = slugTouched;
+  /** the form as last saved or loaded; null until a listing being edited has loaded */
+  const baseline = useRef<string | null>(id ? null : JSON.stringify(blank));
+  const saving = useRef(false);
+  const queued = useRef(false);
 
   const existing = useLoad<{ listing: Record<string, unknown> }>(id ? `/api/admin/listings/${id}` : null);
   const advisors = useLoad<{ items: { key: string; name: string }[] }>("/api/admin/advisors");
@@ -78,7 +160,7 @@ export default function ListingForm({ id }: { id?: string }) {
     const l = existing.data?.listing;
     if (!l) return;
     const s = (k: string) => String(l[k] ?? "");
-    setF({
+    const loaded: State = {
       slug: s("slug"), title: s("title"), type: canonicalType(s("type")), developer: s("developer"), developerLogo: s("developerLogo"), project: s("project"), advisorKey: s("advisorKey"),
       city: s("city"), locality: s("locality"), localitySlug: s("localitySlug"), status: l.status as State["status"],
       hotSelling: l.hotSelling === true, handpicked: l.handpicked === true,
@@ -96,8 +178,91 @@ export default function ListingForm({ id }: { id?: string }) {
       })),
       amenityRows: ((l.amenities as AmenityRow[]) ?? []).map((a) => ({ icon: a.icon, label: a.label })),
       placeRows: ((l.connectivity as PlaceRow[]) ?? []).map((c) => ({ icon: c.icon, place: c.place, time: c.time })),
-    });
-  }, [existing.data]);
+    };
+    baseline.current = JSON.stringify(loaded);
+    // Changes kept on this device that never reached the server (e.g. the connection dropped) win over the saved copy
+    const kept = readLocal(id);
+    if (kept && kept.at > Date.parse(String(l.updatedAt)) && JSON.stringify(kept.f) !== baseline.current) {
+      setF(kept.f);
+      setRestored(new Date(kept.at));
+    } else setF(loaded);
+  }, [existing.data, id]);
+
+  // A new listing: bring back what was being typed when the page was closed
+  useEffect(() => {
+    if (id) return;
+    const kept = readLocal();
+    if (!kept || JSON.stringify(kept.f) === JSON.stringify(blank)) return;
+    setF(kept.f);
+    setSlugTouched(kept.slugTouched);
+    setRestored(new Date(kept.at));
+  }, [id]);
+
+  /** Keep the draft: on this device always, and in the Drafts list once it has a title and an advisor */
+  async function autosave() {
+    if (saving.current) {
+      queued.current = true;
+      return;
+    }
+    const cur = fRef.current;
+    const json = JSON.stringify(cur);
+    // a live listing only changes when it is saved on purpose
+    if (cur.status === "PUBLISHED") return setAuto({ kind: "local", msg: "Changes kept on this device. Press “Save & keep live” to update the live listing." });
+    if (!cur.title.trim() || !cur.advisorKey || !cur.slug.trim()) {
+      return setAuto({ kind: "local", msg: "Kept on this device. Add a title and choose an advisor to save it to Drafts." });
+    }
+    saving.current = true;
+    setAuto({ kind: "saving" });
+    const { body } = buildBody(cur, "DRAFT", true);
+    const r = await api<{ listing: { id: string } }>(idRef.current ? `/api/admin/listings/${idRef.current}` : "/api/admin/listings", { method: idRef.current ? "PATCH" : "POST", body }).catch(() => null);
+    saving.current = false;
+    if (r?.ok) {
+      baseline.current = json;
+      clearLocal(idRef.current);
+      if (!idRef.current) {
+        idRef.current = r.data.listing.id;
+        // Point the address bar at the saved draft without reloading the page, so typing isn't interrupted
+        window.history.replaceState(null, "", `/admin/listings/${idRef.current}/`);
+      }
+      setAuto({ kind: "saved", at: new Date() });
+    } else {
+      const e = r?.data.errors ? Object.values(r.data.errors)[0] : r?.data.error;
+      setAuto({ kind: "error", msg: `Kept on this device, but not saved to Drafts yet${e ? `: ${e}` : " (no connection)"}` });
+    }
+    if (queued.current) {
+      queued.current = false;
+      if (JSON.stringify(fRef.current) !== json) void autosave();
+    }
+  }
+
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const writeLocal = () => {
+    try {
+      localStorage.setItem(LOCAL_KEY(idRef.current), JSON.stringify({ f: fRef.current, slugTouched: slugTouchedRef.current, at: Date.now() }));
+    } catch {}
+  };
+  // Auto-save a moment after the last change
+  useEffect(() => {
+    if (baseline.current === null || JSON.stringify(f) === baseline.current) return;
+    writeLocal();
+    clearTimeout(timer.current);
+    timer.current = setTimeout(autosave, 1500);
+    return () => clearTimeout(timer.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [f]);
+  // Closing the tab or switching away must not lose the last few keystrokes
+  useEffect(() => {
+    const flush = () => {
+      if (baseline.current !== null && JSON.stringify(fRef.current) !== baseline.current) writeLocal();
+    };
+    const hidden = () => document.visibilityState === "hidden" && flush();
+    window.addEventListener("pagehide", flush);
+    document.addEventListener("visibilitychange", hidden);
+    return () => {
+      window.removeEventListener("pagehide", flush);
+      document.removeEventListener("visibilitychange", hidden);
+    };
+  }, []);
 
   // Bring the first field with a problem into view
   useEffect(() => {
@@ -169,59 +334,26 @@ export default function ListingForm({ id }: { id?: string }) {
   async function submit(e: FormEvent, status?: State["status"]) {
     e.preventDefault();
     setTop({});
-    const bad: Record<string, string> = {};
-    // Price list rows: skip empty ones, ask for every column in the rest
-    const rows = f.unitRows.filter((r) => r.label.trim() || r.area.trim() || r.price.trim());
-    rows.forEach((r, i) => {
-      if (!r.label.trim()) bad[`unitTypes.${i}.label`] = "Describe the unit type, e.g. 3 BHK Apartment";
-      if (!(Number(r.area) >= 1)) bad[`unitTypes.${i}.area`] = r.area.trim() ? "Enter a number" : "Fill this in, or remove the row";
-      if (!r.price.trim()) bad[`unitTypes.${i}.price`] = "Enter the price, or set the price per sq ft in Configuration";
-      else if (!(Number(r.price) >= 1)) bad[`unitTypes.${i}.price`] = "Enter a number";
-    });
-    const unitTypes = rows.length
-      ? rows.map((r) => ({
-          label: r.label.trim(),
-          area: Number(r.area),
-          price: Number(r.price),
-          ...(r.floorplan ? { floorplan: r.floorplan } : {}),
-        }))
-      : undefined;
-    const amenityList = f.amenityRows.filter((r) => r.icon || r.label.trim());
-    amenityList.forEach((r, i) => {
-      if (!r.icon) bad[`amenities.${i}.icon`] = "Choose an icon";
-      if (!r.label.trim()) bad[`amenities.${i}.label`] = "Write the amenity name";
-    });
-    const amenities = amenityList.length ? amenityList.map((r) => ({ icon: r.icon, label: r.label.trim() })) : undefined;
-    const placeList = f.placeRows.filter((r) => r.icon || r.place.trim() || r.time.trim());
-    placeList.forEach((r, i) => {
-      if (!r.icon) bad[`connectivity.${i}.icon`] = "Choose an icon";
-      if (!r.place.trim()) bad[`connectivity.${i}.place`] = "Write the place name";
-      if (!r.time.trim()) bad[`connectivity.${i}.time`] = "Add the travel time";
-    });
-    const connectivity = placeList.length ? placeList.map((r) => ({ icon: r.icon, place: r.place.trim(), time: r.time.trim() })) : undefined;
+    clearTimeout(timer.current);
+    const { body, bad } = buildBody(f, status ?? f.status);
     if (Object.keys(bad).length) return setErrors(bad);
 
-    const body = {
-      slug: f.slug, title: f.title, type: f.type, intent: "buy", developer: f.developer, developerLogo: f.developerLogo || undefined, project: f.project, advisorKey: f.advisorKey,
-      city: f.city, locality: f.locality, localitySlug: f.localitySlug, status: status ?? f.status,
-      hotSelling: f.hotSelling, handpicked: f.handpicked,
-      pricePerSqft: num(f.pricePerSqft) ? Math.round(Number(f.pricePerSqft)) : undefined, mapUrl: f.mapUrl.trim() || undefined,
-      price: num(f.price), priceLabel: f.priceLabel, units: num(f.units), totalArea: f.totalArea, towers: num(f.towers), structure: f.structure,
-      areaMin: num(f.areaMin), areaMax: num(f.areaMax),
-      configs: f.configs.trim() ? (f.configs.match(/\d+/g) ?? []).map(Number) : undefined,
-      possession: f.possession, rera: f.rera, badge: f.badges.join(", "), connectingRoad: f.connectingRoad, floorplan: f.floorplan,
-      postedAt: f.postedAt || undefined, summary: f.summary, description: f.description,
-      features: f.features, notes: f.notes.map((s) => s.trim()).filter(Boolean), images: f.images, unitTypes, amenities, connectivity,
-    };
     setBusy(true);
-    const r = await api<{ listing: { id: string } }>(id ? `/api/admin/listings/${id}` : "/api/admin/listings", { method: id ? "PATCH" : "POST", body });
+    // Let an auto-save that is already on its way finish first, so the listing isn't created twice
+    while (saving.current) await new Promise((res) => setTimeout(res, 100));
+    const listingId = idRef.current;
+    const r = await api<{ listing: { id: string } }>(listingId ? `/api/admin/listings/${listingId}` : "/api/admin/listings", { method: listingId ? "PATCH" : "POST", body });
     setBusy(false);
     if (!r.ok) {
       setErrors(r.data.errors ?? {});
       return setTop({ error: Object.keys(r.data.errors ?? {}).length ? "Some fields need attention. They are marked in red below." : r.data.error ?? "Could not save" });
     }
     setErrors({});
+    clearLocal(listingId);
+    idRef.current = r.data.listing.id;
     if (!id) return router.replace(`/admin/listings/${r.data.listing.id}/`);
+    baseline.current = JSON.stringify({ ...f, status: body.status });
+    setAuto({ kind: "idle" });
     set("status", body.status);
     setTop({ ok: body.status === "PUBLISHED" ? "Saved. This listing is live on the website." : "Saved as draft." });
   }
@@ -246,6 +378,11 @@ export default function ListingForm({ id }: { id?: string }) {
       </div>
       {top.error ? <Alert>{top.error}</Alert> : null}
       {top.ok ? <Alert kind="ok">{top.ok}</Alert> : null}
+      {restored ? (
+        <Alert kind="ok">
+          Your unsaved changes from {restored.toLocaleString()} were brought back.
+        </Alert>
+      ) : null}
 
       <section className="a-card">
         <h2>1. Top of the page</h2>
@@ -572,6 +709,11 @@ export default function ListingForm({ id }: { id?: string }) {
         </button>
         <span className="admin-sub" style={{ margin: 0 }}>
           Status: {f.status === "PUBLISHED" ? "Live" : "Draft"}
+        </span>
+        <span className="admin-sub" style={{ margin: 0 }} role="status" aria-live="polite">
+          {auto.kind === "saving" ? "Saving draft…" : null}
+          {auto.kind === "saved" ? `Draft saved automatically at ${auto.at.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}` : null}
+          {auto.kind === "local" || auto.kind === "error" ? auto.msg : null}
         </span>
       </div>
     </form>
