@@ -47,8 +47,10 @@ function recalc(p: State): State {
   const rate = n(p.pricePerSqft);
   const out = { ...p };
   if (rate > 0) {
-    const a = n(p.areaMin);
-    if (!p.priceTouched && a > 0) out.price = String(Math.round(a * rate));
+    // the smallest size, or failing that the smallest size in the price list
+    const sizes = p.unitRows.map((r) => n(r.area)).filter((x) => x > 0);
+    const a = n(p.areaMin) > 0 ? n(p.areaMin) : sizes.length ? Math.min(...sizes) : NaN;
+    if ((!p.priceTouched || p.price.trim() === "") && a > 0) out.price = String(Math.round(a * rate));
     out.unitRows = p.unitRows.map((r) => (!r.manual && n(r.area) > 0 ? { ...r, price: String(Math.round(n(r.area) * rate)) } : r));
   }
   if (!p.labelTouched) out.priceLabel = n(out.price) > 0 ? inrShort(n(out.price)) : "";
@@ -175,7 +177,8 @@ export default function ListingForm({ id }: { id?: string }) {
       city: s("city"), locality: s("locality"), localitySlug: s("localitySlug"), status: l.status as State["status"],
       hotSelling: l.hotSelling === true, handpicked: l.handpicked === true,
       pricePerSqft: s("pricePerSqft"), mapUrl: s("mapUrl"),
-      priceTouched: !(Number(l.pricePerSqft) > 0 && Number(l.price) === Math.round(Number(s("areaMin") || s("area")) * Number(l.pricePerSqft))),
+      // a price that is there but isn't rate x size was typed by hand; an empty price is still free to be calculated
+      priceTouched: Number(l.price) > 0 && !(Number(l.pricePerSqft) > 0 && Number(l.price) === Math.round(Number(s("areaMin") || s("area")) * Number(l.pricePerSqft))),
       labelTouched: !!l.priceLabel && Number(l.price) > 0 && l.priceLabel !== inrShort(Number(l.price)),
       price: Number(l.price) ? s("price") : "", priceLabel: s("priceLabel"), units: s("units"), totalArea: s("totalArea"), towers: s("towers"), structure: s("structure"), areaMin: s("areaMin") || s("area"),
       areaMax: s("areaMax"), configs: (((l.configs as number[]) ?? []).length ? (l.configs as number[]) : Number(l.bhk) ? [Number(l.bhk)] : []).join(", "),
@@ -508,7 +511,7 @@ export default function ListingForm({ id }: { id?: string }) {
           <Field label="Total area" name="totalArea" error={err("totalArea")} hint="Of the whole project, with the unit, e.g. 4.5 acres"><input {...bind("totalArea")} placeholder="4.5 acres" /></Field>
           <Field label="Number of towers" name="towers" error={err("towers")}><input {...bind("towers")} type="number" min={1} /></Field>
           <Field label="Structure" name="structure" error={err("structure")} hint="e.g. 2B + G + 14 floors, RCC framed"><input {...bind("structure")} placeholder="2B + G + 14" /></Field>
-          <Field label="Price per sq ft (₹)" name="pricePerSqft" error={err("pricePerSqft")} hint="Optional. With this, the price below and every price in the price list are worked out from the size. Also shown on the property card.">
+          <Field label="Price per sq ft (₹)" name="pricePerSqft" error={err("pricePerSqft")} hint="Optional. With this and the smallest size above, the price below and every price in the price list are worked out for you. Also shown on the property card.">
             <input {...bind("pricePerSqft")} onChange={(e) => setF((p) => recalc({ ...p, pricePerSqft: e.target.value }))} type="number" min={1} placeholder="11350" />
           </Field>
           <Field label="Price (₹)" name="price" error={err("price")} hint="Starting price in full rupees, e.g. 15300000. Worked out as price per sq ft × smallest size, but you can type over it. Used on cards and in the EMI calculator. Empty it to calculate again.">
