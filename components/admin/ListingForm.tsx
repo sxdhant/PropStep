@@ -511,8 +511,8 @@ export default function ListingForm({ id }: { id?: string }) {
           <Field label="Total area" name="totalArea" error={err("totalArea")} hint="Of the whole project, with the unit, e.g. 4.5 acres"><input {...bind("totalArea")} placeholder="4.5 acres" /></Field>
           <Field label="Number of towers" name="towers" error={err("towers")}><input {...bind("towers")} type="number" min={1} /></Field>
           <Field label="Structure" name="structure" error={err("structure")} hint="e.g. 2B + G + 14 floors, RCC framed"><input {...bind("structure")} placeholder="2B + G + 14" /></Field>
-          <Field label="Price per sq ft (₹)" name="pricePerSqft" error={err("pricePerSqft")} hint="Optional. With this and the smallest size above, the price below and every price in the price list are worked out for you. Also shown on the property card.">
-            <input {...bind("pricePerSqft")} onChange={(e) => setF((p) => recalc({ ...p, pricePerSqft: e.target.value }))} type="number" min={1} placeholder="11350" />
+          <Field label="Price per sq ft (₹)" name="pricePerSqft" error={err("pricePerSqft")} hint="Optional. With this and the smallest size above, the price below and every price in the price list are worked out for you, and they follow whenever you change this. Also shown on the property card.">
+            <input {...bind("pricePerSqft")} onChange={(e) => setF((p) => recalc({ ...p, pricePerSqft: e.target.value, priceTouched: false, labelTouched: false, unitRows: p.unitRows.map((r) => ({ ...r, manual: false })) }))} type="number" min={1} placeholder="11350" />
           </Field>
           <Field label="Price (₹)" name="price" error={err("price")} hint="Starting price in full rupees, e.g. 15300000. Worked out as price per sq ft × smallest size, but you can type over it. Used on cards and in the EMI calculator. Empty it to calculate again.">
             <input {...bind("price")} onChange={(e) => setF((p) => recalc({ ...p, price: e.target.value, priceTouched: e.target.value.trim() !== "" }))} type="number" min={1} />
