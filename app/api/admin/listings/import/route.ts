@@ -4,7 +4,7 @@ import { ICON_NAMES } from "@/components/Icon";
 import { buildListings } from "@/lib/listings-csv.mjs";
 import { fail, ok, parseBody, requireAdmin } from "@/lib/http";
 import { audit, bust } from "@/lib/admin/ops";
-import { listingData } from "@/lib/admin/listings";
+import { findDuplicate, listingData } from "@/lib/admin/listings";
 import { listingInput } from "@/lib/validation/admin";
 import type { Listing } from "@/lib/types";
 
@@ -45,6 +45,18 @@ export async function POST(req: Request) {
     if (!r.success) errors.push(`Row ${i + 2} (${l.title}): ${r.error.issues.map((x) => `${x.path.join(".")} ${x.message}`).join("; ")}`);
     return r.success ? r.data : null;
   });
+
+  // A row for a property that is already listed under another address would create a duplicate
+  const seen = new Set<string>();
+  for (const [n, input] of inputs.entries()) {
+    if (!input) continue;
+    const known = await db.listing.findUnique({ where: { slug: input.slug }, select: { id: true } });
+    const dup = await findDuplicate(input, known?.id);
+    if (dup) errors.push(`Row ${n + 2} (${input.title}): ${dup.message}`);
+    const key = [input.title, input.locality, input.city].map((v) => v.toLowerCase().replace(/[^a-z0-9]+/g, "")).join("|");
+    if (seen.has(key)) errors.push(`Row ${n + 2} (${input.title}): appears twice in the sheet`);
+    seen.add(key);
+  }
 
   if (errors.length) return fail(422, `${errors.length} problem(s) in the sheet. Nothing was saved.`, { problems: errors.slice(0, 100), warnings: built.warnings });
   if (mode === "check") return ok({ rows: rows.length, warnings: built.warnings });

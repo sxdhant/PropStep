@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { fail, ok, requireAdmin } from "@/lib/http";
 import { audit, bust, dbError, plain } from "@/lib/admin/ops";
-import { getListingRow, listingData, listingOut, readListing } from "@/lib/admin/listings";
+import { findDuplicate, getListingRow, listingData, listingOut, readListing } from "@/lib/admin/listings";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -24,6 +24,12 @@ export async function PATCH(req: Request, { params }: Ctx) {
   const mapped = await listingData(parsed.data, { draft, prev });
   if ("error" in mapped) return fail(422, mapped.error, { errors: { [mapped.field]: mapped.error } });
   const warnings = { ...parsed.warnings, ...mapped.warnings };
+  // The same property can't be listed twice: a live listing is refused, a draft is saved with the field marked
+  const dup = await findDuplicate(parsed.data, id);
+  if (dup) {
+    if (!draft) return fail(409, dup.message, { errors: { [dup.field]: dup.message } });
+    warnings[dup.field] = dup.message;
+  }
   try {
     try {
       await db.listing.update({ where: { id }, data: mapped.data });

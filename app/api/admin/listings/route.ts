@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { randomBytes } from "node:crypto";
 import { fail, ok, requireAdmin } from "@/lib/http";
 import { audit, bust, dbError, plain } from "@/lib/admin/ops";
-import { listingData, listingOut, getListingRow, readListing } from "@/lib/admin/listings";
+import { findDuplicate, listingData, listingOut, getListingRow, readListing } from "@/lib/admin/listings";
 
 /** GET /api/admin/listings?q&status&page: a table-friendly list (drafts included) */
 export async function GET(req: Request) {
@@ -32,6 +32,12 @@ export async function POST(req: Request) {
   const mapped = await listingData(parsed.data, { draft });
   if ("error" in mapped) return fail(422, mapped.error, { errors: { [mapped.field]: mapped.error } });
   const warnings = { ...parsed.warnings, ...mapped.warnings };
+  // The same property can't be listed twice: a live listing is refused, a draft is saved with the field marked
+  const dup = await findDuplicate(parsed.data);
+  if (dup) {
+    if (!draft) return fail(409, dup.message, { errors: { [dup.field]: dup.message } });
+    warnings[dup.field] = dup.message;
+  }
   try {
     let row;
     try {

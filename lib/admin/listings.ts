@@ -25,6 +25,30 @@ export function listingOut(r: Row) {
 
 const MAX_BODY = 200_000;
 
+const norm = (v?: string | null) => (v ?? "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+
+/**
+ * Another listing for the same property: the same title, or the same project name, in the same locality and city.
+ * Returns where the match is (so the form can mark that field) and a message naming the existing listing.
+ */
+export async function findDuplicate(i: Pick<ListingInput, "title" | "project" | "locality" | "city">, excludeId?: string): Promise<{ field: "title" | "project"; message: string } | null> {
+  if (!i.locality.trim() || !i.city.trim()) return null;
+  const rows = await db.listing.findMany({
+    where: { city: { equals: i.city, mode: "insensitive" }, locality: { equals: i.locality, mode: "insensitive" }, ...(excludeId ? { id: { not: excludeId } } : {}) },
+    select: { title: true, project: true, status: true },
+  });
+  const title = norm(i.title);
+  const project = norm(i.project);
+  for (const r of rows) {
+    const field = title && norm(r.title) === title ? "title" : project && norm(r.project) === project ? "project" : null;
+    if (field) {
+      const label = r.project?.trim() || r.title;
+      return { field, message: `"${label}" is already listed in ${i.locality} (${r.status === "PUBLISHED" ? "live" : "draft"}). Open that listing and edit it instead of adding it again.` };
+    }
+  }
+  return null;
+}
+
 /**
  * Read and validate a listing from a request.
  * A listing being published must be complete and valid, or it is rejected with the problem fields.

@@ -370,7 +370,7 @@ export default function ListingForm({ id }: { id?: string }) {
     scrollToError.current = true;
     if (!r.ok) {
       setErrors({ ...bad, ...r.data.errors });
-      return setTop({ error: Object.keys(r.data.errors ?? {}).length ? "Some fields need attention. They are marked in red below." : r.data.error ?? "Could not save" });
+      return setTop({ error: r.status === 409 ? r.data.error : Object.keys(r.data.errors ?? {}).length ? "Some fields need attention. They are marked in red below." : r.data.error ?? "Could not save" });
     }
     const problems = { ...bad, ...r.data.fieldWarnings };
     setErrors(problems);
