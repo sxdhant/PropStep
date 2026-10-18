@@ -1768,7 +1768,7 @@ html[data-theme="night"] .hero-search {
 .contact-line:hover { border-color: var(--blue-700); transform: translateX(4px); }
 .contact-line .icon-wrap { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--blue-50); color: var(--blue-700); flex: none; }
 .contact-line small { display: block; font-weight: 500; color: var(--ink-3); font-size: 0.8125rem; }
-/* The three ways to reach us, each in its own colour (the same in day and night): Call light blue, WhatsApp green, Email Gmail red */
+/* The three ways to reach us, each in its own colour (the same in day and night): Call light blue, WhatsApp green, Email soft violet (red read as a warning) */
 .contact-line--phone { background: #e3f0fc; border-color: #b7d6f3; color: #0e1726; }
 .contact-line--phone .icon-wrap { background: #fff; color: #1b6fc4; }
 .contact-line--phone small { color: #3d5a78; }
@@ -1777,10 +1777,10 @@ html[data-theme="night"] .hero-search {
 .contact-line--wa .icon-wrap { background: #fff; color: #128c4a; }
 .contact-line--wa small { color: rgba(255, 255, 255, 0.88); }
 .contact-line--wa:hover { border-color: #0b6b37; }
-.contact-line--mail { background: #fdeceb; border-color: #f4c4c0; color: #0e1726; }
-.contact-line--mail .icon-wrap { background: #fff; color: #d93025; }
-.contact-line--mail small { color: #7a4440; }
-.contact-line--mail:hover { border-color: #d93025; }
+.contact-line--mail { background: #eeebfb; border-color: #cfc6f1; color: #0e1726; }
+.contact-line--mail .icon-wrap { background: #fff; color: #5b3fc4; }
+.contact-line--mail small { color: #54497d; }
+.contact-line--mail:hover { border-color: #5b3fc4; }
 
 /* ---------- 10. Inner page hero & breadcrumbs ---------- */
 .page-hero { padding-top: calc(var(--header-h) + clamp(32px, 5vw, 72px)); padding-bottom: clamp(40px, 5vw, 72px); }
