@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { Instrument_Serif, Manrope } from "next/font/google";
+import Script from "next/script";
 import MotionRoot from "@/components/MotionRoot";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
@@ -10,6 +11,8 @@ import { photoUrl } from "@/lib/img";
 import { splashBoot } from "@/lib/splash";
 import { themeBoot } from "@/lib/theme";
 import "./globals.css";
+
+const GA_ID = "G-7LR3HPHXQJ";
 
 //font
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", display: "swap" });
@@ -71,6 +74,13 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   return (
     <html lang="en-IN" className={`${manrope.variable} ${instrument.variable}`} suppressHydrationWarning>
       <head>
+        <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
+        <Script id="google-tag" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GA_ID}');`}
+        </Script>
         <script dangerouslySetInnerHTML={{ __html: `${bootScript};${themeBoot};${splashBoot}` }} />
         <link rel="preconnect" href="https://images.unsplash.com" />
       </head>
