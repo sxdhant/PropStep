@@ -597,7 +597,7 @@ export function VisitForm({ prefix, phone, property, properties = [], heading = 
         defaultValue="In person"
         layout="equal"
         options={[
-          { value: "In person", main: "At the site", sub: "Free pickup in Bengaluru" },
+          { value: "In person", main: "At the site", sub: "Free pickup" },
           { value: "Video tour", main: "Live video tour", sub: "Ideal for NRIs" },
         ]}
       />
