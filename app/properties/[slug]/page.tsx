@@ -307,7 +307,7 @@ export default async function ListingPage({ params }: Params) {
               title={sameLoc.length ? <>Similar properties in <em>{l.locality}</em></> : <>Similar <em>properties</em></>}
               link={
                 <Link className="link" href="/properties/">
-                  See all homes for sale <Icon name="arrow-right" className="icon--sm" />
+                  See all <Icon name="arrow-right" className="icon--sm" />
                 </Link>
               }
             />

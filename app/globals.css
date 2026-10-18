@@ -330,7 +330,9 @@ em, h1 em, h2 em, .display em {
   align-items: end;
   gap: var(--space-3);
 }
-.section-head--split > :last-child { justify-self: end; }
+.section-head--split > :last-child { justify-self: end; white-space: nowrap; }
+/* A long heading wraps in its own column instead of running under the button */
+.section-head--split .h2 { white-space: normal; }
 .section-head--split .btn { min-height: 36px; padding: 0 14px; font-size: 0.75rem; gap: 6px; white-space: nowrap; }
 .section-head--split .btn .icon { width: 14px; height: 14px; }
 .stack > * + * { margin-top: var(--space-4); }
@@ -1603,15 +1605,17 @@ html[data-theme="night"] .hero-search {
 .band__list .icon { color: var(--orange-400); margin-top: 3px; }
 .band__media { position: relative; border-radius: var(--r-lg); overflow: hidden; aspect-ratio: 4 / 3.4; }
 .band__media img { width: 100%; height: 100%; object-fit: cover; }
-.clocks { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+/* Three clocks to a row at every width; the rest continue on the next row */
+.clocks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 28px; }
 .clock {
   display: grid;
   padding: 10px 14px;
   border-radius: var(--r-sm);
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  min-width: 104px;
+  min-width: 0;
 }
+.clock span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .clock b { font-size: 1.05rem; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
 .clock span { font-size: 0.75rem; color: var(--c-on-dark-2); }
 
