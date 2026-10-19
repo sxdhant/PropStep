@@ -3,6 +3,7 @@ import { canonicalType, resolveBadges, type BadgeDef } from "./budgets";
 import { cache } from "react";
 import { db } from "./db";
 import * as fallback from "./content";
+import { fmtPriceLabel, fmtTotalArea } from "./format";
 import type { Listing, Locality, Site } from "./types";
 
 /**
@@ -39,7 +40,7 @@ export const toListing = (r: ListingRow, badgeDefs?: BadgeDef[]): Listing => ({
   project: r.project ?? undefined,
   configs: (r.configs as number[] | null) ?? undefined,
   units: r.units ?? undefined,
-  total_area: r.totalArea ?? undefined,
+  total_area: r.totalArea ? fmtTotalArea(r.totalArea) : undefined,
   towers: r.towers ?? undefined,
   structure: r.structure ?? undefined,
   hot_selling: r.hotSelling,
@@ -51,7 +52,7 @@ export const toListing = (r: ListingRow, badgeDefs?: BadgeDef[]): Listing => ({
   locality: r.locality,
   locality_slug: r.localityRef?.slug ?? "",
   price: Number(r.price),
-  price_label: r.priceLabel || "Price on request",
+  price_label: r.priceLabel ? fmtPriceLabel(r.priceLabel) : "Price on request",
   area: r.area,
   baths: r.baths,
   floor: r.floor ?? "",

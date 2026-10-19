@@ -5,7 +5,7 @@ import { badgeList, canonicalType, DEFAULT_BADGES, type BadgeDef, PROPERTY_TYPES
 import IconSelect from "./IconSelect";
 import MultiSelect from "./MultiSelect";
 import Select from "./Select";
-import { inrShort } from "@/lib/format";
+import { fmtPriceLabel, inrShort } from "@/lib/format";
 import { Alert, api, Field, Problems, uploadImage, useLoad } from "./ui";
 
 type Img = { id: string; alt: string };
@@ -111,7 +111,7 @@ function buildBody(f: State, status: State["status"], lenient = false) {
     city: f.city, locality: f.locality, localitySlug: f.localitySlug, status,
     hotSelling: f.hotSelling, handpicked: f.handpicked,
     pricePerSqft: num(f.pricePerSqft) ? Math.round(Number(f.pricePerSqft)) : undefined, mapUrl: f.mapUrl.trim() || undefined,
-    price: num(f.price), priceLabel: f.priceLabel, units: num(f.units), totalArea: f.totalArea, towers: num(f.towers), structure: f.structure,
+    price: num(f.price), priceLabel: f.priceLabel, units: num(f.units), totalArea: num(f.totalArea) != null && Number(f.totalArea) > 0 ? `${Number(f.totalArea).toFixed(1)} Acres` : "", towers: num(f.towers), structure: f.structure,
     areaMin: num(f.areaMin), areaMax: num(f.areaMax),
     configs: f.configs.trim() ? (f.configs.match(/\d+/g) ?? []).map(Number) : undefined,
     possession: f.possession, rera: f.rera, badge: f.badges.join(", "), connectingRoad: f.connectingRoad, floorplan: f.floorplan,
@@ -179,8 +179,8 @@ export default function ListingForm({ id }: { id?: string }) {
       pricePerSqft: s("pricePerSqft"), mapUrl: s("mapUrl"),
       // a price that is there but isn't rate x size was typed by hand; an empty price is still free to be calculated
       priceTouched: Number(l.price) > 0 && !(Number(l.pricePerSqft) > 0 && Number(l.price) === Math.round(Number(s("areaMin") || s("area")) * Number(l.pricePerSqft))),
-      labelTouched: !!l.priceLabel && Number(l.price) > 0 && l.priceLabel !== inrShort(Number(l.price)),
-      price: Number(l.price) ? s("price") : "", priceLabel: s("priceLabel"), units: s("units"), totalArea: s("totalArea"), towers: s("towers"), structure: s("structure"), areaMin: s("areaMin") || s("area"),
+      labelTouched: !!l.priceLabel && Number(l.price) > 0 && fmtPriceLabel(String(l.priceLabel)) !== inrShort(Number(l.price)),
+      price: Number(l.price) ? s("price") : "", priceLabel: s("priceLabel"), units: s("units"), totalArea: (s("totalArea").match(/[\d.]+/)?.[0] ?? ""), towers: s("towers"), structure: s("structure"), areaMin: s("areaMin") || s("area"),
       areaMax: s("areaMax"), configs: (((l.configs as number[]) ?? []).length ? (l.configs as number[]) : Number(l.bhk) ? [Number(l.bhk)] : []).join(", "),
       possession: s("possession"), rera: s("rera"), badges: badgeList(s("badge")), connectingRoad: s("connectingRoad"),
       floorplan: s("floorplan"), postedAt: s("postedAt"), summary: s("summary"), description: s("description"),
@@ -508,7 +508,9 @@ export default function ListingForm({ id }: { id?: string }) {
           <Field label="Size: smallest (sq ft)" name="areaMin" error={err("areaMin")}><input {...bind("areaMin")} onChange={(e) => setF((p) => recalc({ ...p, areaMin: e.target.value }))} type="number" min={1} /></Field>
           <Field label="Size: largest (sq ft)" name="areaMax" error={err("areaMax")} hint="Leave empty if there is one size"><input {...bind("areaMax")} type="number" min={1} /></Field>
           <Field label="Number of units" name="units" error={err("units")}><input {...bind("units")} type="number" min={1} /></Field>
-          <Field label="Total area" name="totalArea" error={err("totalArea")} hint="Of the whole project, with the unit, e.g. 4.5 acres"><input {...bind("totalArea")} placeholder="4.5 acres" /></Field>
+          <Field label="Total area (acres)" name="totalArea" error={err("totalArea")} hint="Of the whole project, in acres, to one decimal, e.g. 4.5. “Acres” is added for you.">
+            <div className="a-suffix"><input {...bind("totalArea")} type="number" min={0} step={0.1} placeholder="4.5" /><span>Acres</span></div>
+          </Field>
           <Field label="Number of towers" name="towers" error={err("towers")}><input {...bind("towers")} type="number" min={1} /></Field>
           <Field label="Structure" name="structure" error={err("structure")} hint="e.g. 2B + G + 14 floors, RCC framed"><input {...bind("structure")} placeholder="2B + G + 14" /></Field>
           <Field label="Price per sq ft (₹)" name="pricePerSqft" error={err("pricePerSqft")} hint="Optional. With this and the smallest size above, the price below and every price in the price list are worked out for you, and they follow whenever you change this. Also shown on the property card.">

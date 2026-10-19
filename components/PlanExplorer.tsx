@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import FloorPlan from "./FloorPlan";
 import Icon from "./Icon";
-import { inrGroup, inrShort } from "@/lib/format";
+import { area1, inrGroup, inrShort } from "@/lib/format";
 
 export type PlanUnit = { label: string; area: number; price: number; psf?: number; floorplan?: string; floorplan3d?: string };
 
@@ -42,7 +42,7 @@ export default function PlanExplorer({ units, fallback, fallback3d, title }: Pro
   const foot = (u: PlanUnit) => (
     <div className="plans__foot">
       <div>
-        <h3 className="plans__name">{u.label} · {inrGroup(u.area)} sq ft</h3>
+        <h3 className="plans__name">{u.label} · {area1(u.area)} sq ft</h3>
         <p className="plans__price">{inrShort(u.price)}</p>
         <p className="small muted">₹{inrGroup(u.psf ?? Math.round(u.price / u.area))} per sq ft</p>
       </div>
@@ -64,7 +64,7 @@ export default function PlanExplorer({ units, fallback, fallback3d, title }: Pro
       <div className="plans__sizes" role="tablist" aria-label="Size">
         {sizes.map((u, i) => (
           <button key={u.area} type="button" role="tab" aria-selected={i === pick} className="plans__size" onClick={() => setPick(i)}>
-            <span>{inrGroup(u.area)} sq.ft</span>
+            <span>{area1(u.area)} sq.ft</span>
             <b>{inrShort(u.price)}</b>
           </button>
         ))}
@@ -75,7 +75,7 @@ export default function PlanExplorer({ units, fallback, fallback3d, title }: Pro
         reveal={false}
         src={src}
         src3d={unit.floorplan3d ?? (src === fallback ? fallback3d : undefined)}
-        alt={`${unit.label} floor plan of ${title}, ${inrGroup(unit.area)} sq ft`}
+        alt={`${unit.label} floor plan of ${title}, ${area1(unit.area)} sq ft`}
       />
       ) : (
         <p className="small muted" style={{ margin: "20px 0" }}>The floor plan for this size is coming soon. Contact us and we will share it.</p>

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { ICON_NAMES } from "@/components/Icon";
 import { BADGE_TONES } from "@/lib/budgets";
-import { inrShort } from "@/lib/format";
+import { fmtPriceLabel, inrShort } from "@/lib/format";
 import { clean, optText, photo, reqText, slugSchema } from "./common";
 
 const icon = z.enum(ICON_NAMES as [string, ...string[]], { message: "Unknown icon name" });
@@ -99,7 +99,7 @@ export const listingInput = z
     // bhk and area are derived (they stay as database columns for search): from the BHK options and the smallest size
     const bhks = v.configs?.length ? v.configs : (v.unitTypes ?? []).map((u) => u.bhk);
     const area = v.areaMin ?? (v.unitTypes?.length ? Math.min(...v.unitTypes.map((u) => u.area)) : 0);
-    return { ...v, price, priceLabel: v.priceLabel || (price ? inrShort(price) : ""), bhk: bhks.length ? Math.min(...bhks) : 0, baths: 0, area };
+    return { ...v, price, priceLabel: v.priceLabel ? fmtPriceLabel(v.priceLabel) : price ? inrShort(price) : "", bhk: bhks.length ? Math.min(...bhks) : 0, baths: 0, area };
   });
 export type ListingInput = z.output<typeof listingInput>;
 

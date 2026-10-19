@@ -10,7 +10,7 @@ import { EnquiryForm } from "@/components/forms";
 import { Crumbs, JsonLd, SectionHead } from "@/components/primitives";
 import { getListing, getListings, getLocalities, getPhoneProps, getSite, SITE_URL } from "@/lib/data";
 import { resolveBadges } from "@/lib/budgets";
-import { inrGroup, inrShort, waLink } from "@/lib/format";
+import { area1, inrGroup, inrShort, waLink } from "@/lib/format";
 import { photoUrl } from "@/lib/img";
 import fs from "node:fs";
 import path from "node:path";
@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!l) return {};
   return {
     title: `${l.title}, ${l.locality} — ${l.price_label}`,
-    description: `${l.summary} ${l.area} sq ft · ${l.locality}, ${l.city}. Verified by Propstep.`,
+    description: `${l.summary} ${area1(l.area)} sq ft · ${l.locality}, ${l.city}. Verified by Propstep.`,
     alternates: { canonical: `/properties/${l.slug}/` },
     openGraph: { images: [photoUrl(l.images[0].id, 1200, [1200, 630], 75)] },
   };
@@ -67,7 +67,7 @@ export default async function ListingPage({ params }: Params) {
   const config = ([
     ["home", "Property type", l.type ?? ""],
     ["bed", "Bedrooms", configs.length ? `${configText} BHK` : ""],
-    ["area", "Size", lo ? (lo === hi ? `${inrGroup(lo)} sq ft` : `${inrGroup(lo)} - ${inrGroup(hi)} sq ft`) : ""],
+    ["area", "Size", lo ? (lo === hi ? `${area1(lo)} sq ft` : `${area1(lo)} - ${area1(hi)} sq ft`) : ""],
     ["building", "Number of units", l.units ? inrGroup(l.units) : ""],
     ["layers", "Total area", l.total_area ?? ""],
     ["building", "Number of towers", l.towers ? inrGroup(l.towers) : ""],
@@ -186,7 +186,7 @@ export default async function ListingPage({ params }: Params) {
                     {units.map((u) => (
                       <tr key={`${u.label}-${u.area}`}>
                         <th scope="row">{u.label}</th>
-                        <td>{inrGroup(u.area)} sq ft</td>
+                        <td>{area1(u.area)} sq ft</td>
                         <td><b>{inrShort(u.price)}</b></td>
                       </tr>
                     ))}
