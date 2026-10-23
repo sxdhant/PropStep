@@ -1200,16 +1200,16 @@ html[data-theme="night"] .hero-search {
 .l-card__loc { display: flex; align-items: center; gap: 6px; font-size: var(--fs-sm); color: var(--ink-3); }
 .l-card__facts {
   display: grid;
-  grid-template-columns: 1.15fr 0.66fr 1.3fr;
+  grid-template-columns: 1.35fr 0.7fr 1.05fr;
   margin: auto 0 0;
   padding: 14px 0 0;
   list-style: none;
   border-top: 1px solid var(--line);
 }
-.l-card__facts li { padding-right: 8px; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 0; }
+.l-card__facts li { padding-right: 6px; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 0; }
 .l-card__facts li + li { padding-left: 12px; border-left: 1px solid var(--line); }
 .l-card__fact-label { font-size: 0.625rem; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
-.l-card__facts strong { display: inline-flex; align-items: center; gap: 5px; font-size: 0.875rem; font-weight: 700; color: var(--ink); white-space: nowrap; letter-spacing: -0.01em; }
+.l-card__facts strong { display: inline-flex; align-items: center; gap: 4px; font-size: 0.8125rem; font-weight: 700; color: var(--ink); white-space: nowrap; letter-spacing: -0.01em; }
 .l-card__facts strong .icon { color: var(--blue-700); flex: none; }
 .l-card__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
 .l-card__who { display: flex; flex-direction: column; gap: 4px; min-width: 0; }

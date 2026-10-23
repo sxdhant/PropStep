@@ -4,7 +4,7 @@ import Icon, { type IconName } from "./Icon";
 import { Photo } from "./primitives";
 import { PerspectiveFlipCard } from "./ui/card-14";
 import { BADGE_TONE_CLASS, resolveBadges } from "@/lib/budgets";
-import { area1, inrGroup } from "@/lib/format";
+import { inrGroup } from "@/lib/format";
 import { articleDate, type Article } from "@/lib/articles";
 import type { Listing, Locality } from "@/lib/types";
 
@@ -16,7 +16,7 @@ export function ListingFacts({ l }: { l: Listing }) {
   const facts: { icon: "bed" | "building" | "area"; value: string; label: string }[] = [];
   if (configs.length) facts.push({ icon: "bed", value: `${configs.length > 1 ? `${configs.slice(0, -1).join(", ")} & ${configs[configs.length - 1]}` : configs[0]} BHK`, label: "Configurations" });
   if (l.units) facts.push({ icon: "building", value: inrGroup(l.units), label: "Units" });
-  if (lo) facts.push({ icon: "area", value: lo === hi ? area1(lo) : `${area1(lo)} - ${area1(hi)}`, label: "Size (sq ft)" });
+  if (lo) facts.push({ icon: "area", value: lo === hi ? inrGroup(lo) : `${inrGroup(lo)} - ${inrGroup(hi)}`, label: "Size (sq ft)" });
   return (
     <ul className="l-card__facts" role="list">
       {facts.map((f) => (
