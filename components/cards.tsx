@@ -22,7 +22,7 @@ export function ListingFacts({ l }: { l: Listing }) {
       {facts.map((f) => (
         <li key={f.label}>
           <span className="l-card__fact-label">{f.label}</span>
-          <strong>
+          <strong style={{ fontSize: `${Math.max(0.6875, 0.8125 - Math.max(0, f.value.length - 8) * 0.012).toFixed(3)}rem` }}>
             <Icon name={f.icon} className="icon--sm" />
             {f.value}
           </strong>
