@@ -60,7 +60,7 @@ export async function POST(req: Request) {
     name: d.name,
     phone: d.phone,
     email: d.email,
-    message: `Site visit requested for ${d.date} (${d.time}, ${d.mode})`,
+    message: [listing && `Property: ${listing.title}`, `Site visit requested for ${d.date} (${d.time}, ${d.mode})`].filter(Boolean).join("\n"),
     project: listing ? (listing.project ?? listing.title) : undefined,
   }));
   after(() => alertTeam(`Site visit request: ${d.name}`, { Name: d.name, Phone: d.phone, Email: d.email, Property: d.property, Date: d.date, Slot: d.time, Mode: d.mode }));
