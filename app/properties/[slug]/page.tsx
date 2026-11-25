@@ -10,7 +10,7 @@ import { EnquiryForm } from "@/components/forms";
 import { Crumbs, JsonLd, SectionHead } from "@/components/primitives";
 import { getListing, getListings, getLocalities, getPhoneProps, getSite, SITE_URL } from "@/lib/data";
 import { resolveBadges } from "@/lib/budgets";
-import { area1, inrGroup, inrShort, waLink } from "@/lib/format";
+import { area1, inrGroup, inrShort, truncate, waLink } from "@/lib/format";
 import { photoUrl } from "@/lib/img";
 import fs from "node:fs";
 import path from "node:path";
@@ -35,9 +35,12 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!l) return {};
   // Some listing titles already name the locality (e.g. a street-named locality repeated from the title) — don't repeat it
   const titleLoc = l.title.includes(l.locality) ? "" : `, ${l.locality}`;
+  // The admin-written summary varies in length; keep room for the fixed facts that follow it so the whole
+  // description stays within what search engines actually show (truncating well before the summary itself would).
+  const facts = ` ${area1(l.area)} sq ft · ${l.locality}, ${l.city}. Verified by Propstep.`;
   return {
     title: `${l.title}${titleLoc} — ${l.price_label}`,
-    description: `${l.summary} ${area1(l.area)} sq ft · ${l.locality}, ${l.city}. Verified by Propstep.`,
+    description: `${truncate(l.summary, 155 - facts.length)}${facts}`,
     alternates: { canonical: `/properties/${l.slug}/` },
     openGraph: { images: [photoUrl(l.images[0].id, 1200, [1200, 630], 75)] },
   };

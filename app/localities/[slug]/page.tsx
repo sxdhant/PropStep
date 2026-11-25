@@ -10,6 +10,7 @@ import { Rail } from "@/components/widgets";
 import { getListings, getLocalities, getLocality, getPhoneProps, SITE_URL } from "@/lib/data";
 import { photoUrl } from "@/lib/img";
 import ClampText from "@/components/ClampText";
+import { truncate } from "@/lib/format";
 
 export const revalidate = 3600; // admin edits also revalidate by tag
 export const generateStaticParams = async () => (await getLocalities()).map((l) => ({ slug: l.slug }));
@@ -19,9 +20,12 @@ type Params = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const loc = await getLocality((await params).slug);
   if (!loc) return {};
+  // The admin-written tagline varies in length; keep room for the fixed facts before it so a long one can't
+  // push the whole description past what search engines actually show.
+  const facts = `${loc.name} (${loc.zone}): average ${loc.price_sqft} per sq ft, ${loc.yield} gross yield. `;
   return {
     title: `${loc.name}, Bengaluru — locality guide: prices, yields & metro`,
-    description: `${loc.name} (${loc.zone}): average ${loc.price_sqft} per sq ft, ${loc.yield} gross yield. ${loc.tagline}`,
+    description: `${facts}${truncate(loc.tagline, 155 - facts.length)}`,
     alternates: { canonical: `/localities/${loc.slug}/` },
     openGraph: { images: [photoUrl(loc.image.id, 1200, [1200, 630], 75)] },
   };

@@ -44,3 +44,11 @@ export function initials(name: string): string {
 }
 
 export const waLink = (number: string, text: string) => `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
+
+/** Cuts text to at most `max` characters at a word boundary, with a trailing "…" when it was cut. For meta descriptions. */
+export function truncate(s: string, max: number): string {
+  if (s.length <= max) return s;
+  const cut = s.slice(0, max - 1);
+  const atSpace = cut.slice(0, cut.lastIndexOf(" "));
+  return `${atSpace || cut}…`;
+}
