@@ -58,13 +58,15 @@ export default async function Home() {
   const flagged = listings.filter((l) => l.hot_selling);
   const hot = flagged.length ? flagged.slice(0, 12) : listings.slice(0, 6);
   // Handpicked: Bengaluru's listings, in a horizontal rail
-  // Ticked in the admin; with none ticked, falls back to Bengaluru's listings not already shown in Hot selling,
-  // so the two rails don't repeat the same card (and heading) further down the same page
+  // Ticked in the admin; with none ticked, falls back to all of Bengaluru's listings.
+  // Either way, a listing already shown in Hot selling is skipped here, so the same card (and its heading and
+  // link text) never appears twice on this page — even if it's ticked both hot_selling and handpicked.
   const picked = listings.filter((l) => l.handpicked);
   const bengaluru = listings.filter((l) => l.city === "Bengaluru");
-  const buy = picked.length ? picked : (() => {
-    const rest = bengaluru.filter((l) => !hot.some((h) => h.slug === l.slug));
-    return rest.length ? rest : bengaluru;
+  const buy = (() => {
+    const base = picked.length ? picked : bengaluru;
+    const rest = base.filter((l) => !hot.some((h) => h.slug === l.slug));
+    return rest.length ? rest : base;
   })();
   // Search: Bengaluru's localities and the zones each falls in
   const areas = areaNames.map((name) => ({ name, zones: zonesFor(name) }));

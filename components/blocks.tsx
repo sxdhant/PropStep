@@ -136,7 +136,8 @@ export function NriBand() {
           ]}
         />
         <div className="btn-row" style={{ marginTop: 32 }}>
-          <Link className="btn btn--light" href="/contact-us/?type=nri">
+          {/* ?type=nri only pre-fills the enquiry form's dropdown client-side; nofollow so it isn't crawled as a separate URL from /contact-us/ */}
+          <Link className="btn btn--light" href="/contact-us/?type=nri" rel="nofollow">
             Talk to the NRI Desk <Icon name="arrow-right" className="icon--arrow" />
           </Link>
           <Link className="btn btn--ghost-light" href="/services/#nri-desk">

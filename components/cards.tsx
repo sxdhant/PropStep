@@ -53,6 +53,8 @@ export function ListingCard({ l, reveal = true, hidden, className, eager = false
     <Link
       className={`l-card${className ? ` ${className}` : ""}`}
       href={`/properties/${l.slug}/`}
+      // The card's price and facts would otherwise run into this link's accessible name and anchor text
+      aria-label={`${l.project ?? l.title}, ${l.locality}, ${l.city} — ${l.price_label}`}
       hidden={hidden}
       data-listing=""
       {...(reveal ? { "data-reveal": "" } : {})}
