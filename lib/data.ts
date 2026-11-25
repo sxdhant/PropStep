@@ -76,6 +76,7 @@ export const toListing = (r: ListingRow, badgeDefs?: BadgeDef[]): Listing => ({
   notes: (r.notes as string[] | null) ?? undefined,
   advisor: r.advisor.key,
   posted: r.postedAt.toISOString().slice(0, 10),
+  updated_at: r.updatedAt.toISOString(),
 });
 
 const queryListings = () =>
@@ -107,6 +108,7 @@ const toLocality = (r: LocalityRow): Locality => ({
   schools: r.schools as string[],
   hospitals: r.hospitals as string[],
   work: r.work as string[],
+  updated_at: r.updatedAt.toISOString(),
 });
 
 /* ---------- loaders ---------- */

@@ -107,6 +107,8 @@ export type Listing = {
   notes?: string[];
   advisor: string;
   posted: string;
+  /** When this listing was last saved in the admin; used as the sitemap's lastmod */
+  updated_at: string;
 };
 
 export type Locality = {
@@ -130,6 +132,8 @@ export type Locality = {
   schools: string[];
   hospitals: string[];
   work: string[];
+  /** When this locality was last saved in the admin; used as the sitemap's lastmod */
+  updated_at: string;
 };
 
 /** phone: the advisor's own line in international format (+91...); the site-wide number is used when it is empty */
