@@ -9,7 +9,7 @@ import ClampText from "@/components/ClampText";
 
 export const metadata: Metadata = {
   title: "About Propstep — property advisory & consulting since 2026",
-  description: "Propstep has advised property buyers since 2026: verified listings from across the market and an advisor at every step. Meet the team, our values and our story.",
+  description: "Propstep has advised Bengaluru property buyers since 2011. Meet the advisors behind our verified listings, our values and our story.",
   alternates: { canonical: "/about-us/" },
 };
 
@@ -33,7 +33,7 @@ export default async function AboutPage() {
             </div>
             <div>
               <ClampText className="lead">
-                For fifteen years we’ve sat on the buyer’s side of the table: finding properties from across the market, checking every one, and staying with our clients from the first shortlist to the day they get the keys.
+                For fifteen years our advisors have sat on the buyer’s side of the table: finding properties from across the market, checking every one, and staying with our clients from the first shortlist to the day they get the keys.
               </ClampText>
             </div>
           </div>
@@ -62,7 +62,7 @@ export default async function AboutPage() {
           </div>
           <div className="prose" data-reveal="">
             <p>
-              Propstep began in 2011 as a single advisory desk in Indiranagar, helping Bengaluru’s first generation of tech homebuyers make sense of a market with few rules and fewer guarantees. We checked titles no one else checked, and we told clients when to walk away.
+              Propstep started in 2011 as a single advisory desk in Indiranagar, helping Bengaluru’s first generation of tech homebuyers make sense of a market with few rules and fewer guarantees. We checked titles no one else checked, and we told clients when to walk away.
             </p>
             <p>
               As the city grew, so did the questions. In 2014 we brought legal checks in-house, so every title, approval and khata is read by our own team before a client signs — and in 2017 we opened an NRI Desk for buyers who can’t be here in person.

@@ -4,8 +4,8 @@ import { getSite } from "@/lib/data";
 import ClampText from "@/components/ClampText";
 
 export const metadata: Metadata = {
-  title: "Privacy policy",
-  description: "How Propstep collects and uses personal data.",
+  title: "Privacy policy — Propstep",
+  description: "How Propstep collects, uses and protects the personal data you share through this site.",
   alternates: { canonical: "/privacy/" },
 };
 

@@ -51,7 +51,7 @@ export default async function ServicesPage() {
             </div>
             <div>
               <ClampText className="lead">
-                Ninety advisors, an in-house legal team and a loans desk, working across six cities. We’re paid on client satisfaction as well as transactions, so sometimes our advice is to wait.
+                Ninety advisors, an in-house legal team and a loans desk, working across six cities — before you buy, during the deal, and after you move in. We’re paid on client satisfaction as well as transactions, so sometimes our advice is to wait.
               </ClampText>
             </div>
           </div>
@@ -74,7 +74,7 @@ export default async function ServicesPage() {
                   ))}
                 </ul>
                 <Link className="link" style={{ marginTop: 12 }} href={`/contact-us/?type=${contactType(s.slug)}`}>
-                  Talk to us <Icon name="arrow-right" className="icon--sm" />
+                  Talk to us<span className="visually-hidden"> about {s.title.toLowerCase()}</span> <Icon name="arrow-right" className="icon--sm" />
                 </Link>
               </article>
             ))}

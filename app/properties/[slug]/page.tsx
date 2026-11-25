@@ -33,8 +33,10 @@ type Params = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const l = await getListing((await params).slug);
   if (!l) return {};
+  // Some listing titles already name the locality (e.g. a street-named locality repeated from the title) — don't repeat it
+  const titleLoc = l.title.includes(l.locality) ? "" : `, ${l.locality}`;
   return {
-    title: `${l.title}, ${l.locality} — ${l.price_label}`,
+    title: `${l.title}${titleLoc} — ${l.price_label}`,
     description: `${l.summary} ${area1(l.area)} sq ft · ${l.locality}, ${l.city}. Verified by Propstep.`,
     alternates: { canonical: `/properties/${l.slug}/` },
     openGraph: { images: [photoUrl(l.images[0].id, 1200, [1200, 630], 75)] },

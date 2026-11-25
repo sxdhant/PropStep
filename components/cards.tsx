@@ -99,7 +99,7 @@ export function LocalityCard({ loc, reveal = true }: { loc: Locality; reveal?: b
   return (
     <Link className="loc-card" href={`/localities/${loc.slug}/`} {...(reveal ? { "data-reveal": "" } : {})}>
       <div className="loc-card__img">
-        <Photo id={loc.image.id} ratio={[3, 4]} sizes="(min-width: 1000px) 25vw, 80vw" />
+        <Photo id={loc.image.id} alt={loc.image.alt} ratio={[3, 4]} sizes="(min-width: 1000px) 25vw, 80vw" />
       </div>
       <span className="tag tag--glass">
         <Icon name="train" className="icon--sm" />

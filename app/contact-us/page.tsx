@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const site = await getSite();
   return {
   title: "Contact Propstep — book a site visit or talk to an advisor",
-  description: `Call ${site.phone}, WhatsApp or email Propstep. Book a site visit to a listed property or talk to an advisor in Bengaluru, Mumbai, Pune, Hyderabad, Chennai or Delhi NCR.`,
+  description: `Call, WhatsApp or email Propstep on ${site.phone}. Book a private site visit to a listed property, or start a conversation with an advisor near you.`,
   alternates: { canonical: "/contact-us/" },
   };
 }
@@ -37,7 +37,7 @@ export default async function ContactPage() {
             </div>
             <div>
               <ClampText className="lead">
-                Whether you’re buying, selling or just thinking about it — tell us a little about what you need, and the right advisor will get back to you within two working hours.
+                Whether you’re buying, selling or just thinking about it — tell us a little about what you need, and the right advisor will start that conversation with you within two working hours.
               </ClampText>
             </div>
           </div>

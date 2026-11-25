@@ -10,7 +10,7 @@ import ClampText from "@/components/ClampText";
 export const metadata: Metadata = {
   title: "Bengaluru locality guides — prices, yields & metro access",
   description:
-    "Compare Bengaluru's most popular localities — Whitefield, Sarjapur Road, Hebbal, Devanahalli, Koramangala, Indiranagar, HSR Layout and Electronic City — on price, yield and metro access.",
+    "Compare Bengaluru's most popular localities on price, rental yield and metro access, with the same honest briefing our advisors give clients.",
   alternates: { canonical: "/localities/" },
 };
 

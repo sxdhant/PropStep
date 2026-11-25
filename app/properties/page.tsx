@@ -33,7 +33,7 @@ export default async function PropertiesPage() {
             </div>
             <div style={{ gridColumn: "1 / -1" }}>
               <ClampText className="lead">
-                Homes from across the market, new launches and resale — each one legally checked and visited by an advisor before it’s listed. Looking for something specific? Our advisors see new stock before it goes online.
+                Homes from across the market, new launches and resale — each one legally checked and visited by an advisor before it’s listed, ready to be your next address. Looking for something specific? Our advisors see new stock before it goes online.
               </ClampText>
             </div>
           </div>
