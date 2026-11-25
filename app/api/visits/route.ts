@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { hasDb } from "@/lib/data";
 import { clientIp, fail, hashIp, ok, parseBody, rateLimited, sameOrigin } from "@/lib/http";
-import { alertTeam, forwardToWebhook } from "@/lib/notify";
+import { alertTeam, forwardToCrm, forwardToWebhook } from "@/lib/notify";
 import { optText } from "@/lib/validation/common";
 import { SLOT_CAPACITY, visitSchema } from "@/lib/validation/forms";
 
@@ -22,12 +22,13 @@ export async function POST(req: Request) {
     return fail(503, "We can't take bookings right now. Please call us.");
   }
 
+  let listing: { id: string; title: string; project: string | null } | null = null;
   try {
     if (idempotencyKey) {
       const dup = await db.lead.findUnique({ where: { idempotency: idempotencyKey }, select: { id: true } });
       if (dup) return ok({ duplicate: true });
     }
-    const listing = d.property ? await db.listing.findFirst({ where: { slug: d.property, status: "PUBLISHED" }, select: { id: true, title: true } }) : null;
+    listing = d.property ? await db.listing.findFirst({ where: { slug: d.property, status: "PUBLISHED" }, select: { id: true, title: true, project: true } }) : null;
     if (d.property && !listing) return fail(422, "That property is no longer listed", { errors: { property: "Choose a listed property" } });
 
     const taken = await db.siteVisit.count({ where: { date: new Date(`${d.date}T00:00:00Z`), slot: d.time, status: { in: ["PENDING", "CONFIRMED"] } } });
@@ -54,6 +55,13 @@ export async function POST(req: Request) {
     return fail(500, "Could not save your booking");
   }
   void forwardToWebhook({ ...d, type: "visit" });
+  void forwardToCrm({
+    name: d.name,
+    phone: d.phone,
+    email: d.email,
+    message: `Site visit requested for ${d.date} (${d.time}, ${d.mode})`,
+    project: listing ? (listing.project ?? listing.title) : undefined,
+  });
   void alertTeam(`Site visit request: ${d.name}`, { Name: d.name, Phone: d.phone, Email: d.email, Property: d.property, Date: d.date, Slot: d.time, Mode: d.mode });
   return ok();
 }

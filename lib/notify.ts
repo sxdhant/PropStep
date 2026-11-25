@@ -21,6 +21,29 @@ export async function forwardToWebhook(payload: Record<string, unknown>) {
   }
 }
 
+/**
+ * Send a lead to the CRM's intake endpoint (CRM_URL + INTAKE_KEY; does nothing when either is unset).
+ * Server to server, so the CRM never has to allow browser origins. `project` must match a project name in the CRM exactly.
+ */
+export async function forwardToCrm(lead: { name: string; phone: string; email?: string; message?: string; project?: string }) {
+  const base = process.env.CRM_URL;
+  const key = process.env.INTAKE_KEY;
+  if (!base || !key) return false;
+  try {
+    const res = await fetch(`${base.replace(/\/$/, "")}/api/intake`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-api-key": key },
+      body: JSON.stringify({ ...lead, website_url: "", source: "Website" }),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!res.ok) throw new Error(`CRM responded ${res.status}: ${(await res.text()).slice(0, 200)}`);
+    return true;
+  } catch (err) {
+    console.error("[notify] CRM failed:", err);
+    return false;
+  }
+}
+
 export const mailEnabled = () => !!process.env.RESEND_API_KEY && !!process.env.MAIL_FROM;
 
 export async function sendMail(to: string, subject: string, html: string) {

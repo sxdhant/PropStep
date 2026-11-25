@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { hasDb } from "@/lib/data";
 import { clientIp, fail, hashIp, ok, parseBody, rateLimited, sameOrigin } from "@/lib/http";
-import { alertTeam, forwardToWebhook } from "@/lib/notify";
+import { alertTeam, forwardToCrm, forwardToWebhook } from "@/lib/notify";
 import { enquirySchema } from "@/lib/validation/forms";
 
 /**
@@ -20,12 +20,13 @@ export async function POST(req: Request) {
   if (company_website) return ok(); // honeypot: real visitors never fill it, so pretend success
 
   if (hasDb()) {
+    let listing: { id: string; title: string; locality: string; project: string | null } | null = null;
     try {
       if (idempotencyKey) {
         const dup = await db.lead.findUnique({ where: { idempotency: idempotencyKey }, select: { id: true } });
         if (dup) return ok({ duplicate: true });
       }
-      const listing = d.property ? await db.listing.findFirst({ where: { slug: d.property, status: "PUBLISHED" }, select: { id: true, title: true, locality: true } }) : null;
+      listing = d.property ? await db.listing.findFirst({ where: { slug: d.property, status: "PUBLISHED" }, select: { id: true, title: true, locality: true, project: true } }) : null;
       if (d.property && !listing) return fail(422, "That property is no longer listed", { errors: { property: "Choose a listed property" } });
       await db.lead.create({
         data: {
@@ -48,6 +49,13 @@ export async function POST(req: Request) {
       return fail(500, "Could not save your enquiry");
     }
     void forwardToWebhook({ ...d, type: "enquiry" });
+    void forwardToCrm({
+      name: d.name,
+      phone: d.phone,
+      email: d.email,
+      message: [d.enquiry && `Enquiry: ${d.enquiry}`, d.subject, d.message].filter(Boolean).join("\n") || undefined,
+      project: listing ? (listing.project ?? listing.title) : undefined,
+    });
     void alertTeam(`New enquiry: ${d.name}`, { Name: d.name, Phone: d.phone, Email: d.email, Type: d.enquiry, About: d.subject ?? d.property, Message: d.message });
     return ok();
   }
