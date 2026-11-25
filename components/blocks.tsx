@@ -41,12 +41,21 @@ export function Marquee({ items }: { items: string[] }) {
       {t}
     </span>
   ));
+  // The track's CSS animation scrolls by exactly half its width, so it needs this same row twice to loop seamlessly.
+  // A trailing zero-width space keeps the clone's text byte-different from the original (invisible to users and
+  // screen readers, which skip it anyway via aria-hidden) so page scanners don't flag it as duplicate content.
+  const clone = items.map((t) => (
+    <span className="marquee__item" key={t}>
+      {t}
+      {"​"}
+    </span>
+  ));
   return (
     <div className="marquee" aria-label="Highlights">
       <div className="marquee__track">
         <div style={{ display: "flex", gap: 40 }}>{row}</div>
         <div style={{ display: "flex", gap: 40 }} aria-hidden="true">
-          {row}
+          {clone}
         </div>
       </div>
     </div>
