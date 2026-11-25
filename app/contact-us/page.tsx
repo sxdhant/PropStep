@@ -44,7 +44,7 @@ export default async function ContactPage() {
         </div>
       </section>
 
-      <section className="section" style={{ paddingTop: 0 }} aria-label="Enquiry">
+      <section className="section" style={{ paddingTop: 0 }} id="enquiry" aria-label="Enquiry">
         <div className="container">
           <div className="cta cta--plain">
             <div className="form-card" data-reveal="">

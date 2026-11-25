@@ -5,8 +5,10 @@ import Script from "next/script";
 import MotionRoot from "@/components/MotionRoot";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
+import QuickModal from "@/components/QuickModal";
+import WhatsAppEnquiry from "@/components/WhatsAppEnquiry";
 import { JsonLd } from "@/components/primitives";
-import { getSite, SITE_URL } from "@/lib/data";
+import { getPhoneProps, getSite, getVisitOptions, SITE_URL } from "@/lib/data";
 import { photoUrl } from "@/lib/img";
 import { splashBoot } from "@/lib/splash";
 import { themeBoot } from "@/lib/theme";
@@ -71,6 +73,7 @@ const orgData = (site: Awaited<ReturnType<typeof getSite>>) => ({
 export default async function RootLayout({ children }: { children: ReactNode }) {
   const site = await getSite();
   const org = orgData(site);
+  const [phoneProps, visitOptions] = await Promise.all([getPhoneProps(), getVisitOptions()]);
   return (
     <html lang="en-IN" className={`${manrope.variable} ${instrument.variable}`} suppressHydrationWarning>
       <head>
@@ -91,6 +94,8 @@ gtag('config', '${GA_ID}');`}
         </main>
         <SiteFooter />
         <MotionRoot />
+        <WhatsAppEnquiry />
+        <QuickModal phone={phoneProps} properties={visitOptions} />
         <JsonLd data={org} />
       </body>
     </html>

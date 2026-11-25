@@ -450,31 +450,53 @@ export function SortableTable({ columns, rows, caption }: { columns: Column[]; r
   );
 }
 
-/* ============================================================ Mobile quick-contact bar */
-/** `byListing`: on a property page the bar calls that listing's advisor (slug -> their phone and WhatsApp link) */
+/* ============================================================ Floating quick-contact button */
+/** A "+" button that fans out Call, WhatsApp and Enquiry. `byListing`: on a property page it calls that listing's advisor (slug -> their phone and WhatsApp link) */
 export function ActionBar({ phoneHref, wa, byListing }: { phoneHref: string; wa: string; byListing?: Record<string, { phoneHref: string; wa: string }> }) {
-  const [hide, setHide] = useState(false);
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
   const own = byListing?.[usePathname().replace(/^\/properties\/|\/$/g, "")];
   phoneHref = own?.phoneHref ?? phoneHref;
   wa = own?.wa ?? wa;
   useEffect(() => {
-    const footer = document.querySelector(".site-footer");
-    if (!footer || !("IntersectionObserver" in window)) return;
-    const io = new IntersectionObserver((entries) => setHide(entries[0].isIntersecting), { threshold: 0.05 });
-    io.observe(footer);
-    return () => io.disconnect();
-  }, []);
+    if (!open) return;
+    const onDown = (e: PointerEvent) => !ref.current?.contains(e.target as Node) && setOpen(false);
+    const onKey = (e: globalThis.KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("pointerdown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+  const close = () => setOpen(false);
   return (
-    <nav className={`action-bar${hide ? " is-hidden" : ""}`} aria-label="Quick contact">
-      <a className="call" href={`tel:${phoneHref}`}>
-        <Icon name="phone" className="icon--sm" /> Call
-      </a>
-      <a className="wa" href={wa} target="_blank" rel="noopener">
-        <WhatsAppIcon /> WhatsApp
-      </a>
-      <Link className="primary" href="/contact-us/#visit">
-        <Icon name="calendar" className="icon--sm" /> Book a visit
-      </Link>
-    </nav>
+    <div ref={ref} className={`fab${open ? " is-open" : ""}`}>
+      <div className="fab__items" id="fab-items" role="menu" aria-label="Contact us">
+        <Link className="fab__item fab__item--enquiry" href="/contact-us/#enquiry" role="menuitem" tabIndex={open ? 0 : -1} onClick={close}>
+          <span className="fab__label">Enquiry</span>
+          <span className="fab__icon">
+            <Icon name="mail" />
+          </span>
+        </Link>
+        <a className="fab__item fab__item--wa" href={wa} target="_blank" rel="noopener" role="menuitem" tabIndex={open ? 0 : -1} onClick={close}>
+          <span className="fab__label">WhatsApp</span>
+          <span className="fab__icon">
+            <WhatsAppIcon />
+          </span>
+        </a>
+        <a className="fab__item fab__item--call" href={`tel:${phoneHref}`} role="menuitem" tabIndex={open ? 0 : -1} onClick={close}>
+          <span className="fab__label">Call</span>
+          <span className="fab__icon">
+            <Icon name="phone" />
+          </span>
+        </a>
+      </div>
+      <button type="button" className="fab__toggle" aria-expanded={open} aria-controls="fab-items" aria-label={open ? "Close contact options" : "Contact us"} onClick={() => setOpen((o) => !o)}>
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" aria-hidden="true">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+      </button>
+    </div>
   );
 }

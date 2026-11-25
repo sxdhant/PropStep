@@ -333,9 +333,9 @@ export function SelectField({ id, label, name, required, dataLabel, options, pla
 }
 
 /** A select with the site's designed option list (the native select can't be styled). A hidden proxy input carries the value, so the form's validation and submit work as with a plain select. */
-export function DropdownField({ id, label, name, required, dataLabel, options, placeholder }: FieldBase & { options: [string, string][]; placeholder: string }) {
+export function DropdownField({ id, label, name, required, dataLabel, options, placeholder, defaultValue }: FieldBase & { options: [string, string][]; placeholder: string; defaultValue?: string }) {
   const f = useField(name);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(defaultValue ?? "");
   // Once a choice is made, clear a "choose a property" error
   useEffect(() => {
     const el = document.getElementById(id) as HTMLInputElement | null;
@@ -654,6 +654,42 @@ export function EnquiryForm({ prefix, phone, subject, title = "Talk to an adviso
       <PhoneField id={`${prefix}-phone`} hint="We’ll call or WhatsApp you from our Bengaluru office." />
       <TextField id={`${prefix}-email`} label="Email" name="email" type="email" dataLabel="email address" autoComplete="email" />
       {compact ? null : <TextArea id={`${prefix}-msg`} label="Message" name="message" placeholder="Budget, preferred localities, timelines — anything that helps." />}
+      <ConsentField id={`${prefix}-consent`} />
+    </LeadForm>
+  );
+}
+
+type QuickEnquiryProps = { prefix: string; phone: Phone; properties: [string, string][]; /** slug of the property being viewed */ property?: string; /** Preselected "How can we help?" */ type?: string };
+
+/** The popup enquiry: on a property page it names the property (preselected); elsewhere it asks what the person needs help with */
+export function QuickEnquiryForm({ prefix, phone, properties, property, type }: QuickEnquiryProps) {
+  const about = property && properties.some(([v]) => v === property);
+  return (
+    <LeadForm
+      label="Quick enquiry"
+      formName="enquiry"
+      phone={phone}
+      success={{
+        title: (n) => <>Thank you{n ? `, ${n}` : ""}.</>,
+        text: "An advisor will be in touch within two working hours (Mon – Sat, 10 am – 7 pm IST).",
+      }}
+      submit={
+        <>
+          Send enquiry <Icon name="arrow-right" className="icon--arrow" />
+        </>
+      }
+    >
+      {about ? (
+        <DropdownField id={`${prefix}-property`} label="Interested property" name="property" dataLabel="a property" placeholder="Choose a property" options={properties} defaultValue={property} />
+      ) : (
+        <SelectField id={`${prefix}-type`} label="How can we help?" name="enquiry" required dataLabel="an enquiry type" placeholder="Choose one" options={ENQUIRY_TYPES} defaultValue={ENQUIRY_TYPES.some(([v]) => v === type) ? type : undefined} />
+      )}
+      <div className="form-grid form-grid--2">
+        <TextField id={`${prefix}-name`} label="Full name" name="name" required dataLabel="full name" autoComplete="name" />
+        <PhoneField id={`${prefix}-phone`} />
+      </div>
+      <TextField id={`${prefix}-email`} label="Email" name="email" type="email" dataLabel="email address" autoComplete="email" />
+      {about ? null : <TextArea id={`${prefix}-msg`} label="Message" name="message" placeholder="Budget, preferred localities, timelines — anything that helps." />}
       <ConsentField id={`${prefix}-consent`} />
     </LeadForm>
   );

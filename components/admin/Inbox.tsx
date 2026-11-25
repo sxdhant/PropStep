@@ -58,7 +58,7 @@ export function Leads() {
                   {l.email ? <><br /><a href={`mailto:${l.email}`}>{l.email}</a></> : null}
                 </td>
                 <td style={{ maxWidth: 340 }}>
-                  <Pill>{l.form === "site-visit" ? "Site visit" : l.enquiryType ?? l.form}</Pill>{" "}
+                  <Pill>{l.form === "site-visit" ? "Site visit" : l.form === "whatsapp" ? "WhatsApp" : l.enquiryType ?? l.form}</Pill>{" "}
                   {l.subject ?? l.listing?.title ?? ""}
                   {l.visit ? <><br /><small>{l.visit.date.slice(0, 10)} · {l.visit.slot} · {l.visit.mode}</small></> : null}
                   {l.message ? <><br /><small className="admin-sub">{l.message}</small></> : null}

@@ -25,6 +25,8 @@ export async function POST(req: Request) {
         const dup = await db.lead.findUnique({ where: { idempotency: idempotencyKey }, select: { id: true } });
         if (dup) return ok({ duplicate: true });
       }
+      const listing = d.property ? await db.listing.findFirst({ where: { slug: d.property, status: "PUBLISHED" }, select: { id: true, title: true, locality: true } }) : null;
+      if (d.property && !listing) return fail(422, "That property is no longer listed", { errors: { property: "Choose a listed property" } });
       await db.lead.create({
         data: {
           form: d.form || "enquiry",
@@ -32,7 +34,8 @@ export async function POST(req: Request) {
           phone: d.phone,
           email: d.email,
           enquiryType: d.enquiry,
-          subject: d.subject,
+          subject: d.subject ?? (listing ? `${listing.title} — ${listing.locality}` : undefined),
+          listingId: listing?.id,
           message: d.message,
           page: d.page,
           consentAt: new Date(),
@@ -45,7 +48,7 @@ export async function POST(req: Request) {
       return fail(500, "Could not save your enquiry");
     }
     void forwardToWebhook({ ...d, type: "enquiry" });
-    void alertTeam(`New enquiry: ${d.name}`, { Name: d.name, Phone: d.phone, Email: d.email, Type: d.enquiry, About: d.subject, Message: d.message });
+    void alertTeam(`New enquiry: ${d.name}`, { Name: d.name, Phone: d.phone, Email: d.email, Type: d.enquiry, About: d.subject ?? d.property, Message: d.message });
     return ok();
   }
 

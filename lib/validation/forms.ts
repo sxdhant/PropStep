@@ -20,6 +20,7 @@ export const enquirySchema = z.object({
   enquiry: z.enum(ENQUIRY_TYPES, { message: "Please choose what you need help with" }).optional(),
   subject: optText(200),
   message: optText(2000),
+  property: z.union([slugSchema, z.literal("")]).optional(),
 });
 
 export const visitSchema = z
