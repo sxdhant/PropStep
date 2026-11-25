@@ -1,3 +1,4 @@
+import { after } from "next/server";
 import { db } from "@/lib/db";
 import { hasDb } from "@/lib/data";
 import { clientIp, fail, hashIp, ok, parseBody, rateLimited, sameOrigin } from "@/lib/http";
@@ -54,14 +55,14 @@ export async function POST(req: Request) {
     console.error("[visits] save failed:", err);
     return fail(500, "Could not save your booking");
   }
-  void forwardToWebhook({ ...d, type: "visit" });
-  void forwardToCrm({
+  after(() => forwardToWebhook({ ...d, type: "visit" }));
+  after(() => forwardToCrm({
     name: d.name,
     phone: d.phone,
     email: d.email,
     message: `Site visit requested for ${d.date} (${d.time}, ${d.mode})`,
     project: listing ? (listing.project ?? listing.title) : undefined,
-  });
-  void alertTeam(`Site visit request: ${d.name}`, { Name: d.name, Phone: d.phone, Email: d.email, Property: d.property, Date: d.date, Slot: d.time, Mode: d.mode });
+  }));
+  after(() => alertTeam(`Site visit request: ${d.name}`, { Name: d.name, Phone: d.phone, Email: d.email, Property: d.property, Date: d.date, Slot: d.time, Mode: d.mode }));
   return ok();
 }
