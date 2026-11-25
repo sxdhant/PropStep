@@ -481,7 +481,7 @@ export function DateSlots({ id, days = 12 }: { id: string; days?: number }) {
               <span className="slot" key={i} aria-hidden="true">
                 <span style={{ opacity: 0.35 }}>
                   <small>&nbsp;</small>
-                  <b>&nbsp;</b>
+                  <span>&nbsp;</span>
                   <small>&nbsp;</small>
                 </span>
               </span>

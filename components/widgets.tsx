@@ -195,7 +195,10 @@ export function Pillars({ items }: { items: Pillar[] }) {
                   <span className="pillar__num">0{i + 1}</span>
                   <span>{p.sub}</span>
                 </p>
-                <h3 className="pillar__title">{p.title}</h3>
+                <h3 className="pillar__title">
+                  {p.title}
+                  <span className="visually-hidden"> — {p.sub}</span>
+                </h3>
                 <p className="pillar__text">{p.text}</p>
                 <ul className="pillar__tags" aria-label={`${p.title}: what we offer`}>
                   {p.tags.map((t) => (

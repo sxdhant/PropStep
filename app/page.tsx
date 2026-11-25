@@ -16,8 +16,8 @@ import { areasIn, getListings, getLocalities, getSite, zoneResolver, ZONES } fro
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSite();
   return {
-    title: { absolute: `${site.name} — Property advisory & verified listings in Bengaluru | Across India` },
-    description: site.description,
+    title: { absolute: `${site.name} — Verified Property Listings & Advisory in Bengaluru` },
+    description: "Propstep lists verified homes, land and offices in Bengaluru, and guides buyers, sellers and NRIs from first shortlist to the keys.",
     alternates: { canonical: "/" },
   };
 }
@@ -53,14 +53,19 @@ export default async function Home() {
     ...p,
     links: p.links.map((l) => [l.label, l.href, l.look] as [string, string, ("accent" | "light")?]),
   }));
-  // Handpicked: Bengaluru's listings, in a horizontal rail
-  // Ticked in the admin; with none ticked, falls back to all of Bengaluru's listings
-  const picked = listings.filter((l) => l.handpicked);
-  const buy = picked.length ? picked : listings.filter((l) => l.city === "Bengaluru");
   // Hot selling: six listings in a horizontal rail
   // Ticked in the admin (newest first, up to 12); with none ticked, the 6 newest
   const flagged = listings.filter((l) => l.hot_selling);
   const hot = flagged.length ? flagged.slice(0, 12) : listings.slice(0, 6);
+  // Handpicked: Bengaluru's listings, in a horizontal rail
+  // Ticked in the admin; with none ticked, falls back to Bengaluru's listings not already shown in Hot selling,
+  // so the two rails don't repeat the same card (and heading) further down the same page
+  const picked = listings.filter((l) => l.handpicked);
+  const bengaluru = listings.filter((l) => l.city === "Bengaluru");
+  const buy = picked.length ? picked : (() => {
+    const rest = bengaluru.filter((l) => !hot.some((h) => h.slug === l.slug));
+    return rest.length ? rest : bengaluru;
+  })();
   // Search: Bengaluru's localities and the zones each falls in
   const areas = areaNames.map((name) => ({ name, zones: zonesFor(name) }));
   // The map card's count: Bengaluru listings in each zone (the same ones the Properties search finds)
@@ -92,7 +97,7 @@ export default async function Home() {
                 </Split>
               </h1>
               <p className="hero__lead" data-reveal="" style={{ "--delay": "420ms" } as CSSProperties}>
-                Verified properties from across the market, and an advisor beside you from first shortlist to the keys.
+                Verified properties from across the market, and an advisor beside you from first shortlist to the keys at a better address.
               </p>
             </div>
             <HeroSearch zones={ZONES} areas={areas} counts={counts} />
