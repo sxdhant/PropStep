@@ -36,7 +36,7 @@ export const DEFAULT_PILLARS: PillarContent[] = [
     sub: "Land, offices & NRI",
     tags: ["Plots & farmland", "Pre-leased offices", "NRI Desk"],
     text: "Title-clean plots and managed farmland, pre-leased offices, and an NRI Desk that handles everything from video walkthroughs to power of attorney.",
-    links: [{ label: "NRI Desk", href: "/services/#nri", look: "accent" }],
+    links: [{ label: "NRI Desk", href: "/services/#nri-desk", look: "accent" }],
     image: "1500382017468-9049fed747ef",
     alt: "Open grassland at sunset",
   },

@@ -50,11 +50,8 @@ type ListingCardProps = { l: Listing; reveal?: boolean; hidden?: boolean; classN
 
 export function ListingCard({ l, reveal = true, hidden, className, eager = false }: ListingCardProps) {
   return (
-    <Link
+    <article
       className={`l-card${className ? ` ${className}` : ""}`}
-      href={`/properties/${l.slug}/`}
-      // The card's price and facts would otherwise run into this link's accessible name and anchor text
-      aria-label={`${l.project ?? l.title}, ${l.locality}, ${l.city} — ${l.price_label}`}
       hidden={hidden}
       data-listing=""
       {...(reveal ? { "data-reveal": "" } : {})}
@@ -79,7 +76,13 @@ export function ListingCard({ l, reveal = true, hidden, className, eager = false
                 {l.developer}
               </p>
             ) : null}
-            <h3 className="l-card__title">{l.project ?? l.title}</h3>
+            <h3 className="l-card__title">
+              {/* The whole card is clickable via this link's ::after, stretched over the card by CSS — keeps the
+                  card's anchor text to just the title, instead of running into the price and facts below. */}
+              <Link className="l-card__title-link" href={`/properties/${l.slug}/`}>
+                {l.project ?? l.title}
+              </Link>
+            </h3>
             <p className="l-card__loc">
               <Icon name="pin" className="icon--sm" />
               {l.locality}, {l.city}
@@ -93,7 +96,7 @@ export function ListingCard({ l, reveal = true, hidden, className, eager = false
         </div>
         <ListingFacts l={l} />
       </div>
-    </Link>
+    </article>
   );
 }
 

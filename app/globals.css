@@ -1197,6 +1197,10 @@ html[data-theme="night"] .hero-search {
 .l-card__body { display: flex; flex-direction: column; gap: 6px; padding: 20px 22px 22px; flex: 1; }
 .l-card__price { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.03em; color: var(--ink); }
 .l-card__title { font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.35; color: var(--ink-2); }
+/* The card has no outer link any more; this title link's ::after stretches over the whole (position: relative)
+   .l-card so the card stays fully clickable while the <a>'s own text stays just the title. */
+.l-card__title-link { color: inherit; text-decoration: none; }
+.l-card__title-link::after { content: ""; position: absolute; inset: 0; }
 .l-card__loc { display: flex; align-items: center; gap: 6px; font-size: var(--fs-sm); color: var(--ink-3); }
 .l-card__facts {
   display: grid;
