@@ -1210,8 +1210,8 @@ html[data-theme="night"] .hero-search {
 .l-card__facts li { padding-right: 10px; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 0; }
 .l-card__facts li + li { padding-left: 10px; border-left: 1px solid var(--line); }
 .l-card__fact-label { font-size: 0.625rem; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
-.l-card__facts strong { display: inline-flex; align-items: center; gap: 4px; font-size: 0.8125rem; font-weight: 700; color: var(--ink); white-space: nowrap; letter-spacing: -0.01em; }
-.l-card__facts strong .icon { color: var(--blue-700); flex: none; }
+.l-card__fact-value { display: inline-flex; align-items: center; gap: 4px; font-size: 0.8125rem; font-weight: 700; color: var(--ink); white-space: nowrap; letter-spacing: -0.01em; }
+.l-card__fact-value .icon { color: var(--blue-700); flex: none; }
 .l-card__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
 .l-card__who { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .l-card__dev { font-size: 1.1875rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; color: var(--blue-700); }
@@ -1424,7 +1424,7 @@ html[data-theme="night"] .hero-search {
   box-shadow: 0 8px 18px -8px rgba(0, 0, 0, 0.55);
 }
 .loc-flip__stat-icon .icon { width: 13px; height: 13px; }
-.loc-flip__stat strong { font-size: 0.7rem; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; }
+.loc-flip__stat-value { font-size: 0.7rem; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; }
 .loc-flip__stat-label { font-size: 0.5rem; font-weight: 600; color: var(--c-on-dark-2); white-space: nowrap; }
 .loc-flip__back .loc-flip__eyebrow { justify-content: center; color: var(--orange-400); }
 .loc-flip__lead { margin-top: 6px; font-size: 0.85rem; font-weight: 600; line-height: 1.35; letter-spacing: -0.015em; color: #fff; text-wrap: balance; }

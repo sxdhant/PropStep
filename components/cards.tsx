@@ -22,10 +22,10 @@ export function ListingFacts({ l }: { l: Listing }) {
       {facts.map((f) => (
         <li key={f.label}>
           <span className="l-card__fact-label">{f.label}</span>
-          <strong style={{ fontSize: `${Math.max(0.6875, 0.8125 - Math.max(0, f.value.length - 8) * 0.012).toFixed(3)}rem` }}>
+          <span className="l-card__fact-value" style={{ fontSize: `${Math.max(0.6875, 0.8125 - Math.max(0, f.value.length - 8) * 0.012).toFixed(3)}rem` }}>
             <Icon name={f.icon} className="icon--sm" />
             {f.value}
-          </strong>
+          </span>
         </li>
       ))}
     </ul>
@@ -203,7 +203,7 @@ export function LocalityFlipCard({ loc }: { loc: Locality }) {
             <span className="loc-flip__stat-icon flip-z" style={lift(s.z === 80 ? 25 : 20)}>
               <Icon name={s.icon} />
             </span>
-            <strong className="flip-z" style={lift(10)}>{s.value}</strong>
+            <span className="loc-flip__stat-value flip-z" style={lift(10)}>{s.value}</span>
             <span className="loc-flip__stat-label">{s.label}</span>
           </li>
         ))}
